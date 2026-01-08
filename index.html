@@ -1,0 +1,1242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>RC-9100 Simulator</title>
+
+<!-- PWA Meta Tags -->
+<meta name="description" content="Technisonic RC-9100 Radio Simulator - Interactive dual-band radio control head simulator">
+<meta name="theme-color" content="#101010">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="RC-9100">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+
+<style>
+  :root { --brt: 1; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, Segoe UI, Arial, sans-serif;
+    margin: 0;
+    padding: 24px;
+    background: #101010;
+    color: #eaeaea;
+    min-height: 100vh;
+  }
+  .radio {
+    max-width: 980px;
+    margin: 0 auto;
+    background: #3a3a3a;
+    border-radius: 12px;
+    box-shadow: 0 6px 28px rgba(0,0,0,.6);
+    padding: 18px;
+  }
+  .hdr {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    opacity: .85;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .lcd {
+    background: #0b2011;
+    border-radius: 10px;
+    box-shadow: inset 0 0 24px #041;
+    margin: 4px 0;
+    color: #7fffb9;
+    font-family: Consolas, monospace;
+  }
+  .lcd .l {
+    padding: 6px 14px;
+    border-bottom: 1px solid rgba(127,255,185,.1);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .lcd .row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .lcd .ind {
+    display: inline-block;
+    width: 1ch;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .lcd .bottomRow {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    align-items: center;
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+  .keys {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 10px;
+    margin-top: 12px;
+    align-items: stretch;
+  }
+  button {
+    background: #505050;
+    border: 0;
+    border-bottom: 3px solid #2d2d2d;
+    color: #eee;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:active {
+    transform: translateY(1px);
+    border-bottom-width: 2px;
+  }
+  button:hover {
+    background: #5a5a5a;
+  }
+  .knobslot {
+    grid-column: 1 / span 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: #2f2f2f;
+    border-radius: 8px;
+    border-bottom: 3px solid #222;
+    padding: 10px;
+  }
+  .knob {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #7a7a7a, #2b2b2b);
+    border: 2px solid #1a1a1a;
+    cursor: pointer;
+    transform: rotate(0deg);
+    transition: transform .1s linear;
+    position: relative;
+    touch-action: none;
+  }
+  .knob::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 12px;
+    background: #1a1a1a;
+    border-radius: 2px;
+  }
+  .knoblabel {
+    font-weight: 600;
+  }
+  .center {
+    text-align: center;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    body { padding: 12px; }
+    .radio { padding: 12px; }
+    .keys { 
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .knobslot { 
+      grid-column: 1 / span 2;
+      order: -1;
+    }
+    button { 
+      padding: 10px 6px;
+      font-size: 12px;
+    }
+    .lcd .bottomRow {
+      grid-template-columns: repeat(4, 1fr);
+      font-size: 11px;
+    }
+    .lcd .l { font-size: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .keys { grid-template-columns: repeat(3, 1fr); }
+    .knobslot { grid-column: 1 / span 3; }
+    .knob { width: 60px; height: 60px; }
+  }
+
+  /* Install prompt */
+  .install-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #2d5a3d;
+    color: white;
+    padding: 12px 20px;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+  }
+  .install-banner.show { display: flex; }
+  .install-banner button {
+    background: #7fffb9;
+    color: #0b2011;
+    padding: 8px 16px;
+  }
+  .install-banner .dismiss {
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+  }
+</style>
+</head>
+<body>
+<div class="radio">
+  <div class="hdr">
+    <div>Technisonic RC-9100 (sim)</div>
+    <div>VHF: 3 Zones | UHF/800: 40 Zones</div>
+  </div>
+
+  <!-- LCD -->
+  <div class="lcd" id="lcd">
+    <!-- Top line ALWAYS Band 1, with triangle indicator -->
+    <div class="l">
+      <div class="row">
+        <span class="ind" id="indB1"> </span>
+        <span id="line1"></span>
+      </div>
+    </div>
+    <!-- Second line ALWAYS Band 2, with triangle indicator -->
+    <div class="l">
+      <div class="row">
+        <span class="ind" id="indB2"> </span>
+        <span id="line2"></span>
+      </div>
+    </div>
+
+    <!-- Static labels above -, -, - and knob mode on far right -->
+    <div class="bottomRow">
+      <div></div>
+      <div class="center">ZnDn</div>
+      <div class="center">ZnUp</div>
+      <div class="center">Mute</div>
+      <div></div><div></div><div></div>
+      <div id="rightInd" class="center">CHAN-1</div>
+    </div>
+  </div>
+
+  <!-- KEYPAD GRID -->
+  <div class="keys">
+    <!-- Row 1 -->
+    <button id="homeBtn">HOME</button>
+    <button id="zoneDnBtn">-</button>
+    <button id="zoneUpBtn">-</button>
+    <button id="muteBtn">-</button>
+    <button id="f1">F1</button>
+    <button id="f2">F2</button>
+    <button id="f3">F3</button>
+    <button id="f4">F4</button>
+
+    <!-- Row 2 -->
+    <div class="knobslot" id="knobslot">
+      <div class="knob" id="knob" title="Click knob to change mode"></div>
+      <div class="knoblabel" id="knobMode">CHAN-1</div>
+    </div>
+    <button id="bandBtn">BAND</button>
+    <button id="mup">MUP (4)</button>
+    <button id="up">UP (5)</button>
+    <button id="brt">BRT (6)</button>
+    <button id="esw">ESW (0)</button>
+
+    <!-- Row 3 -->
+    <div></div><div></div><div></div>
+    <button id="funcBtn">FUNC</button>
+    <button id="mdn">MDN (7)</button>
+    <button id="dn">DN (8)</button>
+    <button id="dim">DIM (9)</button>
+    <button id="tsw">TSW (*)</button>
+  </div>
+</div>
+
+<!-- Install Banner -->
+<div class="install-banner" id="installBanner">
+  <span>Install RC-9100 Simulator for offline use</span>
+  <div>
+    <button class="dismiss" id="dismissInstall">Later</button>
+    <button id="installBtn">Install</button>
+  </div>
+</div>
+
+<script>
+/* ---------------- Codeplug ---------------- */
+const codeplug = {
+  "band1": {
+    "name": "VHF",
+    "zones": [
+      {
+        "id": "A",
+        "name": "AIRCARE VHF",
+        "channels": [
+          { "name": "AIRCARE" },
+          { "name": "FL SOUTH" },
+          { "name": "TAMPA GEN" },
+          { "name": "ST JOES" },
+          { "name": "BAYFRONT MED" },
+          { "name": "PUTNAM ATG" },
+          { "name": "HOLMES" },
+          { "name": "AIR SECONDARY" },
+          { "name": "MOBILE CARE" },
+          { "name": "VOLUSIA AIR 1" },
+          { "name": "AIRCARE DIG" }
+        ]
+      },
+      {
+        "id": "F",
+        "name": "VHF-MUT AID",
+        "channels": [
+          { "name": "VCALL10" },
+          { "name": "VTAC11" },
+          { "name": "VTAC12" },
+          { "name": "VTAC13" },
+          { "name": "VTAC14" },
+          { "name": "VFIRE21" },
+          { "name": "VFIRE22" },
+          { "name": "VFIRE23" },
+          { "name": "VMED28" },
+          { "name": "VMED29" },
+          { "name": "INTERCITY" },
+          { "name": "SHERIFF NET" },
+          { "name": "RMACS" },
+          { "name": "MARINE 6" },
+          { "name": "MARINE 9" },
+          { "name": "MARINE 16" }
+        ]
+      },
+      {
+        "id": "G",
+        "name": "VHF-MUT AID 2",
+        "channels": [
+          { "name": "VFIRE 24" },
+          { "name": "VFIRE 25" },
+          { "name": "VFIRE 26" },
+          { "name": "VLAW 31" },
+          { "name": "VLAW 32" },
+          { "name": "VTAC 33" },
+          { "name": "VTAC 34" },
+          { "name": "VTAC 35" },
+          { "name": "VTAC 36" },
+          { "name": "VTAC 37" },
+          { "name": "VTAC 38" }
+        ]
+      }
+    ]
+  },
+  "band2": {
+    "name": "UHF/800",
+    "zones": [
+      {
+        "id": "B",
+        "name": "UHF HOSPITAL",
+        "channels": [
+          { "name": "HOLMES REG" },
+          { "name": "SHANDS" },
+          { "name": "SOUTHLAKE PS" },
+          { "name": "SOUTHLAKE BACK" },
+          { "name": "AIRCARE" },
+          { "name": "Air D DIGITAL" }
+        ]
+      },
+      {
+        "id": "C",
+        "name": "UHF-MED 1",
+        "channels": [
+          { "name": "MED 8 STATE" },
+          { "name": "MED 8 Direct" },
+          { "name": "MED 6 MARION" },
+          { "name": "MED 9 LAKE" },
+          { "name": "MED 12 AH-WAT" },
+          { "name": "MED 22 UF-LEE" },
+          { "name": "MED 62 S-LAKE" },
+          { "name": "MED 82 HEALTH" },
+          { "name": "MED 82 Direct" }
+        ]
+      },
+      {
+        "id": "D",
+        "name": "UHF-MED 2",
+        "channels": [
+          { "name": "MED 1" },
+          { "name": "MED 2" },
+          { "name": "MED 3" },
+          { "name": "MED 4" },
+          { "name": "MED 5" },
+          { "name": "MED 6" },
+          { "name": "MED 7" },
+          { "name": "MED 8" },
+          { "name": "MED 9" },
+          { "name": "MED 10" }
+        ]
+      },
+      {
+        "id": "E",
+        "name": "UHF-MED 3",
+        "channels": [
+          { "name": "MED 12" },
+          { "name": "MED 22" },
+          { "name": "MED 32" },
+          { "name": "MED 42" },
+          { "name": "MED 52" },
+          { "name": "MED 62" },
+          { "name": "MED 72" },
+          { "name": "MED 82" },
+          { "name": "MED 92" },
+          { "name": "MED 102" }
+        ]
+      },
+      {
+        "id": "H",
+        "name": "UHF-MUT AID",
+        "channels": [
+          { "name": "UCALL40" },
+          { "name": "UTAC41" },
+          { "name": "UTAC42" },
+          { "name": "UTAC43" },
+          { "name": "UCALL40 D" },
+          { "name": "UTAC41 D" },
+          { "name": "UTAC42 D" },
+          { "name": "UTAC43 D" },
+          { "name": "LE EMERG" },
+          { "name": "LE EMERG D" }
+        ]
+      },
+      {
+        "id": "1",
+        "name": "OSCEOLA",
+        "channels": [
+          { "name": "OSC TAC 1" },
+          { "name": "OSC TAC 2" },
+          { "name": "OSC TAC 3" },
+          { "name": "OSC TAC 4" },
+          { "name": "OSC TAC 5" },
+          { "name": "OSC TAC 6" },
+          { "name": "OSC TAC 7" },
+          { "name": "OSC TAC 8" },
+          { "name": "100JSM42523" }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "LAKE",
+        "channels": [
+          { "name": "LAKE L/Z" },
+          { "name": "LAKE PS1" },
+          { "name": "LAKE PS2" },
+          { "name": "LAKE PS3" },
+          { "name": "LAKE PS4" },
+          { "name": "LAKE PS5" },
+          { "name": "LAKE PS6" },
+          { "name": "LAKE PS7" },
+          { "name": "LAKE PS8" },
+          { "name": "LAKE IA1" },
+          { "name": "LAKE IA2" },
+          { "name": "LAKE IA3" },
+          { "name": "LAKE IA4" },
+          { "name": "LAKE IA5" },
+          { "name": "LAKE IA6" },
+          { "name": "LAKE IA7" }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "APOPKA",
+        "channels": [
+          { "name": "APK FIRE DISP" },
+          { "name": "APK EMS 1" },
+          { "name": "APK FIRE 1" },
+          { "name": "APK EMS 2" },
+          { "name": "APK FIRE 2" },
+          { "name": "APK FIRE EMS 3" },
+          { "name": "APK TRAINING" },
+          { "name": "APK FIRE EVENT" },
+          { "name": "APK FIRE SPARE" },
+          { "name": "APK CALL" },
+          { "name": "APK TAC 1" },
+          { "name": "APK TAC 2" },
+          { "name": "APK TAC 3" }
+        ]
+      },
+      {
+        "id": "4",
+        "name": "ORANGE FIRE",
+        "channels": [
+          { "name": "OCFRD TAC 1" },
+          { "name": "OCFRD TAC 2" },
+          { "name": "OCFRD TAC 3" },
+          { "name": "OCFRD TAC 4" },
+          { "name": "OCFRD TAC 5" },
+          { "name": "OCFRD TAC 6" },
+          { "name": "OCFRD TAC 7" },
+          { "name": "OCFRD TAC 8" },
+          { "name": "OCFRD TAC 9" },
+          { "name": "OCFRD TAC 10" },
+          { "name": "OCFRD TAC 11" }
+        ]
+      },
+      {
+        "id": "5",
+        "name": "POLK",
+        "channels": [
+          { "name": "POLK L/Z 1" },
+          { "name": "POLK L/Z 2" },
+          { "name": "POLK DISPATCH" },
+          { "name": "POLK TAC 2" },
+          { "name": "POLK TAC 3" },
+          { "name": "POLK TAC 4" },
+          { "name": "POLK TAC 5" },
+          { "name": "POLK TAC 6" },
+          { "name": "POLK TAC 7" },
+          { "name": "POLK TAC 8" },
+          { "name": "POLK TAC 9" },
+          { "name": "POLK TAC 10" },
+          { "name": "POLK TAC 11" },
+          { "name": "POLK TAC 12" },
+          { "name": "POLK/HILL 1" },
+          { "name": "POLK/HILL 2" }
+        ]
+      },
+      {
+        "id": "6",
+        "name": "POLK TWR",
+        "channels": [
+          { "name": "POLK TOWER" },
+          { "name": "LAKLAND REG" },
+          { "name": "WINTER HAVEN" }
+        ]
+      },
+      {
+        "id": "7",
+        "name": "REEDY CREEK",
+        "channels": [
+          { "name": "REEDY TAC 1" },
+          { "name": "REEDY TAC 2" },
+          { "name": "REEDY TAC 3" },
+          { "name": "REEDY TAC 4" },
+          { "name": "REEDY TAC 5" }
+        ]
+      },
+      {
+        "id": "8",
+        "name": "SUMTER",
+        "channels": [
+          { "name": "SUM L/Z" },
+          { "name": "SUM HAIL" },
+          { "name": "SUM 2" },
+          { "name": "SUM 3" },
+          { "name": "SUM 4" },
+          { "name": "SUM 5" },
+          { "name": "SUM 6" },
+          { "name": "SUM 7" },
+          { "name": "SUM 8" },
+          { "name": "SUM 9" },
+          { "name": "SUM 10" },
+          { "name": "SUM 11" }
+        ]
+      },
+      {
+        "id": "9",
+        "name": "SEMINOLE",
+        "channels": [
+          { "name": "SEM 49A" },
+          { "name": "SEM 49B" },
+          { "name": "SEM 49C" },
+          { "name": "SEM 49D" },
+          { "name": "SEM 49E" },
+          { "name": "SEM 49F" },
+          { "name": "SEM 49G" },
+          { "name": "SEM 49H" },
+          { "name": "SEM 49I" },
+          { "name": "SEM 49J" },
+          { "name": "SEM 49K" },
+          { "name": "SEM 49L" },
+          { "name": "SEM 49M" },
+          { "name": "SEM 49N" },
+          { "name": "SEM 49O" },
+          { "name": "SEM 49P" }
+        ]
+      },
+      {
+        "id": "10",
+        "name": "HOSPITAL 1",
+        "channels": [
+          { "name": "ORMC" },
+          { "name": "APH" },
+          { "name": "CFR-LK MONROE" },
+          { "name": "OCALA REG" },
+          { "name": "OSCEOLA REG" },
+          { "name": "LAKLAND REG" },
+          { "name": "AH-ORL" },
+          { "name": "BAY PT MC" },
+          { "name": "FUTURE" },
+          { "name": "FUTURE" },
+          { "name": "SHANDS" },
+          { "name": "WINTER HAVEN" },
+          { "name": "MAYO JAX" },
+          { "name": "MAYO JAX IC" }
+        ]
+      },
+      {
+        "id": "11",
+        "name": "HOSPITAL 2 AH",
+        "channels": [
+          { "name": "AH-APK" },
+          { "name": "AH-O PEDS" },
+          { "name": "AH-ALT" },
+          { "name": "AH-CELEB" },
+          { "name": "AH-EAST" },
+          { "name": "AH-ER OVIEDO" },
+          { "name": "AH-HEART O FL" },
+          { "name": "AH-KIS" },
+          { "name": "AH-LK WALES" },
+          { "name": "MARION AH-PEDS" },
+          { "name": "AH-TIMBER RID" },
+          { "name": "AH-WATERMAN" },
+          { "name": "AH-WAUCHULA" },
+          { "name": "AH-WGRD" }
+        ]
+      },
+      {
+        "id": "12",
+        "name": "HOSPITAL 3 OH",
+        "channels": [
+          { "name": "DPH" },
+          { "name": "HCH" },
+          { "name": "SOUTH LAKE" },
+          { "name": "SOUTH SEMINOLE" },
+          { "name": "ST CLOUD" },
+          { "name": "WINNIE PALM" }
+        ]
+      },
+      {
+        "id": "13",
+        "name": "HOSPITAL 4 HCA",
+        "channels": [
+          { "name": "CITRUS MEM" },
+          { "name": "HIGHLANDS REG" },
+          { "name": "HUN CRK ER" },
+          { "name": "OAK HILL" },
+          { "name": "OVIEDO MC" },
+          { "name": "POINCIANA" }
+        ]
+      },
+      {
+        "id": "14",
+        "name": "HOSPITAL 5",
+        "channels": [
+          { "name": "7RIVERS" },
+          { "name": "BARTOW" },
+          { "name": "LK PLACID" },
+          { "name": "NEMOURS" },
+          { "name": "UF-LEESBURG REG" },
+          { "name": "UF-VILLAGES REG" },
+          { "name": "VETS ORL" },
+          { "name": "EMS-OPS" },
+          { "name": "MED COM" }
+        ]
+      },
+      {
+        "id": "15",
+        "name": "KISSIMMEE",
+        "channels": [
+          { "name": "KIS COMB" },
+          { "name": "KIS TAC 1" },
+          { "name": "KIS TAC 2" },
+          { "name": "KIS TAC 3" },
+          { "name": "KIS TAC 4" }
+        ]
+      },
+      {
+        "id": "16",
+        "name": "SAINT CLOUD",
+        "channels": [
+          { "name": "ST CLD TAC 1" },
+          { "name": "ST CLD TAC 2" },
+          { "name": "ST CLD TAC 3" },
+          { "name": "ST CLD TAC 4" }
+        ]
+      },
+      {
+        "id": "17",
+        "name": "WINTER PARK",
+        "channels": [
+          { "name": "WP TAC 1" },
+          { "name": "WP TAC 2" },
+          { "name": "WP TAC 3" },
+          { "name": "WP TAC 4" }
+        ]
+      },
+      {
+        "id": "18",
+        "name": "ORLANDO",
+        "channels": [
+          { "name": "OFD 1" },
+          { "name": "OFD 2" },
+          { "name": "OFD 3" },
+          { "name": "OFD 4" }
+        ]
+      },
+      {
+        "id": "19",
+        "name": "GOAA",
+        "channels": [
+          { "name": "GOAA TAC 1" },
+          { "name": "GOAA TAC 2" },
+          { "name": "GOAA TAC 3" },
+          { "name": "GOAA TAC 4" },
+          { "name": "GOAA TAC 5" },
+          { "name": "GOAA TAC 6" }
+        ]
+      },
+      {
+        "id": "20",
+        "name": "CITRUS",
+        "channels": [
+          { "name": "CITRUS HELO" },
+          { "name": "CITRUS MEMOR H" },
+          { "name": "CIT 7RIVERS" },
+          { "name": "CITRUS EMS" },
+          { "name": "CITRUS EAST" },
+          { "name": "CITRUS WEST" },
+          { "name": "CITRUS INOP 1" },
+          { "name": "CITRUS INOP 2" },
+          { "name": "CITRUS INOP 3" },
+          { "name": "CITRUS INOP 4" },
+          { "name": "CITRUS INOP 5" },
+          { "name": "CITRUS INOP 6" }
+        ]
+      },
+      {
+        "id": "21",
+        "name": "DESOTO",
+        "channels": [
+          { "name": "FUTURE" }
+        ]
+      },
+      {
+        "id": "22",
+        "name": "HARDEE",
+        "channels": [
+          { "name": "HARDEE DISPATCH" },
+          { "name": "HARDEE EMS" },
+          { "name": "HARDEE FIRE" },
+          { "name": "HARDEE TAC 4" },
+          { "name": "HARDEE TAC 5" },
+          { "name": "HARDEE TAC 6" },
+          { "name": "HARDEE TAC 7" },
+          { "name": "HARDEE TAC 10" },
+          { "name": "HARDEE TAC 11" },
+          { "name": "HARDEE TAC 12" },
+          { "name": "HARDEE TAC 13" },
+          { "name": "HARDEE TAC 14" },
+          { "name": "HARDEE TAC 15" },
+          { "name": "HARDEE INTEROP" }
+        ]
+      },
+      {
+        "id": "23",
+        "name": "HERNANDO",
+        "channels": [
+          { "name": "HERN AIR OP 1" },
+          { "name": "HERN AIR OP 2" },
+          { "name": "BROOKSVIL REG" },
+          { "name": "SPRING HILL" },
+          { "name": "OAK HILL" },
+          { "name": "BAY PT MC" },
+          { "name": "HERN FIRE 1" },
+          { "name": "HERN FIRE 2" },
+          { "name": "HERN FIRE 3" },
+          { "name": "HERN FIRE 4" },
+          { "name": "BAYFLIGHT - 4" }
+        ]
+      },
+      {
+        "id": "24",
+        "name": "HIGHLANDS",
+        "channels": [
+          { "name": "HIGHLANDS LZ 1" },
+          { "name": "HIGHLANDS LZ 2" },
+          { "name": "HIGHLANDS DISP" }
+        ]
+      },
+      {
+        "id": "25",
+        "name": "HILLSBOROUGH",
+        "channels": [
+          { "name": "FUTURE" }
+        ]
+      },
+      {
+        "id": "26",
+        "name": "INDIAN RIVER",
+        "channels": [
+          { "name": "FUTURE" }
+        ]
+      },
+      {
+        "id": "27",
+        "name": "MANATEE",
+        "channels": [
+          { "name": "FUTURE" }
+        ]
+      },
+      {
+        "id": "28",
+        "name": "MARION",
+        "channels": [
+          { "name": "MARION HELO" },
+          { "name": "OCALA REG" },
+          { "name": "AH-OCALA" },
+          { "name": "AH-TIMBER" },
+          { "name": "HCA-W MARION" },
+          { "name": "HCA - SUMRF" },
+          { "name": "AH-PEDS" },
+          { "name": "HCA-MARIC" },
+          { "name": "AH-BELLEVW" },
+          { "name": "HCA-SILVR" },
+          { "name": "UF-OCALA" }
+        ]
+      },
+      {
+        "id": "29",
+        "name": "PASCO",
+        "channels": [
+          { "name": "MA-FLA D" },
+          { "name": "8TAC94 D" }
+        ]
+      },
+      {
+        "id": "30",
+        "name": "PINELLAS",
+        "channels": [
+          { "name": "FUTURE" }
+        ]
+      },
+      {
+        "id": "31",
+        "name": "ST. LUCIE",
+        "channels": [
+          { "name": "FUTURE" }
+        ]
+      },
+      {
+        "id": "32",
+        "name": "ORANGE DISASTER",
+        "channels": [
+          { "name": "ORG DISASTER A" },
+          { "name": "ORG DISASTER B" },
+          { "name": "ORG DISASTER C" },
+          { "name": "ORG DISASTER D" },
+          { "name": "ORG DISASTER E" }
+        ]
+      },
+      {
+        "id": "33",
+        "name": "ORANGE MA",
+        "channels": [
+          { "name": "OCFR MA 1" },
+          { "name": "OCFR MA 2" },
+          { "name": "OCFR MA 3" },
+          { "name": "OCFR MA 4" },
+          { "name": "OCFR MA 5" },
+          { "name": "OCFR MA 6" },
+          { "name": "OCFR MA 7" }
+        ]
+      },
+      {
+        "id": "34",
+        "name": "ORANGE METRO",
+        "channels": [
+          { "name": "OC METRO 1" },
+          { "name": "OC METRO 2" },
+          { "name": "OC METRO 3" },
+          { "name": "OC METRO 4" },
+          { "name": "OC METRO 5" },
+          { "name": "OC METRO 6" },
+          { "name": "OC METRO 7" },
+          { "name": "OC METRO 8" }
+        ]
+      },
+      {
+        "id": "35",
+        "name": "700 MUT-AID",
+        "channels": [
+          { "name": "7CALL50" },
+          { "name": "7CALL70" },
+          { "name": "7TAC55" },
+          { "name": "7TAC56" },
+          { "name": "7GTAC57" },
+          { "name": "7TAC75" },
+          { "name": "7TAC76" },
+          { "name": "7GTAC77" },
+          { "name": "7CALL50 D" },
+          { "name": "7CALL70 D" },
+          { "name": "7TAC55 D" },
+          { "name": "7TAC56 D" },
+          { "name": "7GTAC57 D" },
+          { "name": "7TAC75 D" },
+          { "name": "7TAC76 D" },
+          { "name": "7GTAC77 D" }
+        ]
+      },
+      {
+        "id": "36",
+        "name": "800 MUTUAL AID",
+        "channels": [
+          { "name": "8CALL90" },
+          { "name": "8TAC91" },
+          { "name": "8TAC92" },
+          { "name": "8TAC93" },
+          { "name": "8TAC94" },
+          { "name": "MA-FLA" },
+          { "name": "8TAC91 D" },
+          { "name": "8TAC92 D" },
+          { "name": "8TAC93 D" },
+          { "name": "8TAC94 D" },
+          { "name": "MA-FLA D" }
+        ]
+      },
+      {
+        "id": "37",
+        "name": "PSIC MUT-AID",
+        "channels": [
+          { "name": "PSIC 1" },
+          { "name": "PSIC 2" },
+          { "name": "PSIC 3" },
+          { "name": "PSIC 4" },
+          { "name": "PSIC 5" },
+          { "name": "PSIC 6" },
+          { "name": "PSIC 7" },
+          { "name": "PSIC 8" },
+          { "name": "PSIC 9" },
+          { "name": "PSIC 10" },
+          { "name": "PSIC 11" },
+          { "name": "PSIC 12" },
+          { "name": "PSIC 13" },
+          { "name": "PSIC 14" },
+          { "name": "PSIC 15" },
+          { "name": "7CALL50 D" }
+        ]
+      },
+      {
+        "id": "38",
+        "name": "DISASTER 1",
+        "channels": [
+          { "name": "DISASTER 1" },
+          { "name": "DISASTER 2" },
+          { "name": "DISASTER 3" },
+          { "name": "DISASTER 4" },
+          { "name": "DISASTER 5" },
+          { "name": "DISASTER 6" },
+          { "name": "DISASTER 7" },
+          { "name": "DISASTER 8" },
+          { "name": "DISASTER 9" },
+          { "name": "DISASTER 10" },
+          { "name": "DISASTER 11" },
+          { "name": "DISASTER 12" },
+          { "name": "DISASTER 13" },
+          { "name": "DISASTER 14" },
+          { "name": "DISASTER 15" },
+          { "name": "DISASTER 16" }
+        ]
+      },
+      {
+        "id": "39",
+        "name": "DISASTER 2",
+        "channels": [
+          { "name": "DISASTER 17" },
+          { "name": "DISASTER 18" },
+          { "name": "DISASTER 19" },
+          { "name": "DISASTER 20" },
+          { "name": "DISASTER 21" },
+          { "name": "DISASTER 22" },
+          { "name": "DISASTER 23" },
+          { "name": "DISASTER 24" },
+          { "name": "DISASTER 25" },
+          { "name": "DISASTER 26" },
+          { "name": "DISASTER 27" },
+          { "name": "DISASTER 28" },
+          { "name": "DISASTER 29" },
+          { "name": "DISASTER 30" },
+          { "name": "DISASTER 31" },
+          { "name": "DISASTER 32" }
+        ]
+      },
+      {
+        "id": "40",
+        "name": "VOLUSIA",
+        "channels": [
+          { "name": "VOLUSIA AIR 1" },
+          { "name": "VOLUSIA FIRE 1" },
+          { "name": "AH - DAYTONA" },
+          { "name": "AH - NSB" },
+          { "name": "AH - PT ORANGE" },
+          { "name": "HALIFAX" },
+          { "name": "HALIFAX PO" },
+          { "name": "AH - DELAND" },
+          { "name": "AH - DELTONA" },
+          { "name": "AH - FISH" },
+          { "name": "HALIFAX DELTONA" }
+        ]
+      }
+    ]
+  }
+};
+
+/* ---------------- State ---------------- */
+const st = {
+  activeBand: 0,           // which band the controls affect: 0 = Band1, 1 = Band2
+  zoneB1: 0,               // current zone index in Band1
+  zoneB2: 0,               // current zone index in Band2
+  chanB1: 0,               // current channel index in Band1's current zone
+  chanB2: 0,               // current channel index in Band2's current zone
+  knobMode: 0,             // 0=CHAN, 1=ZONE, 2=VOL
+  brightness: 5, esw: 0, tsw: 0,
+  volume: 5, muted: false,
+  knobAngle: 0
+};
+
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// Get current zone for a band
+function getZone(bandIdx) {
+  const band = bandIdx === 0 ? codeplug.band1 : codeplug.band2;
+  const zoneIdx = bandIdx === 0 ? st.zoneB1 : st.zoneB2;
+  return band.zones[zoneIdx];
+}
+
+// Get current channel for a band
+function getChannel(bandIdx) {
+  const zone = getZone(bandIdx);
+  const chanIdx = bandIdx === 0 ? st.chanB1 : st.chanB2;
+  return zone.channels[chanIdx];
+}
+
+// Format zone display
+function zoneLabel(bandIdx) {
+  const zone = getZone(bandIdx);
+  return `Zone ${zone.id}`;
+}
+
+// Format channel display
+function chanLabel(bandIdx) {
+  const chanIdx = bandIdx === 0 ? st.chanB1 : st.chanB2;
+  return `CH${(chanIdx + 1).toString().padStart(2, '0')}`;
+}
+
+// Knob mode label
+function knobLabel() {
+  if (st.knobMode === 0) {
+    const chanIdx = st.activeBand === 0 ? st.chanB1 : st.chanB2;
+    return `CHAN-${chanIdx + 1}`;
+  }
+  if (st.knobMode === 1) {
+    const zone = getZone(st.activeBand);
+    return `ZONE-${zone.id}`;
+  }
+  return `VOL-${st.volume}${st.muted ? " (MUTE)" : ""}`;
+}
+
+/* Render display */
+function render() {
+  const zone1 = getZone(0);
+  const zone2 = getZone(1);
+  const chan1 = getChannel(0);
+  const chan2 = getChannel(1);
+
+  // Triangle indicators
+  document.getElementById('indB1').textContent = st.activeBand === 0 ? '▶' : ' ';
+  document.getElementById('indB2').textContent = st.activeBand === 1 ? '▶' : ' ';
+
+  // Line 1: Band 1 (VHF) - Zone and Channel
+  document.getElementById('line1').textContent =
+    `${codeplug.band1.name}  ${zoneLabel(0)}  ${chanLabel(0)}  ${chan1.name}`;
+
+  // Line 2: Band 2 (UHF/800) - Zone and Channel
+  document.getElementById('line2').textContent =
+    `${codeplug.band2.name}  ${zoneLabel(1)}  ${chanLabel(1)}  ${chan2.name}`;
+
+  // Mode label and knob rotation
+  const modeText = knobLabel();
+  document.getElementById('rightInd').textContent = modeText;
+  document.getElementById('knobMode').textContent = modeText;
+  document.getElementById('knob').style.transform = `rotate(${st.knobAngle}deg)`;
+}
+
+/* ----- Controls ----- */
+// BAND toggles active band (triangle follows)
+document.getElementById('bandBtn').onclick = () => { 
+  st.activeBand = st.activeBand ? 0 : 1; 
+  render(); 
+};
+
+// MUP / MDN change channel within ACTIVE band's current zone
+document.getElementById('mup').onclick = () => {
+  const zone = getZone(st.activeBand);
+  if (st.activeBand === 0) {
+    st.chanB1 = (st.chanB1 + 1) % zone.channels.length;
+  } else {
+    st.chanB2 = (st.chanB2 + 1) % zone.channels.length;
+  }
+  render();
+};
+
+document.getElementById('mdn').onclick = () => {
+  const zone = getZone(st.activeBand);
+  if (st.activeBand === 0) {
+    st.chanB1 = (st.chanB1 - 1 + zone.channels.length) % zone.channels.length;
+  } else {
+    st.chanB2 = (st.chanB2 - 1 + zone.channels.length) % zone.channels.length;
+  }
+  render();
+};
+
+// Knob click cycles modes
+document.getElementById('knob').onclick = () => { 
+  st.knobMode = (st.knobMode + 1) % 3; 
+  render(); 
+};
+
+// Knob wheel
+document.getElementById('knob').addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const step = (e.deltaY < 0) ? 1 : -1;
+  
+  if (st.knobMode === 0) { // CHAN
+    const zone = getZone(st.activeBand);
+    if (st.activeBand === 0) {
+      st.chanB1 = (st.chanB1 + step + zone.channels.length) % zone.channels.length;
+    } else {
+      st.chanB2 = (st.chanB2 + step + zone.channels.length) % zone.channels.length;
+    }
+  } else if (st.knobMode === 1) { // ZONE
+    const band = st.activeBand === 0 ? codeplug.band1 : codeplug.band2;
+    if (st.activeBand === 0) {
+      st.zoneB1 = (st.zoneB1 + step + band.zones.length) % band.zones.length;
+      st.chanB1 = 0; // Reset channel when zone changes
+    } else {
+      st.zoneB2 = (st.zoneB2 + step + band.zones.length) % band.zones.length;
+      st.chanB2 = 0; // Reset channel when zone changes
+    }
+  } else if (st.knobMode === 2 && !st.muted) { // VOL
+    st.volume = clamp(st.volume + step, 0, 20);
+  }
+  
+  st.knobAngle += (step * 15);
+  render();
+});
+
+// Zone buttons change zone in ACTIVE band
+document.getElementById('zoneDnBtn').onclick = () => {
+  const band = st.activeBand === 0 ? codeplug.band1 : codeplug.band2;
+  if (st.activeBand === 0) {
+    st.zoneB1 = (st.zoneB1 - 1 + band.zones.length) % band.zones.length;
+    st.chanB1 = 0;
+  } else {
+    st.zoneB2 = (st.zoneB2 - 1 + band.zones.length) % band.zones.length;
+    st.chanB2 = 0;
+  }
+  render();
+};
+
+document.getElementById('zoneUpBtn').onclick = () => {
+  const band = st.activeBand === 0 ? codeplug.band1 : codeplug.band2;
+  if (st.activeBand === 0) {
+    st.zoneB1 = (st.zoneB1 + 1) % band.zones.length;
+    st.chanB1 = 0;
+  } else {
+    st.zoneB2 = (st.zoneB2 + 1) % band.zones.length;
+    st.chanB2 = 0;
+  }
+  render();
+};
+
+document.getElementById('muteBtn').onclick = () => { 
+  st.muted = !st.muted; 
+  render(); 
+};
+
+// Misc buttons
+document.getElementById('homeBtn').onclick = () => { 
+  st.knobMode = 0; 
+  render(); 
+};
+document.getElementById('up').onclick = () => {};
+document.getElementById('dn').onclick = () => {};
+document.getElementById('brt').onclick = () => { 
+  st.brightness = clamp(st.brightness + 1, 1, 10); 
+  render(); 
+};
+document.getElementById('dim').onclick = () => { 
+  st.brightness = clamp(st.brightness - 1, 1, 10); 
+  render(); 
+};
+document.getElementById('esw').onclick = () => { 
+  st.esw = st.esw ? 0 : 1; 
+  render(); 
+};
+document.getElementById('funcBtn').onclick = () => {};
+['f1', 'f2', 'f3', 'f4'].forEach(id => { 
+  const el = document.getElementById(id); 
+  if (el) el.onclick = () => {}; 
+});
+
+render();
+
+/* ---------------- PWA Install Prompt ---------------- */
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response: ${outcome}`);
+    deferredPrompt = null;
+  }
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+document.getElementById('dismissInstall').addEventListener('click', () => {
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  deferredPrompt = null;
+});
+
+/* ---------------- Service Worker Registration ---------------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>

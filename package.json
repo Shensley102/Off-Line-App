@@ -1,0 +1,19 @@
+{
+  "name": "rc9100-simulator",
+  "version": "1.0.0",
+  "description": "Technisonic RC-9100 Radio Simulator PWA",
+  "private": true,
+  "scripts": {
+    "generate-icons": "node generate-icons.js"
+  },
+  "devDependencies": {
+    "sharp": "^0.34.5"
+  },
+  "keywords": [
+    "radio",
+    "simulator",
+    "pwa",
+    "technisonic"
+  ],
+  "license": "MIT"
+}
