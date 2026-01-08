@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>RC-9100 Simulator</title>
 
 <!-- PWA Meta Tags -->
@@ -17,159 +17,399 @@
 <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
 
 <style>
-  :root { --brt: 1; }
+  :root { 
+    --brt: 1;
+    --radio-width: min(95vw, 900px);
+    --button-size: clamp(40px, 5vw, 60px);
+    --font-lcd: clamp(12px, 1.8vw, 18px);
+    --font-btn: clamp(11px, 1.4vw, 14px);
+    --gap-size: clamp(6px, 1vw, 12px);
+    --padding-size: clamp(10px, 2vw, 20px);
+    --knob-size: clamp(60px, 10vw, 100px);
+  }
+  
   * { box-sizing: border-box; }
-  body {
-    font-family: system-ui, Segoe UI, Arial, sans-serif;
+  
+  html, body {
     margin: 0;
-    padding: 24px;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+  }
+  
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
     background: #101010;
     color: #eaeaea;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
+  
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: var(--padding-size);
+  }
+  
   .radio {
-    max-width: 980px;
-    margin: 0 auto;
-    background: #3a3a3a;
-    border-radius: 12px;
-    box-shadow: 0 6px 28px rgba(0,0,0,.6);
-    padding: 18px;
+    width: var(--radio-width);
+    max-height: 95vh;
+    background: linear-gradient(145deg, #4a4a4a 0%, #3a3a3a 50%, #2d2d2d 100%);
+    border-radius: clamp(8px, 1.5vw, 16px);
+    box-shadow: 
+      0 8px 32px rgba(0,0,0,.7),
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      inset 0 -1px 0 rgba(0,0,0,0.3);
+    padding: var(--padding-size);
+    border: 2px solid #222;
   }
+  
   .hdr {
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
+    font-size: clamp(10px, 1.3vw, 14px);
     opacity: .85;
     flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: clamp(4px, 0.8vw, 8px);
+    padding: 0 4px;
   }
+  
   .lcd {
-    background: #0b2011;
-    border-radius: 10px;
-    box-shadow: inset 0 0 24px #041;
-    margin: 4px 0;
+    background: linear-gradient(180deg, #0a1f10 0%, #0b2011 50%, #081a0d 100%);
+    border-radius: clamp(6px, 1vw, 12px);
+    box-shadow: 
+      inset 0 0 24px rgba(0, 68, 17, 0.5),
+      inset 0 2px 4px rgba(0,0,0,0.5),
+      0 1px 0 rgba(255,255,255,0.05);
+    margin: clamp(4px, 0.8vw, 8px) 0;
     color: #7fffb9;
-    font-family: Consolas, monospace;
+    font-family: 'Courier New', Consolas, monospace;
+    border: 1px solid #041;
   }
+  
   .lcd .l {
-    padding: 6px 14px;
-    border-bottom: 1px solid rgba(127,255,185,.1);
-    overflow-x: auto;
-    white-space: nowrap;
+    padding: clamp(6px, 1vw, 12px) clamp(10px, 1.5vw, 18px);
+    border-bottom: 1px solid rgba(127,255,185,.15);
+    font-size: var(--font-lcd);
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 8px rgba(127, 255, 185, 0.5);
   }
+  
+  .lcd .l:last-of-type {
+    border-bottom: none;
+  }
+  
   .lcd .row {
     display: flex;
-    gap: 8px;
+    gap: clamp(6px, 1vw, 12px);
     align-items: center;
   }
+  
   .lcd .ind {
     display: inline-block;
-    width: 1ch;
+    width: 1.2ch;
     text-align: center;
     flex-shrink: 0;
+    color: #5fdf99;
   }
+  
   .lcd .bottomRow {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     align-items: center;
-    font-size: 13px;
-    padding: 6px 14px;
+    font-size: clamp(9px, 1.2vw, 13px);
+    padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 18px);
+    border-top: 1px solid rgba(127,255,185,.15);
+    background: rgba(0,0,0,0.2);
+    border-radius: 0 0 clamp(5px, 0.9vw, 11px) clamp(5px, 0.9vw, 11px);
   }
+  
   .keys {
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    gap: 10px;
-    margin-top: 12px;
+    gap: var(--gap-size);
+    margin-top: clamp(8px, 1.5vw, 16px);
     align-items: stretch;
   }
+  
   button {
-    background: #505050;
+    background: linear-gradient(180deg, #5a5a5a 0%, #505050 50%, #454545 100%);
     border: 0;
     border-bottom: 3px solid #2d2d2d;
+    border-right: 1px solid #2d2d2d;
+    border-top: 1px solid #666;
     color: #eee;
-    padding: 12px;
-    border-radius: 8px;
+    padding: clamp(8px, 1.2vw, 14px) clamp(4px, 0.8vw, 12px);
+    border-radius: clamp(4px, 0.8vw, 8px);
     cursor: pointer;
     font-weight: 600;
-    font-size: 14px;
+    font-size: var(--font-btn);
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
+    min-height: var(--button-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: transform 0.05s, box-shadow 0.05s;
   }
+  
   button:active {
-    transform: translateY(1px);
-    border-bottom-width: 2px;
+    transform: translateY(2px);
+    border-bottom-width: 1px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    background: linear-gradient(180deg, #505050 0%, #454545 50%, #3a3a3a 100%);
   }
+  
   button:hover {
-    background: #5a5a5a;
+    background: linear-gradient(180deg, #656565 0%, #5a5a5a 50%, #505050 100%);
   }
+  
   .knobslot {
     grid-column: 1 / span 3;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    background: #2f2f2f;
-    border-radius: 8px;
-    border-bottom: 3px solid #222;
-    padding: 10px;
+    gap: clamp(8px, 1.5vw, 16px);
+    background: linear-gradient(180deg, #353535 0%, #2f2f2f 50%, #252525 100%);
+    border-radius: clamp(4px, 0.8vw, 8px);
+    border-bottom: 3px solid #1a1a1a;
+    border-top: 1px solid #444;
+    padding: clamp(8px, 1.2vw, 14px);
+    min-height: calc(var(--button-size) * 1.8);
   }
+  
   .knob {
-    width: 80px;
-    height: 80px;
+    width: var(--knob-size);
+    height: var(--knob-size);
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #7a7a7a, #2b2b2b);
-    border: 2px solid #1a1a1a;
+    background: radial-gradient(circle at 30% 30%, #888 0%, #555 40%, #2b2b2b 100%);
+    border: 3px solid #1a1a1a;
     cursor: pointer;
     transform: rotate(0deg);
     transition: transform .1s linear;
     position: relative;
+    box-shadow: 
+      0 4px 8px rgba(0,0,0,0.5),
+      inset 0 1px 2px rgba(255,255,255,0.2);
     touch-action: none;
+    flex-shrink: 0;
   }
+  
   .knob::after {
     content: '';
     position: absolute;
-    top: 8px;
+    top: 10%;
     left: 50%;
     transform: translateX(-50%);
-    width: 4px;
-    height: 12px;
-    background: #1a1a1a;
+    width: clamp(3px, 0.5vw, 5px);
+    height: clamp(10px, 1.5vw, 16px);
+    background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
     border-radius: 2px;
   }
+  
   .knoblabel {
     font-weight: 600;
+    font-size: clamp(10px, 1.3vw, 14px);
+    color: #ccc;
+    white-space: nowrap;
   }
+  
   .center {
     text-align: center;
   }
 
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    body { padding: 12px; }
-    .radio { padding: 12px; }
+  /* iPad Landscape (Primary target) */
+  @media screen and (min-width: 1024px) and (max-height: 1400px) {
+    :root {
+      --radio-width: min(90vw, 900px);
+      --button-size: 55px;
+      --font-lcd: 16px;
+      --font-btn: 13px;
+      --gap-size: 10px;
+      --padding-size: 18px;
+      --knob-size: 90px;
+    }
+  }
+
+  /* iPad Portrait */
+  @media screen and (min-width: 768px) and (max-width: 1023px) {
+    :root {
+      --radio-width: 95vw;
+      --button-size: 50px;
+      --font-lcd: 15px;
+      --font-btn: 12px;
+      --gap-size: 8px;
+      --padding-size: 14px;
+      --knob-size: 80px;
+    }
+  }
+
+  /* iPad Mini */
+  @media screen and (min-width: 768px) and (max-width: 834px) {
+    :root {
+      --radio-width: 96vw;
+      --button-size: 48px;
+      --font-lcd: 14px;
+      --font-btn: 11px;
+      --gap-size: 7px;
+      --padding-size: 12px;
+      --knob-size: 75px;
+    }
+  }
+
+  /* iPhone Pro Max / Plus (430px width) */
+  @media screen and (max-width: 767px) and (min-width: 414px) {
+    :root {
+      --radio-width: 98vw;
+      --button-size: 42px;
+      --font-lcd: 12px;
+      --font-btn: 10px;
+      --gap-size: 5px;
+      --padding-size: 8px;
+      --knob-size: 60px;
+    }
+    
     .keys { 
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
     }
+    
     .knobslot { 
       grid-column: 1 / span 2;
       order: -1;
     }
-    button { 
-      padding: 10px 6px;
-      font-size: 12px;
-    }
+    
     .lcd .bottomRow {
       grid-template-columns: repeat(4, 1fr);
-      font-size: 11px;
     }
-    .lcd .l { font-size: 12px; }
+    
+    .hdr {
+      font-size: 10px;
+    }
   }
 
-  @media (max-width: 480px) {
-    .keys { grid-template-columns: repeat(3, 1fr); }
-    .knobslot { grid-column: 1 / span 3; }
-    .knob { width: 60px; height: 60px; }
+  /* iPhone Standard (390px width) */
+  @media screen and (max-width: 413px) and (min-width: 376px) {
+    :root {
+      --radio-width: 99vw;
+      --button-size: 38px;
+      --font-lcd: 11px;
+      --font-btn: 9px;
+      --gap-size: 4px;
+      --padding-size: 6px;
+      --knob-size: 55px;
+    }
+    
+    .keys { 
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .knobslot { 
+      grid-column: 1 / span 2;
+      order: -1;
+    }
+    
+    .lcd .bottomRow {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .hdr {
+      font-size: 9px;
+    }
+  }
+
+  /* iPhone SE / Smaller (375px and below) */
+  @media screen and (max-width: 375px) {
+    :root {
+      --radio-width: 100vw;
+      --button-size: 34px;
+      --font-lcd: 10px;
+      --font-btn: 8px;
+      --gap-size: 3px;
+      --padding-size: 5px;
+      --knob-size: 50px;
+    }
+    
+    .container {
+      padding: 4px;
+    }
+    
+    .keys { 
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .knobslot { 
+      grid-column: 1 / span 2;
+      order: -1;
+      min-height: 70px;
+    }
+    
+    .lcd .bottomRow {
+      grid-template-columns: repeat(4, 1fr);
+      font-size: 8px;
+    }
+    
+    .hdr {
+      font-size: 8px;
+    }
+    
+    .radio {
+      border-radius: 6px;
+      border-width: 1px;
+    }
+  }
+
+  /* Landscape mode for phones */
+  @media screen and (max-height: 500px) and (orientation: landscape) {
+    :root {
+      --radio-width: min(98vw, 700px);
+      --button-size: 32px;
+      --font-lcd: 11px;
+      --font-btn: 9px;
+      --gap-size: 4px;
+      --padding-size: 6px;
+      --knob-size: 50px;
+    }
+    
+    .container {
+      padding: 4px;
+    }
+    
+    .radio {
+      max-height: 94vh;
+    }
+    
+    .keys { 
+      grid-template-columns: repeat(8, 1fr);
+    }
+    
+    .knobslot { 
+      grid-column: 1 / span 3;
+      order: 0;
+      min-height: auto;
+    }
+    
+    .lcd .bottomRow {
+      grid-template-columns: repeat(8, 1fr);
+      padding: 4px 8px;
+    }
+    
+    .lcd .l {
+      padding: 4px 10px;
+    }
+    
+    .hdr {
+      margin-bottom: 2px;
+    }
   }
 
   /* Install prompt */
@@ -178,93 +418,106 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: #2d5a3d;
+    background: linear-gradient(180deg, #2d5a3d 0%, #1f4a2d 100%);
     color: white;
     padding: 12px 20px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
     display: none;
     justify-content: space-between;
     align-items: center;
     gap: 12px;
     z-index: 1000;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
   }
+  
   .install-banner.show { display: flex; }
+  
   .install-banner button {
     background: #7fffb9;
     color: #0b2011;
     padding: 8px 16px;
+    min-height: auto;
+    border: none;
   }
+  
   .install-banner .dismiss {
     background: transparent;
     color: white;
     border: 1px solid white;
   }
+  
+  .install-banner span {
+    font-size: clamp(12px, 2vw, 14px);
+  }
 </style>
 </head>
 <body>
-<div class="radio">
-  <div class="hdr">
-    <div>Technisonic RC-9100 (sim)</div>
-    <div>VHF: 3 Zones | UHF/800: 40 Zones</div>
-  </div>
-
-  <!-- LCD -->
-  <div class="lcd" id="lcd">
-    <!-- Top line ALWAYS Band 1, with triangle indicator -->
-    <div class="l">
-      <div class="row">
-        <span class="ind" id="indB1"> </span>
-        <span id="line1"></span>
-      </div>
-    </div>
-    <!-- Second line ALWAYS Band 2, with triangle indicator -->
-    <div class="l">
-      <div class="row">
-        <span class="ind" id="indB2"> </span>
-        <span id="line2"></span>
-      </div>
+<div class="container">
+  <div class="radio">
+    <div class="hdr">
+      <div>Technisonic RC-9100 (sim)</div>
+      <div>VHF: 3 Zones | UHF/800: 40 Zones</div>
     </div>
 
-    <!-- Static labels above -, -, - and knob mode on far right -->
-    <div class="bottomRow">
-      <div></div>
-      <div class="center">ZnDn</div>
-      <div class="center">ZnUp</div>
-      <div class="center">Mute</div>
+    <!-- LCD -->
+    <div class="lcd" id="lcd">
+      <!-- Top line ALWAYS Band 1, with triangle indicator -->
+      <div class="l">
+        <div class="row">
+          <span class="ind" id="indB1"> </span>
+          <span id="line1"></span>
+        </div>
+      </div>
+      <!-- Second line ALWAYS Band 2, with triangle indicator -->
+      <div class="l">
+        <div class="row">
+          <span class="ind" id="indB2"> </span>
+          <span id="line2"></span>
+        </div>
+      </div>
+
+      <!-- Static labels above -, -, - and knob mode on far right -->
+      <div class="bottomRow">
+        <div></div>
+        <div class="center">ZnDn</div>
+        <div class="center">ZnUp</div>
+        <div class="center">Mute</div>
+        <div></div><div></div><div></div>
+        <div id="rightInd" class="center">CHAN-1</div>
+      </div>
+    </div>
+
+    <!-- KEYPAD GRID -->
+    <div class="keys">
+      <!-- Row 1 -->
+      <button id="homeBtn">HOME</button>
+      <button id="zoneDnBtn">-</button>
+      <button id="zoneUpBtn">-</button>
+      <button id="muteBtn">-</button>
+      <button id="f1">F1</button>
+      <button id="f2">F2</button>
+      <button id="f3">F3</button>
+      <button id="f4">F4</button>
+
+      <!-- Row 2 -->
+      <div class="knobslot" id="knobslot">
+        <div class="knob" id="knob" title="Click knob to change mode"></div>
+        <div class="knoblabel" id="knobMode">CHAN-1</div>
+      </div>
+      <button id="bandBtn">BAND</button>
+      <button id="mup">MUP</button>
+      <button id="up">UP</button>
+      <button id="brt">BRT</button>
+      <button id="esw">ESW</button>
+
+      <!-- Row 3 -->
       <div></div><div></div><div></div>
-      <div id="rightInd" class="center">CHAN-1</div>
+      <button id="funcBtn">FUNC</button>
+      <button id="mdn">MDN</button>
+      <button id="dn">DN</button>
+      <button id="dim">DIM</button>
+      <button id="tsw">TSW</button>
     </div>
-  </div>
-
-  <!-- KEYPAD GRID -->
-  <div class="keys">
-    <!-- Row 1 -->
-    <button id="homeBtn">HOME</button>
-    <button id="zoneDnBtn">-</button>
-    <button id="zoneUpBtn">-</button>
-    <button id="muteBtn">-</button>
-    <button id="f1">F1</button>
-    <button id="f2">F2</button>
-    <button id="f3">F3</button>
-    <button id="f4">F4</button>
-
-    <!-- Row 2 -->
-    <div class="knobslot" id="knobslot">
-      <div class="knob" id="knob" title="Click knob to change mode"></div>
-      <div class="knoblabel" id="knobMode">CHAN-1</div>
-    </div>
-    <button id="bandBtn">BAND</button>
-    <button id="mup">MUP (4)</button>
-    <button id="up">UP (5)</button>
-    <button id="brt">BRT (6)</button>
-    <button id="esw">ESW (0)</button>
-
-    <!-- Row 3 -->
-    <div></div><div></div><div></div>
-    <button id="funcBtn">FUNC</button>
-    <button id="mdn">MDN (7)</button>
-    <button id="dn">DN (8)</button>
-    <button id="dim">DIM (9)</button>
-    <button id="tsw">TSW (*)</button>
   </div>
 </div>
 
