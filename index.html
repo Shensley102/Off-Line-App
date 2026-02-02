@@ -1283,16 +1283,16 @@ function getChannel(bandIdx) {
   return zone.channels[chanIdx];
 }
 
-// Format zone display
+// Format zone display - just the zone ID
 function zoneLabel(bandIdx) {
   const zone = getZone(bandIdx);
-  return `Zone ${zone.id}`;
+  return zone.id;
 }
 
-// Format channel display
+// Format channel display - just the number
 function chanLabel(bandIdx) {
   const chanIdx = bandIdx === 0 ? st.chanB1 : st.chanB2;
-  return `CH${(chanIdx + 1).toString().padStart(2, '0')}`;
+  return (chanIdx + 1).toString();
 }
 
 // Knob mode label
@@ -1319,13 +1319,13 @@ function render() {
   document.getElementById('indB1').textContent = st.activeBand === 0 ? '▶' : ' ';
   document.getElementById('indB2').textContent = st.activeBand === 1 ? '▶' : ' ';
 
-  // Line 1: Band 1 (VHF) - Zone and Channel
+  // Line 1: Band 1 (VHF) - Zone ID, Channel Number, Channel Name
   document.getElementById('line1').textContent =
-    `${codeplug.band1.name}  ${zoneLabel(0)}  ${chanLabel(0)}  ${chan1.name}`;
+    `${zoneLabel(0)} ${chanLabel(0)} ${chan1.name}`;
 
-  // Line 2: Band 2 (UHF/800) - Zone and Channel
+  // Line 2: Band 2 (UHF/800) - Zone ID, Channel Number, Channel Name
   document.getElementById('line2').textContent =
-    `${codeplug.band2.name}  ${zoneLabel(1)}  ${chanLabel(1)}  ${chan2.name}`;
+    `${zoneLabel(1)} ${chanLabel(1)} ${chan2.name}`;
 
   // Mode label and knob rotation
   const modeText = knobLabel();
