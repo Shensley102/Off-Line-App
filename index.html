@@ -33,8 +33,7 @@
   html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
   }
   
   body {
@@ -42,10 +41,8 @@
     background: #101010;
     color: #eaeaea;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
   
@@ -54,13 +51,12 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100%;
     padding: var(--padding-size);
+    padding-bottom: 0;
   }
   
   .radio {
     width: var(--radio-width);
-    max-height: 95vh;
     background: linear-gradient(145deg, #4a4a4a 0%, #3a3a3a 50%, #2d2d2d 100%);
     border-radius: clamp(8px, 1.5vw, 16px);
     box-shadow: 
@@ -287,6 +283,61 @@
     text-align: center;
   }
 
+  /* Guide Section */
+  .guide {
+    width: var(--radio-width);
+    background: linear-gradient(145deg, #2a2a2a 0%, #222 50%, #1a1a1a 100%);
+    border-radius: clamp(8px, 1.5vw, 16px);
+    padding: clamp(16px, 3vw, 28px);
+    margin: var(--padding-size);
+    margin-top: clamp(16px, 2vw, 24px);
+    border: 1px solid #333;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  }
+  
+  .guide h2 {
+    color: #7fffb9;
+    font-size: clamp(16px, 2.5vw, 22px);
+    margin: 0 0 clamp(12px, 2vw, 20px) 0;
+    padding-bottom: clamp(8px, 1.5vw, 14px);
+    border-bottom: 1px solid #444;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .guide-section {
+    margin-bottom: clamp(14px, 2vw, 20px);
+  }
+  
+  .guide-section:last-child {
+    margin-bottom: 0;
+  }
+  
+  .guide-section h3 {
+    color: #aaa;
+    font-size: clamp(12px, 1.6vw, 15px);
+    margin: 0 0 clamp(6px, 1vw, 10px) 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .guide-section p {
+    color: #ccc;
+    font-size: clamp(12px, 1.5vw, 14px);
+    margin: 0 0 clamp(4px, 0.8vw, 8px) 0;
+    line-height: 1.5;
+    padding-left: clamp(8px, 1.5vw, 16px);
+  }
+  
+  .guide-section p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .guide-section .key {
+    color: #7fffb9;
+    font-weight: 600;
+  }
+
   /* iPad Landscape (Primary target) */
   @media screen and (min-width: 1024px) and (max-height: 1400px) {
     :root {
@@ -400,6 +451,7 @@
     
     .container {
       padding: 4px;
+      padding-bottom: 0;
     }
     
     .keys { 
@@ -424,6 +476,12 @@
       border-radius: 6px;
       border-width: 1px;
     }
+    
+    .guide {
+      border-radius: 6px;
+      margin: 4px;
+      margin-top: 12px;
+    }
   }
 
   /* Landscape mode for phones */
@@ -440,10 +498,7 @@
     
     .container {
       padding: 4px;
-    }
-    
-    .radio {
-      max-height: 94vh;
+      padding-bottom: 0;
     }
     
     .keys { 
@@ -594,6 +649,48 @@
       <button id="dim">DIM</button>
       <button id="tsw">TSW</button>
     </div>
+  </div>
+</div>
+
+<!-- How to Operate Guide -->
+<div class="guide">
+  <h2>How to Operate</h2>
+  
+  <div class="guide-section">
+    <h3>Display</h3>
+    <p><span class="key">Line 1 (VHF):</span> Shows Zone, Channel #, and Channel Name</p>
+    <p><span class="key">Line 2 (UHF/800):</span> Shows Zone and Channel Name only</p>
+    <p><span class="key">▶</span> indicates active band &nbsp;|&nbsp; <span class="key">↑</span> indicates TX ready</p>
+  </div>
+  
+  <div class="guide-section">
+    <h3>Band Selection</h3>
+    <p><span class="key">BAND</span> button: Toggle control between VHF and UHF/800</p>
+  </div>
+  
+  <div class="guide-section">
+    <h3>Channel & Zone</h3>
+    <p><span class="key">MUP / MDN:</span> Change channel on the active band</p>
+    <p><span class="key">ZnDn / ZnUp</span> (- buttons): Change zone on the active band</p>
+  </div>
+  
+  <div class="guide-section">
+    <h3>Knob Control</h3>
+    <p><span class="key">Click knob:</span> Cycle through modes (CHAN → ZONE → VOL)</p>
+    <p><span class="key">Scroll wheel on knob:</span> Adjust the selected mode value</p>
+    <p><span class="key">HOME</span> button: Return knob to CHAN mode</p>
+  </div>
+  
+  <div class="guide-section">
+    <h3>Audio</h3>
+    <p><span class="key">Mute</span> (- button): Toggle mute on/off</p>
+    <p><span class="key">VOL</span> indicator shown in bottom right of display</p>
+  </div>
+  
+  <div class="guide-section">
+    <h3>Brightness</h3>
+    <p><span class="key">BRT:</span> Increase display brightness</p>
+    <p><span class="key">DIM:</span> Decrease display brightness</p>
   </div>
 </div>
 
