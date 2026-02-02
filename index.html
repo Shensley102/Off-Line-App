@@ -179,23 +179,16 @@
   }
   
   .lcd .bottomRow {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
     align-items: center;
-    justify-content: space-between;
-    font-size: clamp(9px, 1.2vw, 13px);
+    font-size: var(--font-lcd);
     padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 18px);
     border-top: 1px solid rgba(127,255,185,.15);
     background: rgba(0,0,0,0.2);
     border-radius: 0 0 clamp(5px, 0.9vw, 11px) clamp(5px, 0.9vw, 11px);
-  }
-  
-  .lcd .softkeys {
-    display: flex;
-    gap: 2ch;
-  }
-  
-  .lcd .vol-ind {
-    text-align: right;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 8px rgba(127, 255, 185, 0.5);
   }
   
   .keys {
@@ -354,6 +347,10 @@
       order: -1;
     }
     
+    .lcd .bottomRow {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    
     .hdr {
       font-size: 10px;
     }
@@ -378,6 +375,10 @@
     .knobslot { 
       grid-column: 1 / span 2;
       order: -1;
+    }
+    
+    .lcd .bottomRow {
+      grid-template-columns: repeat(4, 1fr);
     }
     
     .hdr {
@@ -409,6 +410,10 @@
       grid-column: 1 / span 2;
       order: -1;
       min-height: 70px;
+    }
+    
+    .lcd .bottomRow {
+      grid-template-columns: repeat(4, 1fr);
     }
     
     .hdr {
@@ -449,6 +454,10 @@
       grid-column: 1 / span 3;
       order: 0;
       min-height: auto;
+    }
+    
+    .lcd .bottomRow {
+      grid-template-columns: repeat(8, 1fr);
     }
     
     .lcd .l {
@@ -541,14 +550,16 @@
         </div>
       </div>
 
-      <!-- Bottom row: Soft keys and volume -->
+      <!-- Bottom row: Labels aligned to buttons below -->
       <div class="bottomRow">
-        <div class="softkeys">
-          <span>ZnDn</span>
-          <span>ZnUp</span>
-          <span>Mute</span>
-        </div>
-        <div class="vol-ind" id="volInd">VOL-16</div>
+        <div></div>
+        <div class="center">ZnDn</div>
+        <div class="center">ZnUp</div>
+        <div class="center">Mute</div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div class="center" id="volInd">VOL-16</div>
       </div>
     </div>
 
