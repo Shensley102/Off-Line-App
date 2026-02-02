@@ -101,35 +101,101 @@
     font-size: var(--font-lcd);
     letter-spacing: 0.5px;
     text-shadow: 0 0 8px rgba(127, 255, 185, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
   
   .lcd .l:last-of-type {
     border-bottom: none;
   }
   
-  .lcd .row {
+  /* Channel row layout matching real radio */
+  .lcd .chan-row {
     display: flex;
-    gap: clamp(6px, 1vw, 12px);
     align-items: center;
+    width: 100%;
+  }
+  
+  .lcd .chan-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .lcd .chan-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    flex-shrink: 0;
   }
   
   .lcd .ind {
     display: inline-block;
-    width: 1.2ch;
+    width: 1.5ch;
     text-align: center;
     flex-shrink: 0;
     color: #5fdf99;
   }
   
+  .lcd .zone-id {
+    display: inline-block;
+    width: 2.5ch;
+    text-align: right;
+    flex-shrink: 0;
+    margin-right: 0.5ch;
+  }
+  
+  .lcd .chan-num {
+    display: inline-block;
+    width: 2.5ch;
+    text-align: right;
+    flex-shrink: 0;
+    margin-right: 1ch;
+  }
+  
+  .lcd .chan-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: clip;
+    white-space: nowrap;
+  }
+  
+  .lcd .tx-ind {
+    display: inline-block;
+    width: 1.5ch;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  
+  .lcd .mode-ind {
+    display: inline-block;
+    width: 3.5ch;
+    text-align: right;
+    flex-shrink: 0;
+    font-size: 0.9em;
+  }
+  
   .lcd .bottomRow {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
+    display: flex;
     align-items: center;
+    justify-content: space-between;
     font-size: clamp(9px, 1.2vw, 13px);
     padding: clamp(6px, 1vw, 10px) clamp(10px, 1.5vw, 18px);
     border-top: 1px solid rgba(127,255,185,.15);
     background: rgba(0,0,0,0.2);
     border-radius: 0 0 clamp(5px, 0.9vw, 11px) clamp(5px, 0.9vw, 11px);
+  }
+  
+  .lcd .softkeys {
+    display: flex;
+    gap: 2ch;
+  }
+  
+  .lcd .vol-ind {
+    text-align: right;
   }
   
   .keys {
@@ -288,10 +354,6 @@
       order: -1;
     }
     
-    .lcd .bottomRow {
-      grid-template-columns: repeat(4, 1fr);
-    }
-    
     .hdr {
       font-size: 10px;
     }
@@ -316,10 +378,6 @@
     .knobslot { 
       grid-column: 1 / span 2;
       order: -1;
-    }
-    
-    .lcd .bottomRow {
-      grid-template-columns: repeat(4, 1fr);
     }
     
     .hdr {
@@ -351,11 +409,6 @@
       grid-column: 1 / span 2;
       order: -1;
       min-height: 70px;
-    }
-    
-    .lcd .bottomRow {
-      grid-template-columns: repeat(4, 1fr);
-      font-size: 8px;
     }
     
     .hdr {
@@ -396,11 +449,6 @@
       grid-column: 1 / span 3;
       order: 0;
       min-height: auto;
-    }
-    
-    .lcd .bottomRow {
-      grid-template-columns: repeat(8, 1fr);
-      padding: 4px 8px;
     }
     
     .lcd .l {
@@ -461,29 +509,46 @@
 
     <!-- LCD -->
     <div class="lcd" id="lcd">
-      <!-- Top line ALWAYS Band 1, with triangle indicator -->
+      <!-- Line 1: Band 1 (VHF) -->
       <div class="l">
-        <div class="row">
-          <span class="ind" id="indB1"> </span>
-          <span id="line1"></span>
+        <div class="chan-row">
+          <div class="chan-left">
+            <span class="ind" id="indB1">▶</span>
+            <span class="zone-id" id="zone1">A</span>
+            <span class="chan-num" id="chanNum1">11</span>
+            <span class="chan-name" id="chanName1">AIRCARE D</span>
+          </div>
+          <div class="chan-right">
+            <span class="tx-ind" id="txInd1">↑</span>
+            <span class="mode-ind" id="mode1">HNA</span>
+          </div>
         </div>
       </div>
-      <!-- Second line ALWAYS Band 2, with triangle indicator -->
+      
+      <!-- Line 2: Band 2 (UHF/800) -->
       <div class="l">
-        <div class="row">
-          <span class="ind" id="indB2"> </span>
-          <span id="line2"></span>
+        <div class="chan-row">
+          <div class="chan-left">
+            <span class="ind" id="indB2"> </span>
+            <span class="zone-id" id="zone2">6</span>
+            <span class="chan-num" id="chanNum2">1</span>
+            <span class="chan-name" id="chanName2">POLK TOWER</span>
+          </div>
+          <div class="chan-right">
+            <span class="tx-ind" id="txInd2"> </span>
+            <span class="mode-ind" id="mode2">HGA</span>
+          </div>
         </div>
       </div>
 
-      <!-- Static labels above -, -, - and knob mode on far right -->
+      <!-- Bottom row: Soft keys and volume -->
       <div class="bottomRow">
-        <div></div>
-        <div class="center">ZnDn</div>
-        <div class="center">ZnUp</div>
-        <div class="center">Mute</div>
-        <div></div><div></div><div></div>
-        <div id="rightInd" class="center">CHAN-1</div>
+        <div class="softkeys">
+          <span>ZnDn</span>
+          <span>ZnUp</span>
+          <span>Mute</span>
+        </div>
+        <div class="vol-ind" id="volInd">VOL-16</div>
       </div>
     </div>
 
@@ -1258,12 +1323,12 @@ const codeplug = {
 const st = {
   activeBand: 0,           // which band the controls affect: 0 = Band1, 1 = Band2
   zoneB1: 0,               // current zone index in Band1
-  zoneB2: 0,               // current zone index in Band2
-  chanB1: 0,               // current channel index in Band1's current zone
-  chanB2: 0,               // current channel index in Band2's current zone
+  zoneB2: 10,              // current zone index in Band2 (Zone 6 = POLK TWR)
+  chanB1: 10,              // current channel index in Band1's current zone (CH11 = AIRCARE DIG)
+  chanB2: 0,               // current channel index in Band2's current zone (CH1 = POLK TOWER)
   knobMode: 0,             // 0=CHAN, 1=ZONE, 2=VOL
   brightness: 5, esw: 0, tsw: 0,
-  volume: 5, muted: false,
+  volume: 16, muted: false,
   knobAngle: 0
 };
 
@@ -1283,18 +1348,6 @@ function getChannel(bandIdx) {
   return zone.channels[chanIdx];
 }
 
-// Format zone display - just the zone ID
-function zoneLabel(bandIdx) {
-  const zone = getZone(bandIdx);
-  return zone.id;
-}
-
-// Format channel display - just the number
-function chanLabel(bandIdx) {
-  const chanIdx = bandIdx === 0 ? st.chanB1 : st.chanB2;
-  return (chanIdx + 1).toString();
-}
-
 // Knob mode label
 function knobLabel() {
   if (st.knobMode === 0) {
@@ -1305,7 +1358,7 @@ function knobLabel() {
     const zone = getZone(st.activeBand);
     return `ZONE-${zone.id}`;
   }
-  return `VOL-${st.volume}${st.muted ? " (MUTE)" : ""}`;
+  return `VOL-${st.volume}${st.muted ? " M" : ""}`;
 }
 
 /* Render display */
@@ -1314,23 +1367,39 @@ function render() {
   const zone2 = getZone(1);
   const chan1 = getChannel(0);
   const chan2 = getChannel(1);
+  const chanIdx1 = st.chanB1;
+  const chanIdx2 = st.chanB2;
 
   // Triangle indicators
   document.getElementById('indB1').textContent = st.activeBand === 0 ? '▶' : ' ';
   document.getElementById('indB2').textContent = st.activeBand === 1 ? '▶' : ' ';
 
-  // Line 1: Band 1 (VHF) - Zone ID, Channel Number, Channel Name
-  document.getElementById('line1').textContent =
-    `${zoneLabel(0)} ${chanLabel(0)} ${chan1.name}`;
+  // Zone IDs
+  document.getElementById('zone1').textContent = zone1.id;
+  document.getElementById('zone2').textContent = zone2.id;
 
-  // Line 2: Band 2 (UHF/800) - Zone ID, Channel Number, Channel Name
-  document.getElementById('line2').textContent =
-    `${zoneLabel(1)} ${chanLabel(1)} ${chan2.name}`;
+  // Channel numbers
+  document.getElementById('chanNum1').textContent = chanIdx1 + 1;
+  document.getElementById('chanNum2').textContent = chanIdx2 + 1;
 
-  // Mode label and knob rotation
-  const modeText = knobLabel();
-  document.getElementById('rightInd').textContent = modeText;
-  document.getElementById('knobMode').textContent = modeText;
+  // Channel names
+  document.getElementById('chanName1').textContent = chan1.name;
+  document.getElementById('chanName2').textContent = chan2.name;
+
+  // TX indicator (show on active band)
+  document.getElementById('txInd1').textContent = st.activeBand === 0 ? '↑' : ' ';
+  document.getElementById('txInd2').textContent = st.activeBand === 1 ? '↑' : ' ';
+
+  // Mode indicators (placeholder - could be made functional)
+  // HNA = High power, Normal, Analog; HGA = High power, Group, Analog (examples)
+  document.getElementById('mode1').textContent = 'HNA';
+  document.getElementById('mode2').textContent = 'HGA';
+
+  // Volume indicator
+  document.getElementById('volInd').textContent = `VOL-${st.volume}${st.muted ? ' M' : ''}`;
+
+  // Knob mode label
+  document.getElementById('knobMode').textContent = knobLabel();
   document.getElementById('knob').style.transform = `rotate(${st.knobAngle}deg)`;
 }
 
