@@ -525,11 +525,11 @@
             <span class="ind" id="indB1">▶</span>
             <span class="zone-id" id="zone1">A</span>
             <span class="chan-num" id="chanNum1">11</span>
-            <span class="chan-name" id="chanName1">AIRCARE D</span>
+            <span class="chan-name" id="chanName1">AIRCARE DIG</span>
           </div>
           <div class="chan-right">
             <span class="tx-ind" id="txInd1">↑</span>
-            <span class="mode-ind" id="mode1">HNA</span>
+            <span class="mode-ind" id="mode1">HOA</span>
           </div>
         </div>
       </div>
@@ -539,13 +539,13 @@
         <div class="chan-row">
           <div class="chan-left">
             <span class="ind" id="indB2"> </span>
-            <span class="zone-id" id="zone2">6</span>
-            <span class="chan-num" id="chanNum2">1</span>
-            <span class="chan-name" id="chanName2">POLK TOWER</span>
+            <span class="zone-id" id="zone2">10</span>
+            <span class="chan-num" id="chanNum2"></span>
+            <span class="chan-name" id="chanName2">ORMC</span>
           </div>
           <div class="chan-right">
             <span class="tx-ind" id="txInd2"> </span>
-            <span class="mode-ind" id="mode2">HGA</span>
+            <span class="mode-ind" id="mode2">HOA</span>
           </div>
         </div>
       </div>
@@ -1334,9 +1334,9 @@ const codeplug = {
 const st = {
   activeBand: 0,           // which band the controls affect: 0 = Band1, 1 = Band2
   zoneB1: 0,               // current zone index in Band1
-  zoneB2: 10,              // current zone index in Band2 (Zone 6 = POLK TWR)
+  zoneB2: 14,              // current zone index in Band2 (Zone 10 = HOSPITAL 1)
   chanB1: 10,              // current channel index in Band1's current zone (CH11 = AIRCARE DIG)
-  chanB2: 0,               // current channel index in Band2's current zone (CH1 = POLK TOWER)
+  chanB2: 0,               // current channel index in Band2's current zone (CH1 = ORMC)
   knobMode: 0,             // 0=CHAN, 1=ZONE, 2=VOL
   brightness: 5, esw: 0, tsw: 0,
   volume: 16, muted: false,
@@ -1379,32 +1379,28 @@ function render() {
   const chan1 = getChannel(0);
   const chan2 = getChannel(1);
   const chanIdx1 = st.chanB1;
-  const chanIdx2 = st.chanB2;
 
   // Triangle indicators
   document.getElementById('indB1').textContent = st.activeBand === 0 ? '▶' : ' ';
   document.getElementById('indB2').textContent = st.activeBand === 1 ? '▶' : ' ';
 
-  // Zone IDs
+  // Zone IDs (always shown)
   document.getElementById('zone1').textContent = zone1.id;
   document.getElementById('zone2').textContent = zone2.id;
 
-  // Channel numbers
+  // Channel info - Band 1 always shows channel number, Band 2 never does
   document.getElementById('chanNum1').textContent = chanIdx1 + 1;
-  document.getElementById('chanNum2').textContent = chanIdx2 + 1;
-
-  // Channel names
   document.getElementById('chanName1').textContent = chan1.name;
+  document.getElementById('chanNum2').textContent = '';
   document.getElementById('chanName2').textContent = chan2.name;
 
   // TX indicator (show on active band)
   document.getElementById('txInd1').textContent = st.activeBand === 0 ? '↑' : ' ';
   document.getElementById('txInd2').textContent = st.activeBand === 1 ? '↑' : ' ';
 
-  // Mode indicators (placeholder - could be made functional)
-  // HNA = High power, Normal, Analog; HGA = High power, Group, Analog (examples)
-  document.getElementById('mode1').textContent = 'HNA';
-  document.getElementById('mode2').textContent = 'HGA';
+  // Mode indicators - both show HOA
+  document.getElementById('mode1').textContent = 'HOA';
+  document.getElementById('mode2').textContent = 'HOA';
 
   // Volume indicator
   document.getElementById('volInd').textContent = `VOL-${st.volume}${st.muted ? ' M' : ''}`;
