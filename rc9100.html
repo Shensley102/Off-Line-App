@@ -46,6 +46,25 @@
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
   
+  /* Back link */
+  .back-link {
+    width: var(--radio-width);
+    padding: 10px var(--padding-size);
+    padding-bottom: 0;
+  }
+  
+  .back-link a {
+    color: #7fffb9;
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  
+  .back-link a:hover {
+    opacity: 1;
+  }
+  
   .container {
     display: flex;
     align-items: center;
@@ -106,7 +125,6 @@
     border-bottom: none;
   }
   
-  /* Channel row layout matching real radio */
   .lcd .chan-row {
     display: flex;
     align-items: center;
@@ -283,7 +301,6 @@
     text-align: center;
   }
 
-  /* Guide Section */
   .guide {
     width: var(--radio-width);
     background: linear-gradient(145deg, #2a2a2a 0%, #222 50%, #1a1a1a 100%);
@@ -338,7 +355,6 @@
     font-weight: 600;
   }
 
-  /* iPad Landscape (Primary target) */
   @media screen and (min-width: 1024px) and (max-height: 1400px) {
     :root {
       --radio-width: min(90vw, 900px);
@@ -351,7 +367,6 @@
     }
   }
 
-  /* iPad Portrait */
   @media screen and (min-width: 768px) and (max-width: 1023px) {
     :root {
       --radio-width: 95vw;
@@ -364,7 +379,6 @@
     }
   }
 
-  /* iPad Mini */
   @media screen and (min-width: 768px) and (max-width: 834px) {
     :root {
       --radio-width: 96vw;
@@ -377,7 +391,6 @@
     }
   }
 
-  /* iPhone Pro Max / Plus (430px width) */
   @media screen and (max-width: 767px) and (min-width: 414px) {
     :root {
       --radio-width: 98vw;
@@ -407,7 +420,6 @@
     }
   }
 
-  /* iPhone Standard (390px width) */
   @media screen and (max-width: 413px) and (min-width: 376px) {
     :root {
       --radio-width: 99vw;
@@ -437,7 +449,6 @@
     }
   }
 
-  /* iPhone SE / Smaller (375px and below) */
   @media screen and (max-width: 375px) {
     :root {
       --radio-width: 100vw;
@@ -484,7 +495,6 @@
     }
   }
 
-  /* Landscape mode for phones */
   @media screen and (max-height: 500px) and (orientation: landscape) {
     :root {
       --radio-width: min(98vw, 700px);
@@ -523,47 +533,14 @@
       margin-bottom: 2px;
     }
   }
-
-  /* Install prompt */
-  .install-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: linear-gradient(180deg, #2d5a3d 0%, #1f4a2d 100%);
-    color: white;
-    padding: 12px 20px;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom));
-    display: none;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    z-index: 1000;
-    box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
-  }
-  
-  .install-banner.show { display: flex; }
-  
-  .install-banner button {
-    background: #7fffb9;
-    color: #0b2011;
-    padding: 8px 16px;
-    min-height: auto;
-    border: none;
-  }
-  
-  .install-banner .dismiss {
-    background: transparent;
-    color: white;
-    border: 1px solid white;
-  }
-  
-  .install-banner span {
-    font-size: clamp(12px, 2vw, 14px);
-  }
 </style>
 </head>
 <body>
+
+<div class="back-link">
+  <a href="/">← Back to Simulators</a>
+</div>
+
 <div class="container">
   <div class="radio">
     <div class="hdr">
@@ -571,9 +548,7 @@
       <div>VHF: 3 Zones | UHF/800: 40 Zones</div>
     </div>
 
-    <!-- LCD -->
     <div class="lcd" id="lcd">
-      <!-- Line 1: Band 1 (VHF) -->
       <div class="l">
         <div class="chan-row">
           <div class="chan-left">
@@ -589,7 +564,6 @@
         </div>
       </div>
       
-      <!-- Line 2: Band 2 (UHF/800) -->
       <div class="l">
         <div class="chan-row">
           <div class="chan-left">
@@ -605,7 +579,6 @@
         </div>
       </div>
 
-      <!-- Bottom row: Labels aligned to buttons below -->
       <div class="bottomRow">
         <div></div>
         <div class="center">ZnDn</div>
@@ -618,9 +591,7 @@
       </div>
     </div>
 
-    <!-- KEYPAD GRID -->
     <div class="keys">
-      <!-- Row 1 -->
       <button id="homeBtn">HOME</button>
       <button id="zoneDnBtn">-</button>
       <button id="zoneUpBtn">-</button>
@@ -630,7 +601,6 @@
       <button id="f3">F3</button>
       <button id="f4">F4</button>
 
-      <!-- Row 2 -->
       <div class="knobslot" id="knobslot">
         <div class="knob" id="knob" title="Click knob to change mode"></div>
         <div class="knoblabel" id="knobMode">CHAN-1</div>
@@ -641,7 +611,6 @@
       <button id="brt">BRT</button>
       <button id="esw">ESW</button>
 
-      <!-- Row 3 -->
       <div></div><div></div><div></div>
       <button id="funcBtn">FUNC</button>
       <button id="mdn">MDN</button>
@@ -652,7 +621,6 @@
   </div>
 </div>
 
-<!-- How to Operate Guide -->
 <div class="guide">
   <h2>How to Operate</h2>
   
@@ -694,769 +662,28 @@
   </div>
 </div>
 
-<!-- Install Banner -->
-<div class="install-banner" id="installBanner">
-  <span>Install RC-9100 Simulator for offline use</span>
-  <div>
-    <button class="dismiss" id="dismissInstall">Later</button>
-    <button id="installBtn">Install</button>
-  </div>
-</div>
-
 <script>
-/* ---------------- Codeplug ---------------- */
-const codeplug = {
-  "band1": {
-    "name": "VHF",
-    "zones": [
-      {
-        "id": "A",
-        "name": "AIRCARE VHF",
-        "channels": [
-          { "name": "AIRCARE" },
-          { "name": "FL SOUTH" },
-          { "name": "TAMPA GEN" },
-          { "name": "ST JOES" },
-          { "name": "BAYFRONT MED" },
-          { "name": "PUTNAM ATG" },
-          { "name": "HOLMES" },
-          { "name": "AIR SECONDARY" },
-          { "name": "MOBILE CARE" },
-          { "name": "VOLUSIA AIR 1" },
-          { "name": "AIRCARE DIG" }
-        ]
-      },
-      {
-        "id": "F",
-        "name": "VHF-MUT AID",
-        "channels": [
-          { "name": "VCALL10" },
-          { "name": "VTAC11" },
-          { "name": "VTAC12" },
-          { "name": "VTAC13" },
-          { "name": "VTAC14" },
-          { "name": "VFIRE21" },
-          { "name": "VFIRE22" },
-          { "name": "VFIRE23" },
-          { "name": "VMED28" },
-          { "name": "VMED29" },
-          { "name": "INTERCITY" },
-          { "name": "SHERIFF NET" },
-          { "name": "RMACS" },
-          { "name": "MARINE 6" },
-          { "name": "MARINE 9" },
-          { "name": "MARINE 16" }
-        ]
-      },
-      {
-        "id": "G",
-        "name": "VHF-MUT AID 2",
-        "channels": [
-          { "name": "VFIRE 24" },
-          { "name": "VFIRE 25" },
-          { "name": "VFIRE 26" },
-          { "name": "VLAW 31" },
-          { "name": "VLAW 32" },
-          { "name": "VTAC 33" },
-          { "name": "VTAC 34" },
-          { "name": "VTAC 35" },
-          { "name": "VTAC 36" },
-          { "name": "VTAC 37" },
-          { "name": "VTAC 38" }
-        ]
-      }
-    ]
-  },
-  "band2": {
-    "name": "UHF/800",
-    "zones": [
-      {
-        "id": "B",
-        "name": "UHF HOSPITAL",
-        "channels": [
-          { "name": "HOLMES REG" },
-          { "name": "SHANDS" },
-          { "name": "SOUTHLAKE PS" },
-          { "name": "SOUTHLAKE BACK" },
-          { "name": "AIRCARE" },
-          { "name": "Air D DIGITAL" }
-        ]
-      },
-      {
-        "id": "C",
-        "name": "UHF-MED 1",
-        "channels": [
-          { "name": "MED 8 STATE" },
-          { "name": "MED 8 Direct" },
-          { "name": "MED 6 MARION" },
-          { "name": "MED 9 LAKE" },
-          { "name": "MED 12 AH-WAT" },
-          { "name": "MED 22 UF-LEE" },
-          { "name": "MED 62 S-LAKE" },
-          { "name": "MED 82 HEALTH" },
-          { "name": "MED 82 Direct" }
-        ]
-      },
-      {
-        "id": "D",
-        "name": "UHF-MED 2",
-        "channels": [
-          { "name": "MED 1" },
-          { "name": "MED 2" },
-          { "name": "MED 3" },
-          { "name": "MED 4" },
-          { "name": "MED 5" },
-          { "name": "MED 6" },
-          { "name": "MED 7" },
-          { "name": "MED 8" },
-          { "name": "MED 9" },
-          { "name": "MED 10" }
-        ]
-      },
-      {
-        "id": "E",
-        "name": "UHF-MED 3",
-        "channels": [
-          { "name": "MED 12" },
-          { "name": "MED 22" },
-          { "name": "MED 32" },
-          { "name": "MED 42" },
-          { "name": "MED 52" },
-          { "name": "MED 62" },
-          { "name": "MED 72" },
-          { "name": "MED 82" },
-          { "name": "MED 92" },
-          { "name": "MED 102" }
-        ]
-      },
-      {
-        "id": "H",
-        "name": "UHF-MUT AID",
-        "channels": [
-          { "name": "UCALL40" },
-          { "name": "UTAC41" },
-          { "name": "UTAC42" },
-          { "name": "UTAC43" },
-          { "name": "UCALL40 D" },
-          { "name": "UTAC41 D" },
-          { "name": "UTAC42 D" },
-          { "name": "UTAC43 D" },
-          { "name": "LE EMERG" },
-          { "name": "LE EMERG D" }
-        ]
-      },
-      {
-        "id": "1",
-        "name": "OSCEOLA",
-        "channels": [
-          { "name": "OSC TAC 1" },
-          { "name": "OSC TAC 2" },
-          { "name": "OSC TAC 3" },
-          { "name": "OSC TAC 4" },
-          { "name": "OSC TAC 5" },
-          { "name": "OSC TAC 6" },
-          { "name": "OSC TAC 7" },
-          { "name": "OSC TAC 8" },
-          { "name": "100JSM42523" }
-        ]
-      },
-      {
-        "id": "2",
-        "name": "LAKE",
-        "channels": [
-          { "name": "LAKE L/Z" },
-          { "name": "LAKE PS1" },
-          { "name": "LAKE PS2" },
-          { "name": "LAKE PS3" },
-          { "name": "LAKE PS4" },
-          { "name": "LAKE PS5" },
-          { "name": "LAKE PS6" },
-          { "name": "LAKE PS7" },
-          { "name": "LAKE PS8" },
-          { "name": "LAKE IA1" },
-          { "name": "LAKE IA2" },
-          { "name": "LAKE IA3" },
-          { "name": "LAKE IA4" },
-          { "name": "LAKE IA5" },
-          { "name": "LAKE IA6" },
-          { "name": "LAKE IA7" }
-        ]
-      },
-      {
-        "id": "3",
-        "name": "APOPKA",
-        "channels": [
-          { "name": "APK FIRE DISP" },
-          { "name": "APK EMS 1" },
-          { "name": "APK FIRE 1" },
-          { "name": "APK EMS 2" },
-          { "name": "APK FIRE 2" },
-          { "name": "APK FIRE EMS 3" },
-          { "name": "APK TRAINING" },
-          { "name": "APK FIRE EVENT" },
-          { "name": "APK FIRE SPARE" },
-          { "name": "APK CALL" },
-          { "name": "APK TAC 1" },
-          { "name": "APK TAC 2" },
-          { "name": "APK TAC 3" }
-        ]
-      },
-      {
-        "id": "4",
-        "name": "ORANGE FIRE",
-        "channels": [
-          { "name": "OCFRD TAC 1" },
-          { "name": "OCFRD TAC 2" },
-          { "name": "OCFRD TAC 3" },
-          { "name": "OCFRD TAC 4" },
-          { "name": "OCFRD TAC 5" },
-          { "name": "OCFRD TAC 6" },
-          { "name": "OCFRD TAC 7" },
-          { "name": "OCFRD TAC 8" },
-          { "name": "OCFRD TAC 9" },
-          { "name": "OCFRD TAC 10" },
-          { "name": "OCFRD TAC 11" }
-        ]
-      },
-      {
-        "id": "5",
-        "name": "POLK",
-        "channels": [
-          { "name": "POLK L/Z 1" },
-          { "name": "POLK L/Z 2" },
-          { "name": "POLK DISPATCH" },
-          { "name": "POLK TAC 2" },
-          { "name": "POLK TAC 3" },
-          { "name": "POLK TAC 4" },
-          { "name": "POLK TAC 5" },
-          { "name": "POLK TAC 6" },
-          { "name": "POLK TAC 7" },
-          { "name": "POLK TAC 8" },
-          { "name": "POLK TAC 9" },
-          { "name": "POLK TAC 10" },
-          { "name": "POLK TAC 11" },
-          { "name": "POLK TAC 12" },
-          { "name": "POLK/HILL 1" },
-          { "name": "POLK/HILL 2" }
-        ]
-      },
-      {
-        "id": "6",
-        "name": "POLK TWR",
-        "channels": [
-          { "name": "POLK TOWER" },
-          { "name": "LAKLAND REG" },
-          { "name": "WINTER HAVEN" }
-        ]
-      },
-      {
-        "id": "7",
-        "name": "REEDY CREEK",
-        "channels": [
-          { "name": "REEDY TAC 1" },
-          { "name": "REEDY TAC 2" },
-          { "name": "REEDY TAC 3" },
-          { "name": "REEDY TAC 4" },
-          { "name": "REEDY TAC 5" }
-        ]
-      },
-      {
-        "id": "8",
-        "name": "SUMTER",
-        "channels": [
-          { "name": "SUM L/Z" },
-          { "name": "SUM HAIL" },
-          { "name": "SUM 2" },
-          { "name": "SUM 3" },
-          { "name": "SUM 4" },
-          { "name": "SUM 5" },
-          { "name": "SUM 6" },
-          { "name": "SUM 7" },
-          { "name": "SUM 8" },
-          { "name": "SUM 9" },
-          { "name": "SUM 10" },
-          { "name": "SUM 11" }
-        ]
-      },
-      {
-        "id": "9",
-        "name": "SEMINOLE",
-        "channels": [
-          { "name": "SEM 49A" },
-          { "name": "SEM 49B" },
-          { "name": "SEM 49C" },
-          { "name": "SEM 49D" },
-          { "name": "SEM 49E" },
-          { "name": "SEM 49F" },
-          { "name": "SEM 49G" },
-          { "name": "SEM 49H" },
-          { "name": "SEM 49I" },
-          { "name": "SEM 49J" },
-          { "name": "SEM 49K" },
-          { "name": "SEM 49L" },
-          { "name": "SEM 49M" },
-          { "name": "SEM 49N" },
-          { "name": "SEM 49O" },
-          { "name": "SEM 49P" }
-        ]
-      },
-      {
-        "id": "10",
-        "name": "HOSPITAL 1",
-        "channels": [
-          { "name": "ORMC" },
-          { "name": "APH" },
-          { "name": "CFR-LK MONROE" },
-          { "name": "OCALA REG" },
-          { "name": "OSCEOLA REG" },
-          { "name": "LAKLAND REG" },
-          { "name": "AH-ORL" },
-          { "name": "BAY PT MC" },
-          { "name": "FUTURE" },
-          { "name": "FUTURE" },
-          { "name": "SHANDS" },
-          { "name": "WINTER HAVEN" },
-          { "name": "MAYO JAX" },
-          { "name": "MAYO JAX IC" }
-        ]
-      },
-      {
-        "id": "11",
-        "name": "HOSPITAL 2 AH",
-        "channels": [
-          { "name": "AH-APK" },
-          { "name": "AH-O PEDS" },
-          { "name": "AH-ALT" },
-          { "name": "AH-CELEB" },
-          { "name": "AH-EAST" },
-          { "name": "AH-ER OVIEDO" },
-          { "name": "AH-HEART O FL" },
-          { "name": "AH-KIS" },
-          { "name": "AH-LK WALES" },
-          { "name": "MARION AH-PEDS" },
-          { "name": "AH-TIMBER RID" },
-          { "name": "AH-WATERMAN" },
-          { "name": "AH-WAUCHULA" },
-          { "name": "AH-WGRD" }
-        ]
-      },
-      {
-        "id": "12",
-        "name": "HOSPITAL 3 OH",
-        "channels": [
-          { "name": "DPH" },
-          { "name": "HCH" },
-          { "name": "SOUTH LAKE" },
-          { "name": "SOUTH SEMINOLE" },
-          { "name": "ST CLOUD" },
-          { "name": "WINNIE PALM" }
-        ]
-      },
-      {
-        "id": "13",
-        "name": "HOSPITAL 4 HCA",
-        "channels": [
-          { "name": "CITRUS MEM" },
-          { "name": "HIGHLANDS REG" },
-          { "name": "HUN CRK ER" },
-          { "name": "OAK HILL" },
-          { "name": "OVIEDO MC" },
-          { "name": "POINCIANA" }
-        ]
-      },
-      {
-        "id": "14",
-        "name": "HOSPITAL 5",
-        "channels": [
-          { "name": "7RIVERS" },
-          { "name": "BARTOW" },
-          { "name": "LK PLACID" },
-          { "name": "NEMOURS" },
-          { "name": "UF-LEESBURG REG" },
-          { "name": "UF-VILLAGES REG" },
-          { "name": "VETS ORL" },
-          { "name": "EMS-OPS" },
-          { "name": "MED COM" }
-        ]
-      },
-      {
-        "id": "15",
-        "name": "KISSIMMEE",
-        "channels": [
-          { "name": "KIS COMB" },
-          { "name": "KIS TAC 1" },
-          { "name": "KIS TAC 2" },
-          { "name": "KIS TAC 3" },
-          { "name": "KIS TAC 4" }
-        ]
-      },
-      {
-        "id": "16",
-        "name": "SAINT CLOUD",
-        "channels": [
-          { "name": "ST CLD TAC 1" },
-          { "name": "ST CLD TAC 2" },
-          { "name": "ST CLD TAC 3" },
-          { "name": "ST CLD TAC 4" }
-        ]
-      },
-      {
-        "id": "17",
-        "name": "WINTER PARK",
-        "channels": [
-          { "name": "WP TAC 1" },
-          { "name": "WP TAC 2" },
-          { "name": "WP TAC 3" },
-          { "name": "WP TAC 4" }
-        ]
-      },
-      {
-        "id": "18",
-        "name": "ORLANDO",
-        "channels": [
-          { "name": "OFD 1" },
-          { "name": "OFD 2" },
-          { "name": "OFD 3" },
-          { "name": "OFD 4" }
-        ]
-      },
-      {
-        "id": "19",
-        "name": "GOAA",
-        "channels": [
-          { "name": "GOAA TAC 1" },
-          { "name": "GOAA TAC 2" },
-          { "name": "GOAA TAC 3" },
-          { "name": "GOAA TAC 4" },
-          { "name": "GOAA TAC 5" },
-          { "name": "GOAA TAC 6" }
-        ]
-      },
-      {
-        "id": "20",
-        "name": "CITRUS",
-        "channels": [
-          { "name": "CITRUS HELO" },
-          { "name": "CITRUS MEMOR H" },
-          { "name": "CIT 7RIVERS" },
-          { "name": "CITRUS EMS" },
-          { "name": "CITRUS EAST" },
-          { "name": "CITRUS WEST" },
-          { "name": "CITRUS INOP 1" },
-          { "name": "CITRUS INOP 2" },
-          { "name": "CITRUS INOP 3" },
-          { "name": "CITRUS INOP 4" },
-          { "name": "CITRUS INOP 5" },
-          { "name": "CITRUS INOP 6" }
-        ]
-      },
-      {
-        "id": "21",
-        "name": "DESOTO",
-        "channels": [
-          { "name": "FUTURE" }
-        ]
-      },
-      {
-        "id": "22",
-        "name": "HARDEE",
-        "channels": [
-          { "name": "HARDEE DISPATCH" },
-          { "name": "HARDEE EMS" },
-          { "name": "HARDEE FIRE" },
-          { "name": "HARDEE TAC 4" },
-          { "name": "HARDEE TAC 5" },
-          { "name": "HARDEE TAC 6" },
-          { "name": "HARDEE TAC 7" },
-          { "name": "HARDEE TAC 10" },
-          { "name": "HARDEE TAC 11" },
-          { "name": "HARDEE TAC 12" },
-          { "name": "HARDEE TAC 13" },
-          { "name": "HARDEE TAC 14" },
-          { "name": "HARDEE TAC 15" },
-          { "name": "HARDEE INTEROP" }
-        ]
-      },
-      {
-        "id": "23",
-        "name": "HERNANDO",
-        "channels": [
-          { "name": "HERN AIR OP 1" },
-          { "name": "HERN AIR OP 2" },
-          { "name": "BROOKSVIL REG" },
-          { "name": "SPRING HILL" },
-          { "name": "OAK HILL" },
-          { "name": "BAY PT MC" },
-          { "name": "HERN FIRE 1" },
-          { "name": "HERN FIRE 2" },
-          { "name": "HERN FIRE 3" },
-          { "name": "HERN FIRE 4" },
-          { "name": "BAYFLIGHT - 4" }
-        ]
-      },
-      {
-        "id": "24",
-        "name": "HIGHLANDS",
-        "channels": [
-          { "name": "HIGHLANDS LZ 1" },
-          { "name": "HIGHLANDS LZ 2" },
-          { "name": "HIGHLANDS DISP" }
-        ]
-      },
-      {
-        "id": "25",
-        "name": "HILLSBOROUGH",
-        "channels": [
-          { "name": "FUTURE" }
-        ]
-      },
-      {
-        "id": "26",
-        "name": "INDIAN RIVER",
-        "channels": [
-          { "name": "FUTURE" }
-        ]
-      },
-      {
-        "id": "27",
-        "name": "MANATEE",
-        "channels": [
-          { "name": "FUTURE" }
-        ]
-      },
-      {
-        "id": "28",
-        "name": "MARION",
-        "channels": [
-          { "name": "MARION HELO" },
-          { "name": "OCALA REG" },
-          { "name": "AH-OCALA" },
-          { "name": "AH-TIMBER" },
-          { "name": "HCA-W MARION" },
-          { "name": "HCA - SUMRF" },
-          { "name": "AH-PEDS" },
-          { "name": "HCA-MARIC" },
-          { "name": "AH-BELLEVW" },
-          { "name": "HCA-SILVR" },
-          { "name": "UF-OCALA" }
-        ]
-      },
-      {
-        "id": "29",
-        "name": "PASCO",
-        "channels": [
-          { "name": "MA-FLA D" },
-          { "name": "8TAC94 D" }
-        ]
-      },
-      {
-        "id": "30",
-        "name": "PINELLAS",
-        "channels": [
-          { "name": "FUTURE" }
-        ]
-      },
-      {
-        "id": "31",
-        "name": "ST. LUCIE",
-        "channels": [
-          { "name": "FUTURE" }
-        ]
-      },
-      {
-        "id": "32",
-        "name": "ORANGE DISASTER",
-        "channels": [
-          { "name": "ORG DISASTER A" },
-          { "name": "ORG DISASTER B" },
-          { "name": "ORG DISASTER C" },
-          { "name": "ORG DISASTER D" },
-          { "name": "ORG DISASTER E" }
-        ]
-      },
-      {
-        "id": "33",
-        "name": "ORANGE MA",
-        "channels": [
-          { "name": "OCFR MA 1" },
-          { "name": "OCFR MA 2" },
-          { "name": "OCFR MA 3" },
-          { "name": "OCFR MA 4" },
-          { "name": "OCFR MA 5" },
-          { "name": "OCFR MA 6" },
-          { "name": "OCFR MA 7" }
-        ]
-      },
-      {
-        "id": "34",
-        "name": "ORANGE METRO",
-        "channels": [
-          { "name": "OC METRO 1" },
-          { "name": "OC METRO 2" },
-          { "name": "OC METRO 3" },
-          { "name": "OC METRO 4" },
-          { "name": "OC METRO 5" },
-          { "name": "OC METRO 6" },
-          { "name": "OC METRO 7" },
-          { "name": "OC METRO 8" }
-        ]
-      },
-      {
-        "id": "35",
-        "name": "700 MUT-AID",
-        "channels": [
-          { "name": "7CALL50" },
-          { "name": "7CALL70" },
-          { "name": "7TAC55" },
-          { "name": "7TAC56" },
-          { "name": "7GTAC57" },
-          { "name": "7TAC75" },
-          { "name": "7TAC76" },
-          { "name": "7GTAC77" },
-          { "name": "7CALL50 D" },
-          { "name": "7CALL70 D" },
-          { "name": "7TAC55 D" },
-          { "name": "7TAC56 D" },
-          { "name": "7GTAC57 D" },
-          { "name": "7TAC75 D" },
-          { "name": "7TAC76 D" },
-          { "name": "7GTAC77 D" }
-        ]
-      },
-      {
-        "id": "36",
-        "name": "800 MUTUAL AID",
-        "channels": [
-          { "name": "8CALL90" },
-          { "name": "8TAC91" },
-          { "name": "8TAC92" },
-          { "name": "8TAC93" },
-          { "name": "8TAC94" },
-          { "name": "MA-FLA" },
-          { "name": "8TAC91 D" },
-          { "name": "8TAC92 D" },
-          { "name": "8TAC93 D" },
-          { "name": "8TAC94 D" },
-          { "name": "MA-FLA D" }
-        ]
-      },
-      {
-        "id": "37",
-        "name": "PSIC MUT-AID",
-        "channels": [
-          { "name": "PSIC 1" },
-          { "name": "PSIC 2" },
-          { "name": "PSIC 3" },
-          { "name": "PSIC 4" },
-          { "name": "PSIC 5" },
-          { "name": "PSIC 6" },
-          { "name": "PSIC 7" },
-          { "name": "PSIC 8" },
-          { "name": "PSIC 9" },
-          { "name": "PSIC 10" },
-          { "name": "PSIC 11" },
-          { "name": "PSIC 12" },
-          { "name": "PSIC 13" },
-          { "name": "PSIC 14" },
-          { "name": "PSIC 15" },
-          { "name": "7CALL50 D" }
-        ]
-      },
-      {
-        "id": "38",
-        "name": "DISASTER 1",
-        "channels": [
-          { "name": "DISASTER 1" },
-          { "name": "DISASTER 2" },
-          { "name": "DISASTER 3" },
-          { "name": "DISASTER 4" },
-          { "name": "DISASTER 5" },
-          { "name": "DISASTER 6" },
-          { "name": "DISASTER 7" },
-          { "name": "DISASTER 8" },
-          { "name": "DISASTER 9" },
-          { "name": "DISASTER 10" },
-          { "name": "DISASTER 11" },
-          { "name": "DISASTER 12" },
-          { "name": "DISASTER 13" },
-          { "name": "DISASTER 14" },
-          { "name": "DISASTER 15" },
-          { "name": "DISASTER 16" }
-        ]
-      },
-      {
-        "id": "39",
-        "name": "DISASTER 2",
-        "channels": [
-          { "name": "DISASTER 17" },
-          { "name": "DISASTER 18" },
-          { "name": "DISASTER 19" },
-          { "name": "DISASTER 20" },
-          { "name": "DISASTER 21" },
-          { "name": "DISASTER 22" },
-          { "name": "DISASTER 23" },
-          { "name": "DISASTER 24" },
-          { "name": "DISASTER 25" },
-          { "name": "DISASTER 26" },
-          { "name": "DISASTER 27" },
-          { "name": "DISASTER 28" },
-          { "name": "DISASTER 29" },
-          { "name": "DISASTER 30" },
-          { "name": "DISASTER 31" },
-          { "name": "DISASTER 32" }
-        ]
-      },
-      {
-        "id": "40",
-        "name": "VOLUSIA",
-        "channels": [
-          { "name": "VOLUSIA AIR 1" },
-          { "name": "VOLUSIA FIRE 1" },
-          { "name": "AH - DAYTONA" },
-          { "name": "AH - NSB" },
-          { "name": "AH - PT ORANGE" },
-          { "name": "HALIFAX" },
-          { "name": "HALIFAX PO" },
-          { "name": "AH - DELAND" },
-          { "name": "AH - DELTONA" },
-          { "name": "AH - FISH" },
-          { "name": "HALIFAX DELTONA" }
-        ]
-      }
-    ]
-  }
-};
+const codeplug = {"band1":{"name":"VHF","zones":[{"id":"A","name":"AIRCARE VHF","channels":[{"name":"AIRCARE"},{"name":"FL SOUTH"},{"name":"TAMPA GEN"},{"name":"ST JOES"},{"name":"BAYFRONT MED"},{"name":"PUTNAM ATG"},{"name":"HOLMES"},{"name":"AIR SECONDARY"},{"name":"MOBILE CARE"},{"name":"VOLUSIA AIR 1"},{"name":"AIRCARE DIG"}]},{"id":"F","name":"VHF-MUT AID","channels":[{"name":"VCALL10"},{"name":"VTAC11"},{"name":"VTAC12"},{"name":"VTAC13"},{"name":"VTAC14"},{"name":"VFIRE21"},{"name":"VFIRE22"},{"name":"VFIRE23"},{"name":"VMED28"},{"name":"VMED29"},{"name":"INTERCITY"},{"name":"SHERIFF NET"},{"name":"RMACS"},{"name":"MARINE 6"},{"name":"MARINE 9"},{"name":"MARINE 16"}]},{"id":"G","name":"VHF-MUT AID 2","channels":[{"name":"VFIRE 24"},{"name":"VFIRE 25"},{"name":"VFIRE 26"},{"name":"VLAW 31"},{"name":"VLAW 32"},{"name":"VTAC 33"},{"name":"VTAC 34"},{"name":"VTAC 35"},{"name":"VTAC 36"},{"name":"VTAC 37"},{"name":"VTAC 38"}]}]},"band2":{"name":"UHF/800","zones":[{"id":"B","name":"UHF HOSPITAL","channels":[{"name":"HOLMES REG"},{"name":"SHANDS"},{"name":"SOUTHLAKE PS"},{"name":"SOUTHLAKE BACK"},{"name":"AIRCARE"},{"name":"Air D DIGITAL"}]},{"id":"C","name":"UHF-MED 1","channels":[{"name":"MED 8 STATE"},{"name":"MED 8 Direct"},{"name":"MED 6 MARION"},{"name":"MED 9 LAKE"},{"name":"MED 12 AH-WAT"},{"name":"MED 22 UF-LEE"},{"name":"MED 62 S-LAKE"},{"name":"MED 82 HEALTH"},{"name":"MED 82 Direct"}]},{"id":"D","name":"UHF-MED 2","channels":[{"name":"MED 1"},{"name":"MED 2"},{"name":"MED 3"},{"name":"MED 4"},{"name":"MED 5"},{"name":"MED 6"},{"name":"MED 7"},{"name":"MED 8"},{"name":"MED 9"},{"name":"MED 10"}]},{"id":"E","name":"UHF-MED 3","channels":[{"name":"MED 12"},{"name":"MED 22"},{"name":"MED 32"},{"name":"MED 42"},{"name":"MED 52"},{"name":"MED 62"},{"name":"MED 72"},{"name":"MED 82"},{"name":"MED 92"},{"name":"MED 102"}]},{"id":"H","name":"UHF-MUT AID","channels":[{"name":"UCALL40"},{"name":"UTAC41"},{"name":"UTAC42"},{"name":"UTAC43"},{"name":"UCALL40 D"},{"name":"UTAC41 D"},{"name":"UTAC42 D"},{"name":"UTAC43 D"},{"name":"LE EMERG"},{"name":"LE EMERG D"}]},{"id":"1","name":"OSCEOLA","channels":[{"name":"OSC TAC 1"},{"name":"OSC TAC 2"},{"name":"OSC TAC 3"},{"name":"OSC TAC 4"},{"name":"OSC TAC 5"},{"name":"OSC TAC 6"},{"name":"OSC TAC 7"},{"name":"OSC TAC 8"},{"name":"100JSM42523"}]},{"id":"2","name":"LAKE","channels":[{"name":"LAKE L/Z"},{"name":"LAKE PS1"},{"name":"LAKE PS2"},{"name":"LAKE PS3"},{"name":"LAKE PS4"},{"name":"LAKE PS5"},{"name":"LAKE PS6"},{"name":"LAKE PS7"},{"name":"LAKE PS8"},{"name":"LAKE IA1"},{"name":"LAKE IA2"},{"name":"LAKE IA3"},{"name":"LAKE IA4"},{"name":"LAKE IA5"},{"name":"LAKE IA6"},{"name":"LAKE IA7"}]},{"id":"3","name":"APOPKA","channels":[{"name":"APK FIRE DISP"},{"name":"APK EMS 1"},{"name":"APK FIRE 1"},{"name":"APK EMS 2"},{"name":"APK FIRE 2"},{"name":"APK FIRE EMS 3"},{"name":"APK TRAINING"},{"name":"APK FIRE EVENT"},{"name":"APK FIRE SPARE"},{"name":"APK CALL"},{"name":"APK TAC 1"},{"name":"APK TAC 2"},{"name":"APK TAC 3"}]},{"id":"4","name":"ORANGE FIRE","channels":[{"name":"OCFRD TAC 1"},{"name":"OCFRD TAC 2"},{"name":"OCFRD TAC 3"},{"name":"OCFRD TAC 4"},{"name":"OCFRD TAC 5"},{"name":"OCFRD TAC 6"},{"name":"OCFRD TAC 7"},{"name":"OCFRD TAC 8"},{"name":"OCFRD TAC 9"},{"name":"OCFRD TAC 10"},{"name":"OCFRD TAC 11"}]},{"id":"5","name":"POLK","channels":[{"name":"POLK L/Z 1"},{"name":"POLK L/Z 2"},{"name":"POLK DISPATCH"},{"name":"POLK TAC 2"},{"name":"POLK TAC 3"},{"name":"POLK TAC 4"},{"name":"POLK TAC 5"},{"name":"POLK TAC 6"},{"name":"POLK TAC 7"},{"name":"POLK TAC 8"},{"name":"POLK TAC 9"},{"name":"POLK TAC 10"},{"name":"POLK TAC 11"},{"name":"POLK TAC 12"},{"name":"POLK/HILL 1"},{"name":"POLK/HILL 2"}]},{"id":"6","name":"POLK TWR","channels":[{"name":"POLK TOWER"},{"name":"LAKLAND REG"},{"name":"WINTER HAVEN"}]},{"id":"7","name":"REEDY CREEK","channels":[{"name":"REEDY TAC 1"},{"name":"REEDY TAC 2"},{"name":"REEDY TAC 3"},{"name":"REEDY TAC 4"},{"name":"REEDY TAC 5"}]},{"id":"8","name":"SUMTER","channels":[{"name":"SUM L/Z"},{"name":"SUM HAIL"},{"name":"SUM 2"},{"name":"SUM 3"},{"name":"SUM 4"},{"name":"SUM 5"},{"name":"SUM 6"},{"name":"SUM 7"},{"name":"SUM 8"},{"name":"SUM 9"},{"name":"SUM 10"},{"name":"SUM 11"}]},{"id":"9","name":"SEMINOLE","channels":[{"name":"SEM 49A"},{"name":"SEM 49B"},{"name":"SEM 49C"},{"name":"SEM 49D"},{"name":"SEM 49E"},{"name":"SEM 49F"},{"name":"SEM 49G"},{"name":"SEM 49H"},{"name":"SEM 49I"},{"name":"SEM 49J"},{"name":"SEM 49K"},{"name":"SEM 49L"},{"name":"SEM 49M"},{"name":"SEM 49N"},{"name":"SEM 49O"},{"name":"SEM 49P"}]},{"id":"10","name":"HOSPITAL 1","channels":[{"name":"ORMC"},{"name":"APH"},{"name":"CFR-LK MONROE"},{"name":"OCALA REG"},{"name":"OSCEOLA REG"},{"name":"LAKLAND REG"},{"name":"AH-ORL"},{"name":"BAY PT MC"},{"name":"FUTURE"},{"name":"FUTURE"},{"name":"SHANDS"},{"name":"WINTER HAVEN"},{"name":"MAYO JAX"},{"name":"MAYO JAX IC"}]},{"id":"11","name":"HOSPITAL 2 AH","channels":[{"name":"AH-APK"},{"name":"AH-O PEDS"},{"name":"AH-ALT"},{"name":"AH-CELEB"},{"name":"AH-EAST"},{"name":"AH-ER OVIEDO"},{"name":"AH-HEART O FL"},{"name":"AH-KIS"},{"name":"AH-LK WALES"},{"name":"MARION AH-PEDS"},{"name":"AH-TIMBER RID"},{"name":"AH-WATERMAN"},{"name":"AH-WAUCHULA"},{"name":"AH-WGRD"}]},{"id":"12","name":"HOSPITAL 3 OH","channels":[{"name":"DPH"},{"name":"HCH"},{"name":"SOUTH LAKE"},{"name":"SOUTH SEMINOLE"},{"name":"ST CLOUD"},{"name":"WINNIE PALM"}]},{"id":"13","name":"HOSPITAL 4 HCA","channels":[{"name":"CITRUS MEM"},{"name":"HIGHLANDS REG"},{"name":"HUN CRK ER"},{"name":"OAK HILL"},{"name":"OVIEDO MC"},{"name":"POINCIANA"}]},{"id":"14","name":"HOSPITAL 5","channels":[{"name":"7RIVERS"},{"name":"BARTOW"},{"name":"LK PLACID"},{"name":"NEMOURS"},{"name":"UF-LEESBURG REG"},{"name":"UF-VILLAGES REG"},{"name":"VETS ORL"},{"name":"EMS-OPS"},{"name":"MED COM"}]},{"id":"15","name":"KISSIMMEE","channels":[{"name":"KIS COMB"},{"name":"KIS TAC 1"},{"name":"KIS TAC 2"},{"name":"KIS TAC 3"},{"name":"KIS TAC 4"}]},{"id":"16","name":"SAINT CLOUD","channels":[{"name":"ST CLD TAC 1"},{"name":"ST CLD TAC 2"},{"name":"ST CLD TAC 3"},{"name":"ST CLD TAC 4"}]},{"id":"17","name":"WINTER PARK","channels":[{"name":"WP TAC 1"},{"name":"WP TAC 2"},{"name":"WP TAC 3"},{"name":"WP TAC 4"}]},{"id":"18","name":"ORLANDO","channels":[{"name":"OFD 1"},{"name":"OFD 2"},{"name":"OFD 3"},{"name":"OFD 4"}]},{"id":"19","name":"GOAA","channels":[{"name":"GOAA TAC 1"},{"name":"GOAA TAC 2"},{"name":"GOAA TAC 3"},{"name":"GOAA TAC 4"},{"name":"GOAA TAC 5"},{"name":"GOAA TAC 6"}]},{"id":"20","name":"CITRUS","channels":[{"name":"CITRUS HELO"},{"name":"CITRUS MEMOR H"},{"name":"CIT 7RIVERS"},{"name":"CITRUS EMS"},{"name":"CITRUS EAST"},{"name":"CITRUS WEST"},{"name":"CITRUS INOP 1"},{"name":"CITRUS INOP 2"},{"name":"CITRUS INOP 3"},{"name":"CITRUS INOP 4"},{"name":"CITRUS INOP 5"},{"name":"CITRUS INOP 6"}]},{"id":"21","name":"DESOTO","channels":[{"name":"FUTURE"}]},{"id":"22","name":"HARDEE","channels":[{"name":"HARDEE DISPATCH"},{"name":"HARDEE EMS"},{"name":"HARDEE FIRE"},{"name":"HARDEE TAC 4"},{"name":"HARDEE TAC 5"},{"name":"HARDEE TAC 6"},{"name":"HARDEE TAC 7"},{"name":"HARDEE TAC 10"},{"name":"HARDEE TAC 11"},{"name":"HARDEE TAC 12"},{"name":"HARDEE TAC 13"},{"name":"HARDEE TAC 14"},{"name":"HARDEE TAC 15"},{"name":"HARDEE INTEROP"}]},{"id":"23","name":"HERNANDO","channels":[{"name":"HERN AIR OP 1"},{"name":"HERN AIR OP 2"},{"name":"BROOKSVIL REG"},{"name":"SPRING HILL"},{"name":"OAK HILL"},{"name":"BAY PT MC"},{"name":"HERN FIRE 1"},{"name":"HERN FIRE 2"},{"name":"HERN FIRE 3"},{"name":"HERN FIRE 4"},{"name":"BAYFLIGHT - 4"}]},{"id":"24","name":"HIGHLANDS","channels":[{"name":"HIGHLANDS LZ 1"},{"name":"HIGHLANDS LZ 2"},{"name":"HIGHLANDS DISP"}]},{"id":"25","name":"HILLSBOROUGH","channels":[{"name":"FUTURE"}]},{"id":"26","name":"INDIAN RIVER","channels":[{"name":"FUTURE"}]},{"id":"27","name":"MANATEE","channels":[{"name":"FUTURE"}]},{"id":"28","name":"MARION","channels":[{"name":"MARION HELO"},{"name":"OCALA REG"},{"name":"AH-OCALA"},{"name":"AH-TIMBER"},{"name":"HCA-W MARION"},{"name":"HCA - SUMRF"},{"name":"AH-PEDS"},{"name":"HCA-MARIC"},{"name":"AH-BELLEVW"},{"name":"HCA-SILVR"},{"name":"UF-OCALA"}]},{"id":"29","name":"PASCO","channels":[{"name":"MA-FLA D"},{"name":"8TAC94 D"}]},{"id":"30","name":"PINELLAS","channels":[{"name":"FUTURE"}]},{"id":"31","name":"ST. LUCIE","channels":[{"name":"FUTURE"}]},{"id":"32","name":"ORANGE DISASTER","channels":[{"name":"ORG DISASTER A"},{"name":"ORG DISASTER B"},{"name":"ORG DISASTER C"},{"name":"ORG DISASTER D"},{"name":"ORG DISASTER E"}]},{"id":"33","name":"ORANGE MA","channels":[{"name":"OCFR MA 1"},{"name":"OCFR MA 2"},{"name":"OCFR MA 3"},{"name":"OCFR MA 4"},{"name":"OCFR MA 5"},{"name":"OCFR MA 6"},{"name":"OCFR MA 7"}]},{"id":"34","name":"ORANGE METRO","channels":[{"name":"OC METRO 1"},{"name":"OC METRO 2"},{"name":"OC METRO 3"},{"name":"OC METRO 4"},{"name":"OC METRO 5"},{"name":"OC METRO 6"},{"name":"OC METRO 7"},{"name":"OC METRO 8"}]},{"id":"35","name":"700 MUT-AID","channels":[{"name":"7CALL50"},{"name":"7CALL70"},{"name":"7TAC55"},{"name":"7TAC56"},{"name":"7GTAC57"},{"name":"7TAC75"},{"name":"7TAC76"},{"name":"7GTAC77"},{"name":"7CALL50 D"},{"name":"7CALL70 D"},{"name":"7TAC55 D"},{"name":"7TAC56 D"},{"name":"7GTAC57 D"},{"name":"7TAC75 D"},{"name":"7TAC76 D"},{"name":"7GTAC77 D"}]},{"id":"36","name":"800 MUTUAL AID","channels":[{"name":"8CALL90"},{"name":"8TAC91"},{"name":"8TAC92"},{"name":"8TAC93"},{"name":"8TAC94"},{"name":"MA-FLA"},{"name":"8TAC91 D"},{"name":"8TAC92 D"},{"name":"8TAC93 D"},{"name":"8TAC94 D"},{"name":"MA-FLA D"}]},{"id":"37","name":"PSIC MUT-AID","channels":[{"name":"PSIC 1"},{"name":"PSIC 2"},{"name":"PSIC 3"},{"name":"PSIC 4"},{"name":"PSIC 5"},{"name":"PSIC 6"},{"name":"PSIC 7"},{"name":"PSIC 8"},{"name":"PSIC 9"},{"name":"PSIC 10"},{"name":"PSIC 11"},{"name":"PSIC 12"},{"name":"PSIC 13"},{"name":"PSIC 14"},{"name":"PSIC 15"},{"name":"7CALL50 D"}]},{"id":"38","name":"DISASTER 1","channels":[{"name":"DISASTER 1"},{"name":"DISASTER 2"},{"name":"DISASTER 3"},{"name":"DISASTER 4"},{"name":"DISASTER 5"},{"name":"DISASTER 6"},{"name":"DISASTER 7"},{"name":"DISASTER 8"},{"name":"DISASTER 9"},{"name":"DISASTER 10"},{"name":"DISASTER 11"},{"name":"DISASTER 12"},{"name":"DISASTER 13"},{"name":"DISASTER 14"},{"name":"DISASTER 15"},{"name":"DISASTER 16"}]},{"id":"39","name":"DISASTER 2","channels":[{"name":"DISASTER 17"},{"name":"DISASTER 18"},{"name":"DISASTER 19"},{"name":"DISASTER 20"},{"name":"DISASTER 21"},{"name":"DISASTER 22"},{"name":"DISASTER 23"},{"name":"DISASTER 24"},{"name":"DISASTER 25"},{"name":"DISASTER 26"},{"name":"DISASTER 27"},{"name":"DISASTER 28"},{"name":"DISASTER 29"},{"name":"DISASTER 30"},{"name":"DISASTER 31"},{"name":"DISASTER 32"}]},{"id":"40","name":"VOLUSIA","channels":[{"name":"VOLUSIA AIR 1"},{"name":"VOLUSIA FIRE 1"},{"name":"AH - DAYTONA"},{"name":"AH - NSB"},{"name":"AH - PT ORANGE"},{"name":"HALIFAX"},{"name":"HALIFAX PO"},{"name":"AH - DELAND"},{"name":"AH - DELTONA"},{"name":"AH - FISH"},{"name":"HALIFAX DELTONA"}]}]}};
 
-/* ---------------- State ---------------- */
 const st = {
-  activeBand: 0,           // which band the controls affect: 0 = Band1, 1 = Band2
-  zoneB1: 0,               // current zone index in Band1
-  zoneB2: 14,              // current zone index in Band2 (Zone 10 = HOSPITAL 1)
-  chanB1: 10,              // current channel index in Band1's current zone (CH11 = AIRCARE DIG)
-  chanB2: 0,               // current channel index in Band2's current zone (CH1 = ORMC)
-  knobMode: 0,             // 0=CHAN, 1=ZONE, 2=VOL
-  brightness: 5, esw: 0, tsw: 0,
-  volume: 16, muted: false,
-  knobAngle: 0
+  activeBand: 0, zoneB1: 0, zoneB2: 14, chanB1: 10, chanB2: 0,
+  knobMode: 0, brightness: 5, esw: 0, tsw: 0, volume: 16, muted: false, knobAngle: 0
 };
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
-// Get current zone for a band
 function getZone(bandIdx) {
   const band = bandIdx === 0 ? codeplug.band1 : codeplug.band2;
   const zoneIdx = bandIdx === 0 ? st.zoneB1 : st.zoneB2;
   return band.zones[zoneIdx];
 }
 
-// Get current channel for a band
 function getChannel(bandIdx) {
   const zone = getZone(bandIdx);
   const chanIdx = bandIdx === 0 ? st.chanB1 : st.chanB2;
   return zone.channels[chanIdx];
 }
 
-// Knob mode label
 function knobLabel() {
   if (st.knobMode === 0) {
     const chanIdx = st.activeBand === 0 ? st.chanB1 : st.chanB2;
@@ -1469,193 +696,86 @@ function knobLabel() {
   return `VOL-${st.volume}${st.muted ? " M" : ""}`;
 }
 
-/* Render display */
 function render() {
-  const zone1 = getZone(0);
-  const zone2 = getZone(1);
-  const chan1 = getChannel(0);
-  const chan2 = getChannel(1);
-  const chanIdx1 = st.chanB1;
-
-  // Triangle indicators
+  const zone1 = getZone(0), zone2 = getZone(1);
+  const chan1 = getChannel(0), chan2 = getChannel(1);
   document.getElementById('indB1').textContent = st.activeBand === 0 ? '▶' : ' ';
   document.getElementById('indB2').textContent = st.activeBand === 1 ? '▶' : ' ';
-
-  // Zone IDs (always shown)
   document.getElementById('zone1').textContent = zone1.id;
   document.getElementById('zone2').textContent = zone2.id;
-
-  // Channel info - Band 1 always shows channel number, Band 2 never does
-  document.getElementById('chanNum1').textContent = chanIdx1 + 1;
+  document.getElementById('chanNum1').textContent = st.chanB1 + 1;
   document.getElementById('chanName1').textContent = chan1.name;
   document.getElementById('chanNum2').textContent = '';
   document.getElementById('chanName2').textContent = chan2.name;
-
-  // TX indicator (show on active band)
   document.getElementById('txInd1').textContent = st.activeBand === 0 ? '↑' : ' ';
   document.getElementById('txInd2').textContent = st.activeBand === 1 ? '↑' : ' ';
-
-  // Mode indicators - both show HOA
   document.getElementById('mode1').textContent = 'HOA';
   document.getElementById('mode2').textContent = 'HOA';
-
-  // Volume indicator
   document.getElementById('volInd').textContent = `VOL-${st.volume}${st.muted ? ' M' : ''}`;
-
-  // Knob mode label
   document.getElementById('knobMode').textContent = knobLabel();
   document.getElementById('knob').style.transform = `rotate(${st.knobAngle}deg)`;
 }
 
-/* ----- Controls ----- */
-// BAND toggles active band (triangle follows)
-document.getElementById('bandBtn').onclick = () => { 
-  st.activeBand = st.activeBand ? 0 : 1; 
-  render(); 
-};
+document.getElementById('bandBtn').onclick = () => { st.activeBand = st.activeBand ? 0 : 1; render(); };
 
-// MUP / MDN change channel within ACTIVE band's current zone
 document.getElementById('mup').onclick = () => {
   const zone = getZone(st.activeBand);
-  if (st.activeBand === 0) {
-    st.chanB1 = (st.chanB1 + 1) % zone.channels.length;
-  } else {
-    st.chanB2 = (st.chanB2 + 1) % zone.channels.length;
-  }
+  if (st.activeBand === 0) st.chanB1 = (st.chanB1 + 1) % zone.channels.length;
+  else st.chanB2 = (st.chanB2 + 1) % zone.channels.length;
   render();
 };
 
 document.getElementById('mdn').onclick = () => {
   const zone = getZone(st.activeBand);
-  if (st.activeBand === 0) {
-    st.chanB1 = (st.chanB1 - 1 + zone.channels.length) % zone.channels.length;
-  } else {
-    st.chanB2 = (st.chanB2 - 1 + zone.channels.length) % zone.channels.length;
-  }
+  if (st.activeBand === 0) st.chanB1 = (st.chanB1 - 1 + zone.channels.length) % zone.channels.length;
+  else st.chanB2 = (st.chanB2 - 1 + zone.channels.length) % zone.channels.length;
   render();
 };
 
-// Knob click cycles modes
-document.getElementById('knob').onclick = () => { 
-  st.knobMode = (st.knobMode + 1) % 3; 
-  render(); 
-};
+document.getElementById('knob').onclick = () => { st.knobMode = (st.knobMode + 1) % 3; render(); };
 
-// Knob wheel
 document.getElementById('knob').addEventListener('wheel', (e) => {
   e.preventDefault();
   const step = (e.deltaY < 0) ? 1 : -1;
-  
-  if (st.knobMode === 0) { // CHAN
+  if (st.knobMode === 0) {
     const zone = getZone(st.activeBand);
-    if (st.activeBand === 0) {
-      st.chanB1 = (st.chanB1 + step + zone.channels.length) % zone.channels.length;
-    } else {
-      st.chanB2 = (st.chanB2 + step + zone.channels.length) % zone.channels.length;
-    }
-  } else if (st.knobMode === 1) { // ZONE
+    if (st.activeBand === 0) st.chanB1 = (st.chanB1 + step + zone.channels.length) % zone.channels.length;
+    else st.chanB2 = (st.chanB2 + step + zone.channels.length) % zone.channels.length;
+  } else if (st.knobMode === 1) {
     const band = st.activeBand === 0 ? codeplug.band1 : codeplug.band2;
-    if (st.activeBand === 0) {
-      st.zoneB1 = (st.zoneB1 + step + band.zones.length) % band.zones.length;
-      st.chanB1 = 0; // Reset channel when zone changes
-    } else {
-      st.zoneB2 = (st.zoneB2 + step + band.zones.length) % band.zones.length;
-      st.chanB2 = 0; // Reset channel when zone changes
-    }
-  } else if (st.knobMode === 2 && !st.muted) { // VOL
-    st.volume = clamp(st.volume + step, 0, 20);
-  }
-  
+    if (st.activeBand === 0) { st.zoneB1 = (st.zoneB1 + step + band.zones.length) % band.zones.length; st.chanB1 = 0; }
+    else { st.zoneB2 = (st.zoneB2 + step + band.zones.length) % band.zones.length; st.chanB2 = 0; }
+  } else if (st.knobMode === 2 && !st.muted) { st.volume = clamp(st.volume + step, 0, 20); }
   st.knobAngle += (step * 15);
   render();
 });
 
-// Zone buttons change zone in ACTIVE band
 document.getElementById('zoneDnBtn').onclick = () => {
   const band = st.activeBand === 0 ? codeplug.band1 : codeplug.band2;
-  if (st.activeBand === 0) {
-    st.zoneB1 = (st.zoneB1 - 1 + band.zones.length) % band.zones.length;
-    st.chanB1 = 0;
-  } else {
-    st.zoneB2 = (st.zoneB2 - 1 + band.zones.length) % band.zones.length;
-    st.chanB2 = 0;
-  }
+  if (st.activeBand === 0) { st.zoneB1 = (st.zoneB1 - 1 + band.zones.length) % band.zones.length; st.chanB1 = 0; }
+  else { st.zoneB2 = (st.zoneB2 - 1 + band.zones.length) % band.zones.length; st.chanB2 = 0; }
   render();
 };
 
 document.getElementById('zoneUpBtn').onclick = () => {
   const band = st.activeBand === 0 ? codeplug.band1 : codeplug.band2;
-  if (st.activeBand === 0) {
-    st.zoneB1 = (st.zoneB1 + 1) % band.zones.length;
-    st.chanB1 = 0;
-  } else {
-    st.zoneB2 = (st.zoneB2 + 1) % band.zones.length;
-    st.chanB2 = 0;
-  }
+  if (st.activeBand === 0) { st.zoneB1 = (st.zoneB1 + 1) % band.zones.length; st.chanB1 = 0; }
+  else { st.zoneB2 = (st.zoneB2 + 1) % band.zones.length; st.chanB2 = 0; }
   render();
 };
 
-document.getElementById('muteBtn').onclick = () => { 
-  st.muted = !st.muted; 
-  render(); 
-};
-
-// Misc buttons
-document.getElementById('homeBtn').onclick = () => { 
-  st.knobMode = 0; 
-  render(); 
-};
+document.getElementById('muteBtn').onclick = () => { st.muted = !st.muted; render(); };
+document.getElementById('homeBtn').onclick = () => { st.knobMode = 0; render(); };
 document.getElementById('up').onclick = () => {};
 document.getElementById('dn').onclick = () => {};
-document.getElementById('brt').onclick = () => { 
-  st.brightness = clamp(st.brightness + 1, 1, 10); 
-  render(); 
-};
-document.getElementById('dim').onclick = () => { 
-  st.brightness = clamp(st.brightness - 1, 1, 10); 
-  render(); 
-};
-document.getElementById('esw').onclick = () => { 
-  st.esw = st.esw ? 0 : 1; 
-  render(); 
-};
+document.getElementById('brt').onclick = () => { st.brightness = clamp(st.brightness + 1, 1, 10); render(); };
+document.getElementById('dim').onclick = () => { st.brightness = clamp(st.brightness - 1, 1, 10); render(); };
+document.getElementById('esw').onclick = () => { st.esw = st.esw ? 0 : 1; render(); };
 document.getElementById('funcBtn').onclick = () => {};
-['f1', 'f2', 'f3', 'f4'].forEach(id => { 
-  const el = document.getElementById(id); 
-  if (el) el.onclick = () => {}; 
-});
+['f1', 'f2', 'f3', 'f4'].forEach(id => { const el = document.getElementById(id); if (el) el.onclick = () => {}; });
 
 render();
 
-/* ---------------- PWA Install Prompt ---------------- */
-let deferredPrompt;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBanner').classList.add('show');
-});
-
-document.getElementById('installBtn').addEventListener('click', async () => {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response: ${outcome}`);
-    deferredPrompt = null;
-  }
-  document.getElementById('installBanner').classList.remove('show');
-});
-
-document.getElementById('dismissInstall').addEventListener('click', () => {
-  document.getElementById('installBanner').classList.remove('show');
-});
-
-window.addEventListener('appinstalled', () => {
-  document.getElementById('installBanner').classList.remove('show');
-  deferredPrompt = null;
-});
-
-/* ---------------- Service Worker Registration ---------------- */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
