@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Aviation Simulators</title>
+
+<!-- PWA Meta Tags -->
+<meta name="description" content="Aviation Equipment Simulators - RC-9100 Radio & AA95 Audio Panel">
+<meta name="theme-color" content="#101010">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AvSim">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html, body {
+    min-height: 100%;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(145deg, #1a1a1a 0%, #0a0a0a 50%, #000 100%);
+    color: #eaeaea;
+  }
+  
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  
+  .container {
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: clamp(24px, 5vw, 36px);
+    margin-bottom: 8px;
+    color: #7fffb9;
+    text-shadow: 0 0 20px rgba(127, 255, 185, 0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  
+  .subtitle {
+    font-size: clamp(12px, 2.5vw, 16px);
+    color: #888;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+  }
+  
+  .simulators {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .sim-card {
+    background: linear-gradient(145deg, #2a2a2a 0%, #1a1a1a 50%, #111 100%);
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  
+  .sim-card:hover {
+    transform: translateY(-2px);
+    border-color: #7fffb9;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.7), 0 0 20px rgba(127, 255, 185, 0.1);
+  }
+  
+  .sim-card:active {
+    transform: translateY(0);
+  }
+  
+  .sim-card h2 {
+    font-size: clamp(18px, 4vw, 24px);
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  
+  .sim-card .model {
+    font-size: clamp(12px, 2.5vw, 14px);
+    color: #7fffb9;
+    margin-bottom: 12px;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .sim-card p {
+    font-size: clamp(12px, 2.5vw, 14px);
+    color: #aaa;
+    line-height: 1.5;
+  }
+  
+  .sim-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+  
+  .footer {
+    margin-top: 60px;
+    font-size: 12px;
+    color: #555;
+  }
+  
+  /* Install banner */
+  .install-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, #2d5a3d 0%, #1f4a2d 100%);
+    color: white;
+    padding: 12px 20px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    z-index: 1000;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
+  }
+  
+  .install-banner.show { display: flex; }
+  
+  .install-banner button {
+    background: #7fffb9;
+    color: #0b2011;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .install-banner .dismiss {
+    background: transparent;
+    color: white;
+    border: 1px solid white;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Aviation Simulators</h1>
+  <p class="subtitle">Training & Reference Tools</p>
+  
+  <div class="simulators">
+    <a href="rc9100.html" class="sim-card">
+      <div class="sim-icon">📻</div>
+      <h2>Dual-Band Radio</h2>
+      <div class="model">Technisonic RC-9100</div>
+      <p>Interactive dual-band VHF/UHF radio control head simulator with full codeplug support.</p>
+    </a>
+    
+    <a href="aa95.html" class="sim-card">
+      <div class="sim-icon">🎧</div>
+      <h2>Audio Control Panel</h2>
+      <div class="model">NAT AA95-729</div>
+      <p>Aircraft audio selector panel with COM/FM/AUX routing, ICS controls, and transmit selection.</p>
+    </a>
+  </div>
+  
+  <div class="footer">
+    Tap a simulator to begin
+  </div>
+</div>
+
+<!-- Install Banner -->
+<div class="install-banner" id="installBanner">
+  <span>Install for offline use</span>
+  <div>
+    <button class="dismiss" id="dismissInstall">Later</button>
+    <button id="installBtn">Install</button>
+  </div>
+</div>
+
+<script>
+/* PWA Install Prompt */
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+
+document.getElementById('installBtn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    console.log(`User response: ${outcome}`);
+    deferredPrompt = null;
+  }
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+document.getElementById('dismissInstall').addEventListener('click', () => {
+  document.getElementById('installBanner').classList.remove('show');
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').classList.remove('show');
+  deferredPrompt = null;
+});
+
+/* Service Worker Registration */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
