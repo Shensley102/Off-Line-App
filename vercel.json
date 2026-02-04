@@ -42,7 +42,7 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api|icons|sw.js|manifest.json).*)",
+      "source": "/((?!api|icons|sw.js|manifest.json|codeplug.json|rc9100.html|aa95.html).*)",
       "destination": "/index.html"
     }
   ]
