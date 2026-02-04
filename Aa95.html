@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>NAT AA95 Audio Panel Simulator</title>
+
+<!-- PWA Meta Tags -->
+<meta name="description" content="NAT AA95-729 Aircraft Audio Control Panel Simulator">
+<meta name="theme-color" content="#1a1a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AA95">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    min-height: 100%;
+    background: #1a1a1a;
+    font-family: Arial, sans-serif;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+    gap: 20px;
+  }
+
+  /* Back link */
+  .back-link {
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: -10px;
+  }
+
+  .back-link a {
+    color: #7fffb9;
+    text-decoration: none;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .back-link a:hover {
+    opacity: 1;
+  }
+
+  .panel-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  /* ===== PANEL BASE ===== */
+  .panel {
+    background: #0a0a0a;
+    border: 2px solid #222;
+    border-radius: 3px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+  }
+
+  .panel-id {
+    position: absolute;
+    color: #c4a44a;
+    font-size: 11px;
+    font-weight: bold;
+  }
+
+  .brand {
+    position: absolute;
+    color: #c4a44a;
+    font-size: 9px;
+    font-weight: bold;
+  }
+
+  .brand::before {
+    content: "✦";
+    margin-right: 2px;
+  }
+
+  /* ===== AA30 TOP PANEL ===== */
+  .aa30 {
+    width: 420px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    gap: 30px;
+  }
+
+  .aa30 .panel-id {
+    top: 8px;
+    left: 12px;
+  }
+
+  .aa30 .brand {
+    top: 8px;
+    right: 12px;
+  }
+
+  /* Large selector knob */
+  .selector-knob-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 40px;
+  }
+
+  .selector-knob {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #aaa 0%, #777 30%, #444 70%, #222 100%);
+    border: 2px solid #111;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+    transition: transform 0.15s ease;
+  }
+
+  .selector-knob::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 16px;
+    background: #111;
+    border-radius: 2px;
+  }
+
+  .selector-positions {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+    font-size: 8px;
+    color: #ccc;
+  }
+
+  /* RX-ON Section */
+  .rx-on-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 30px;
+  }
+
+  .rx-on-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .rx-on-label {
+    font-size: 9px;
+    color: #ccc;
+    border: 1px solid #666;
+    border-bottom: none;
+    padding: 2px 20px 0 20px;
+  }
+
+  .rx-on-numbers {
+    font-size: 7px;
+    color: #ccc;
+    letter-spacing: 8px;
+    padding-left: 4px;
+  }
+
+  .rx-on-toggles {
+    display: flex;
+    gap: 18px;
+  }
+
+  /* ===== AA95 BOTTOM PANEL ===== */
+  .aa95 {
+    width: 420px;
+    padding: 12px 15px 15px 15px;
+  }
+
+  .aa95 .panel-id {
+    top: 8px;
+    left: 12px;
+  }
+
+  .aa95 .brand {
+    bottom: 12px;
+    right: 12px;
+  }
+
+  /* Row layout */
+  .aa95-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .aa95-row:last-child {
+    margin-bottom: 0;
+  }
+
+  /* RX Section header */
+  .rx-header {
+    font-size: 8px;
+    color: #c4a44a;
+    border: 1px solid #c4a44a;
+    border-bottom: none;
+    padding: 1px 6px 0 6px;
+    margin-bottom: 4px;
+    align-self: flex-start;
+    margin-left: 50px;
+    font-weight: bold;
+  }
+
+  /* Routing lines SVG overlay */
+  .routing-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .routing-lines line,
+  .routing-lines polyline,
+  .routing-lines path {
+    stroke: #ffffff;
+    stroke-width: 1.2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ===== TOGGLE SWITCH ===== */
+  .toggle-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    min-height: 60px;
+    justify-content: flex-end;
+  }
+
+  .toggle-label {
+    font-size: 7px;
+    color: #c4a44a;
+    text-align: center;
+    line-height: 1.2;
+    font-weight: bold;
+    min-height: 16px;
+  }
+
+  .toggle-label-top {
+    margin-bottom: 1px;
+  }
+
+  .toggle {
+    width: 14px;
+    height: 42px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  /* Small dark hole in panel - center pivot point */
+  .toggle-base {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #111;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
+  }
+
+  /* Metal stem - hidden */
+  .toggle-stem {
+    display: none;
+  }
+
+  /* Pill-shaped handle - stays vertical, moves up/down */
+  .toggle-handle {
+    position: absolute;
+    width: 9px;
+    height: 24px;
+    border-radius: 4.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 1px 2px 4px rgba(0,0,0,0.6);
+    transition: all 0.1s ease;
+  }
+
+  /* UP position - handle in upper half, crossing through center */
+  .toggle.up .toggle-handle {
+    top: 2px;
+  }
+
+  /* DOWN position - handle in lower half, crossing through center */
+  .toggle.down .toggle-handle {
+    top: 16px;
+  }
+
+  /* Toggle colors - cream/off-white for white toggles */
+  .toggle-handle.white {
+    background: linear-gradient(90deg, 
+      #c8c4b8 0%, 
+      #e8e4d8 25%, 
+      #f5f2e8 50%, 
+      #e8e4d8 75%, 
+      #c8c4b8 100%
+    );
+  }
+
+  .toggle-handle.blue {
+    background: linear-gradient(90deg, 
+      #2255aa 0%, 
+      #3377cc 25%, 
+      #4488dd 50%, 
+      #3377cc 75%, 
+      #2255aa 100%
+    );
+  }
+
+  .toggle-handle.yellow {
+    background: linear-gradient(90deg, 
+      #aa8800 0%, 
+      #ccaa22 25%, 
+      #ddbb44 50%, 
+      #ccaa22 75%, 
+      #aa8800 100%
+    );
+  }
+
+  .toggle-handle.orange {
+    background: linear-gradient(90deg, 
+      #aa6655 0%, 
+      #cc9988 25%, 
+      #ddaa99 50%, 
+      #cc9988 75%, 
+      #aa6655 100%
+    );
+  }
+
+  /* ===== LARGE COM KNOB ===== */
+  .com-knob-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 10px;
+  }
+
+  .com-knob {
+    width: 49px;
+    height: 49px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, #4a4a4a 0%, #333 50%, #1a1a1a 100%);
+    border: 2px solid #0a0a0a;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.1);
+    transition: transform 0.15s ease;
+  }
+
+  /* Diamond/chevron raised section */
+  .com-knob::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle at 35% 35%, #aaa 0%, #888 25%, #666 60%, #444 100%);
+    clip-path: polygon(50% 0%, 85% 35%, 85% 85%, 50% 100%, 15% 85%, 15% 35%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  }
+
+  /* Indicator line on the diamond */
+  .com-knob::after {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 11px;
+    background: linear-gradient(180deg, #111 0%, #000 100%);
+    border-radius: 1px;
+    z-index: 1;
+  }
+
+  .com-knob-label {
+    font-size: 9px;
+    color: #c4a44a;
+    margin-top: 4px;
+    font-weight: bold;
+  }
+
+  .com-positions {
+    display: flex;
+    justify-content: space-between;
+    width: 90px;
+    font-size: 6px;
+    color: #c4a44a;
+    margin-top: 2px;
+    font-weight: bold;
+  }
+
+  /* ===== SMALL KNOBS ===== */
+  .small-knob-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .small-knob {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #555 0%, #333 50%, #1a1a1a 100%);
+    border: 2px solid #0a0a0a;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    transition: transform 0.1s ease;
+  }
+
+  .small-knob::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 8px;
+    background: #000;
+    border-radius: 1px;
+  }
+
+  .small-knob-label {
+    font-size: 6px;
+    color: #c4a44a;
+    text-align: center;
+    line-height: 1.2;
+    font-weight: bold;
+  }
+
+  /* VOX Knob - white surface with text */
+  .vox-knob-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .vox-knob {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff 0%, #e8e8e0 40%, #d0d0c8 80%, #aaa 100%);
+    border: 3px solid #333;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.5);
+    transition: transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .vox-knob-text {
+    font-size: 7px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  /* ===== PUSH BUTTONS ===== */
+  .button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .push-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #111;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    transition: transform 0.05s;
+  }
+
+  .push-btn:active {
+    transform: scale(0.92);
+  }
+
+  .push-btn.white {
+    background: radial-gradient(circle at 35% 35%, #fff 0%, #eee 40%, #ccc 100%);
+  }
+
+  .push-btn.cream {
+    background: radial-gradient(circle at 35% 35%, #fff8e8 0%, #f0e8d0 40%, #d8d0b8 100%);
+  }
+
+  .push-btn.gray {
+    background: radial-gradient(circle at 35% 35%, #888 0%, #555 50%, #333 100%);
+  }
+
+  .push-btn.orange {
+    background: radial-gradient(circle at 35% 35%, #ffaa55 0%, #dd7722 50%, #aa5511 100%);
+  }
+
+  .btn-label {
+    font-size: 6px;
+    color: #c4a44a;
+    text-align: center;
+    line-height: 1.2;
+    font-weight: bold;
+  }
+
+  /* ===== LED INDICATORS ===== */
+  .led-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .led {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid #222;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .led.red.off {
+    background: radial-gradient(circle at 40% 40%, #4a2020 0%, #2a1010 100%);
+  }
+
+  .led.red.on {
+    background: radial-gradient(circle at 35% 35%, #ff6666 0%, #ff2222 60%, #aa0000 100%);
+    box-shadow: 0 0 8px #ff3333, 0 0 16px rgba(255,0,0,0.4);
+  }
+
+  .led.green.off {
+    background: radial-gradient(circle at 40% 40%, #204a20 0%, #102a10 100%);
+  }
+
+  .led.green.on {
+    background: radial-gradient(circle at 35% 35%, #66ff66 0%, #22ff22 60%, #00aa00 100%);
+    box-shadow: 0 0 8px #33ff33, 0 0 16px rgba(0,255,0,0.4);
+  }
+
+  .led-label {
+    font-size: 6px;
+    color: #c4a44a;
+    font-weight: bold;
+  }
+
+  /* ===== SPACERS ===== */
+  .spacer-sm { width: 8px; }
+  .spacer-md { width: 16px; }
+  .spacer-lg { width: 24px; }
+  .flex-grow { flex-grow: 1; }
+
+  /* ===== STATUS DISPLAY ===== */
+  .status {
+    background: #0a1a10;
+    border: 1px solid #041;
+    border-radius: 4px;
+    padding: 12px 16px;
+    width: 420px;
+    font-family: 'Courier New', monospace;
+    color: #7fffb9;
+    font-size: 11px;
+  }
+
+  .status h3 {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    border-bottom: 1px solid #143;
+    padding-bottom: 6px;
+  }
+
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+  }
+
+  .status-label { color: #5fdf99; }
+  .status-value { color: #fff; }
+
+  /* ===== GUIDE ===== */
+  .guide {
+    background: #151515;
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 16px 20px;
+    width: 420px;
+    color: #aaa;
+    font-size: 12px;
+  }
+
+  .guide h2 {
+    color: #7fffb9;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .guide p {
+    margin: 0 0 6px 0;
+    line-height: 1.4;
+  }
+
+  .guide .key {
+    color: #7fffb9;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="back-link">
+  <a href="/">← Back to Simulators</a>
+</div>
+
+<div class="panel-stack">
+  <!-- ===== AA30 TOP PANEL ===== -->
+  <div class="panel aa30">
+    <span class="panel-id">AA30</span>
+    <span class="brand">nat</span>
+
+    <!-- Main Selector Knob -->
+    <div class="selector-knob-area">
+      <div class="selector-knob" id="mainSelector" title="Click or scroll"></div>
+      <div class="selector-positions">
+        <span>OFF</span>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+      </div>
+    </div>
+
+    <div class="flex-grow"></div>
+
+    <!-- RX-ON Section -->
+    <div class="rx-on-section">
+      <div class="rx-on-header">
+        <span class="rx-on-label">RX-ON</span>
+        <span class="rx-on-numbers">1 2 3</span>
+      </div>
+      <div class="rx-on-toggles">
+        <div class="toggle-group">
+          <div class="toggle up" id="tglSatCom">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">SAT<br>COM</span>
+        </div>
+        <div class="toggle-group">
+          <div class="toggle up" id="tgl800">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">800</span>
+        </div>
+        <div class="toggle-group">
+          <div class="toggle down" id="tglVhfLo">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">VHF<br>LO</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AA95 BOTTOM PANEL ===== -->
+  <div class="panel aa95">
+    <span class="panel-id">AA95-729</span>
+    <span class="brand">nat</span>
+
+    <!-- Routing Lines SVG Overlay -->
+    <svg class="routing-lines" viewBox="0 0 420 160" preserveAspectRatio="xMidYMid meet">
+      <!-- RX-ON bracket at top spanning toggles -->
+      <path d="M 28 18 L 28 10 L 116 10 L 116 18" />
+      <text x="60" y="8" fill="#ffffff" font-size="7" font-weight="bold">RX-ON</text>
+      
+      <!-- Vertical drops from RX-ON bracket to each toggle base -->
+      <line x1="28" y1="18" x2="28" y2="48" />
+      <line x1="50" y1="18" x2="50" y2="48" />
+      <line x1="72" y1="18" x2="72" y2="48" />
+      <line x1="94" y1="18" x2="94" y2="48" />
+      <line x1="116" y1="18" x2="116" y2="48" />
+      
+      <!-- Stair-step routing lines: horizontal right, vertical down, diagonal to knob -->
+      
+      <!-- COM2 line: horizontal right, down, diagonal to knob -->
+      <polyline points="50,75 70,75 70,95 130,120" />
+      
+      <!-- FM1 line: horizontal right, down, diagonal to knob -->
+      <polyline points="72,75 95,75 95,90 140,110" />
+      
+      <!-- FM2 line: horizontal right, down, diagonal to knob -->
+      <polyline points="94,75 115,75 115,85 150,100" />
+      
+      <!-- AUX line: horizontal right, down, diagonal to knob with T-junction for PA -->
+      <polyline points="116,75 135,75 135,82 160,92" />
+      <!-- T-junction symbol for PA -->
+      <line x1="135" y1="78" x2="143" y2="78" />
+      <line x1="139" y1="74" x2="139" y2="82" />
+      
+      <!-- NORMAL label - bottom far left below knob -->
+      <text x="58" y="148" fill="#c4a44a" font-size="7" font-weight="bold">NORMAL</text>
+      
+      <!-- LIVE label - bottom left below knob -->
+      <text x="100" y="148" fill="#c4a44a" font-size="8" font-weight="bold">LIVE</text>
+      
+      <!-- Line from knob down to COM1 label -->
+      <polyline points="168,115 168,130 152,142" />
+      
+      <!-- COM1 label - bottom center below knob -->
+      <text x="145" y="152" fill="#c4a44a" font-size="8" font-weight="bold">COM1</text>
+      
+      <!-- MUSIC bracket -->
+      <path d="M 280 18 L 280 10 L 325 10 L 325 18" />
+      <text x="285" y="8" fill="#ffffff" font-size="7" font-weight="bold">MUSIC</text>
+      <line x1="290" y1="18" x2="290" y2="48" />
+    </svg>
+
+    <!-- Top Row: RX Toggles -->
+    <div class="aa95-row">
+      <div class="toggle-group">
+        <div class="toggle up" id="tglCom1">
+          <div class="toggle-handle white"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">COM<br>1</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle up" id="tglCom2">
+          <div class="toggle-handle white"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">COM<br>2</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle down" id="tglFm1">
+          <div class="toggle-handle white"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">FM1</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle down" id="tglFm2">
+          <div class="toggle-handle white"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">FM2</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle down" id="tglAux">
+          <div class="toggle-handle white"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">AUX<br>PA</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle down" id="tglAdf">
+          <div class="toggle-handle blue"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">ADF</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle down" id="tglDplr">
+          <div class="toggle-handle blue"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">DPLR</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle down" id="tglOff">
+          <div class="toggle-handle white"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">OFF</span>
+      </div>
+
+      <div class="spacer-md"></div>
+
+      <div class="toggle-group">
+        <div class="toggle down" id="tglMusic">
+          <div class="toggle-handle blue"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">MUSIC</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle up" id="tglPatOn">
+          <div class="toggle-handle yellow"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">PAT<br>ON</span>
+      </div>
+
+      <div class="spacer-sm"></div>
+
+      <div class="button-group">
+        <div class="push-btn gray" id="btnRx"></div>
+        <span class="btn-label">RX</span>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Main Controls -->
+    <div class="aa95-row" style="margin-top: 8px;">
+      <div class="toggle-group">
+        <span class="toggle-label toggle-label-top">ISO/EMR</span>
+        <div class="toggle up" id="tglIsoEmr">
+          <div class="toggle-handle orange"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+      </div>
+      <div class="toggle-group">
+        <span class="toggle-label toggle-label-top">TX</span>
+        <div class="toggle down" id="tglTx">
+          <div class="toggle-handle white"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+      </div>
+
+      <div class="spacer-sm"></div>
+
+      <!-- LIVE LED - red, unlit by default (lights when transmitting) -->
+      <div class="led-group">
+        <div class="led red off" id="ledLive"></div>
+        <span class="led-label">LIVE</span>
+      </div>
+      
+      <!-- VOX rotary knob with label on knob surface -->
+      <div class="vox-knob-group">
+        <div class="vox-knob" id="knobVox" title="Click or scroll">
+          <span class="vox-knob-text">VOX</span>
+        </div>
+      </div>
+
+      <!-- COM 1 Knob -->
+      <div class="com-knob-area">
+        <div class="com-knob" id="comSelector" title="Click or scroll"></div>
+      </div>
+
+      <div class="toggle-group">
+        <div class="toggle up" id="tglPlt">
+          <div class="toggle-handle blue"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">PLT</span>
+      </div>
+      <div class="toggle-group">
+        <div class="toggle down" id="tglIso">
+          <div class="toggle-handle blue"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">ISO</span>
+      </div>
+
+      <div class="button-group">
+        <div class="push-btn cream" id="btnIcsCall"></div>
+        <span class="btn-label">ICS<br>CALL</span>
+      </div>
+
+      <div class="small-knob-group">
+        <div class="small-knob" id="knobIcsVox" title="Click or scroll"></div>
+        <span class="small-knob-label">ICS<br>VOX</span>
+      </div>
+
+      <div class="toggle-group">
+        <div class="toggle down" id="tglKey">
+          <div class="toggle-handle orange"></div>
+          <div class="toggle-stem"></div>
+          <div class="toggle-base"></div>
+        </div>
+        <span class="toggle-label">KEY</span>
+      </div>
+
+      <div class="small-knob-group">
+        <div class="small-knob" id="knobIcs" title="Click or scroll"></div>
+        <span class="small-knob-label">ICS</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Status Display -->
+<div class="status">
+  <h3>Panel Status</h3>
+  <div class="status-row">
+    <span class="status-label">Main Selector:</span>
+    <span class="status-value" id="statMain">OFF</span>
+  </div>
+  <div class="status-row">
+    <span class="status-label">COM Selector:</span>
+    <span class="status-value" id="statCom">NORMAL</span>
+  </div>
+  <div class="status-row">
+    <span class="status-label">Active RX:</span>
+    <span class="status-value" id="statRx">COM1, COM2</span>
+  </div>
+</div>
+
+<!-- Guide -->
+<div class="guide">
+  <h2>How to Operate</h2>
+  <p><span class="key">Toggles:</span> Click to flip up/down</p>
+  <p><span class="key">Knobs:</span> Click to rotate CW, scroll wheel, or right-click for CCW</p>
+  <p><span class="key">Buttons:</span> Click to activate</p>
+  <p><span class="key">LEDs:</span> Click to toggle on/off</p>
+</div>
+
+<script>
+/* ===== STATE ===== */
+const state = {
+  mainSelector: 0,
+  comSelector: 0,
+  toggles: {},
+  knobs: { icsVox: 0, ics: 0 },
+  leds: { live: false, vox: true }
+};
+
+const mainPositions = ['OFF', '1', '2', '3'];
+const comPositions = ['NORMAL', 'LIVE', 'VOX'];
+
+/* ===== TOGGLES ===== */
+document.querySelectorAll('.toggle').forEach(t => {
+  state.toggles[t.id] = t.classList.contains('up');
+  t.addEventListener('click', () => {
+    const isUp = t.classList.contains('up');
+    t.classList.toggle('up', !isUp);
+    t.classList.toggle('down', isUp);
+    state.toggles[t.id] = !isUp;
+    updateStatus();
+  });
+});
+
+/* ===== MAIN SELECTOR ===== */
+const mainSel = document.getElementById('mainSelector');
+function updateMainKnob() {
+  const angle = state.mainSelector * 45 - 45;
+  mainSel.style.transform = `rotate(${angle}deg)`;
+  updateStatus();
+}
+mainSel.addEventListener('click', () => {
+  state.mainSelector = (state.mainSelector + 1) % 4;
+  updateMainKnob();
+});
+mainSel.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  state.mainSelector = (state.mainSelector + 3) % 4;
+  updateMainKnob();
+});
+mainSel.addEventListener('wheel', e => {
+  e.preventDefault();
+  state.mainSelector = (state.mainSelector + (e.deltaY < 0 ? 1 : 3)) % 4;
+  updateMainKnob();
+});
+
+/* ===== COM SELECTOR ===== */
+const comSel = document.getElementById('comSelector');
+function updateComKnob() {
+  const angle = state.comSelector * 45 - 22;
+  comSel.style.transform = `rotate(${angle}deg)`;
+  updateStatus();
+}
+comSel.addEventListener('click', () => {
+  state.comSelector = (state.comSelector + 1) % 3;
+  updateComKnob();
+});
+comSel.addEventListener('contextmenu', e => {
+  e.preventDefault();
+  state.comSelector = (state.comSelector + 2) % 3;
+  updateComKnob();
+});
+comSel.addEventListener('wheel', e => {
+  e.preventDefault();
+  state.comSelector = (state.comSelector + (e.deltaY < 0 ? 1 : 2)) % 3;
+  updateComKnob();
+});
+
+/* ===== SMALL KNOBS ===== */
+['knobIcsVox', 'knobIcs', 'knobVox'].forEach(id => {
+  const knob = document.getElementById(id);
+  if (!knob) return;
+  const key = id.replace('knob', '').toLowerCase();
+  state.knobs[key] = 0;
+  
+  knob.addEventListener('click', () => {
+    state.knobs[key] = (state.knobs[key] + 30) % 360;
+    knob.style.transform = `rotate(${state.knobs[key]}deg)`;
+  });
+  knob.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    state.knobs[key] = (state.knobs[key] + 330) % 360;
+    knob.style.transform = `rotate(${state.knobs[key]}deg)`;
+  });
+  knob.addEventListener('wheel', e => {
+    e.preventDefault();
+    state.knobs[key] = (state.knobs[key] + (e.deltaY < 0 ? 15 : 345)) % 360;
+    knob.style.transform = `rotate(${state.knobs[key]}deg)`;
+  });
+});
+
+/* ===== LEDs ===== */
+document.querySelectorAll('.led').forEach(led => {
+  led.addEventListener('click', () => {
+    const isOn = led.classList.contains('on');
+    led.classList.toggle('on', !isOn);
+    led.classList.toggle('off', isOn);
+    if (led.id === 'ledLive') state.leds.live = !isOn;
+    if (led.id === 'ledVox') state.leds.vox = !isOn;
+  });
+});
+
+/* ===== PUSH BUTTONS ===== */
+document.querySelectorAll('.push-btn').forEach(btn => {
+  btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.9)');
+  btn.addEventListener('mouseup', () => btn.style.transform = '');
+  btn.addEventListener('mouseleave', () => btn.style.transform = '');
+});
+
+/* ===== STATUS UPDATE ===== */
+function updateStatus() {
+  document.getElementById('statMain').textContent = mainPositions[state.mainSelector];
+  document.getElementById('statCom').textContent = comPositions[state.comSelector];
+  
+  const activeRx = Object.entries(state.toggles)
+    .filter(([id, up]) => up && id.startsWith('tgl'))
+    .map(([id]) => id.replace('tgl', ''))
+    .join(', ');
+  document.getElementById('statRx').textContent = activeRx || 'None';
+}
+
+// Initialize
+updateMainKnob();
+updateComKnob();
+updateStatus();
+
+/* ===== SERVICE WORKER ===== */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
