@@ -209,6 +209,31 @@
     z-index: 1;
   }
 
+  .aa95-row.top-row {
+    justify-content: flex-start;
+    gap: 0;
+  }
+
+  /* Toggle sections for grouped spacing */
+  .toggle-section {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+  }
+
+  .toggle-section.rx-on {
+    gap: 20px;
+  }
+
+  .toggle-section.music {
+    gap: 20px;
+    margin-left: 30px;
+  }
+
+  .rx-button-wrap {
+    margin-left: auto;
+  }
+
   .aa95-row:last-child {
     margin-bottom: 0;
   }
@@ -708,143 +733,153 @@
 
     <!-- Routing Lines SVG Overlay -->
     <svg class="routing-lines" viewBox="0 0 420 160" preserveAspectRatio="xMidYMid meet">
-      <!-- RX-ON bracket at top spanning toggles -->
-      <path d="M 28 18 L 28 10 L 116 10 L 116 18" />
-      <text x="60" y="8" fill="#ffffff" font-size="7" font-weight="bold">RX-ON</text>
+      <!-- RX-ON bracket at top spanning toggles (wider now) -->
+      <path d="M 14 18 L 14 10 L 255 10 L 255 18" />
+      <text x="120" y="8" fill="#ffffff" font-size="7" font-weight="bold">RX-ON</text>
       
       <!-- Vertical drops from RX-ON bracket to each toggle base -->
-      <line x1="28" y1="18" x2="28" y2="48" />
-      <line x1="50" y1="18" x2="50" y2="48" />
-      <line x1="72" y1="18" x2="72" y2="48" />
-      <line x1="94" y1="18" x2="94" y2="48" />
+      <!-- COM1=14, COM2=48, FM1=82, FM2=116, AUX=150, ADF=184, DPLR=218, OFF=252 -->
+      <line x1="14" y1="18" x2="14" y2="48" />
+      <line x1="48" y1="18" x2="48" y2="48" />
+      <line x1="82" y1="18" x2="82" y2="48" />
       <line x1="116" y1="18" x2="116" y2="48" />
+      <line x1="150" y1="18" x2="150" y2="48" />
+      <line x1="184" y1="18" x2="184" y2="48" />
+      <line x1="218" y1="18" x2="218" y2="48" />
+      <line x1="252" y1="18" x2="252" y2="48" />
       
       <!-- Stair-step routing lines: horizontal right, vertical down, diagonal to knob -->
       
       <!-- COM2 line: starts right of label, horizontal right, down, diagonal to knob -->
-      <polyline points="58,75 78,75 78,95 130,120" />
+      <polyline points="58,75 80,75 80,100 145,130" />
       
       <!-- FM1 line: horizontal right, down, diagonal to knob -->
-      <polyline points="72,75 95,75 95,90 140,110" />
+      <polyline points="92,75 112,75 112,95 155,125" />
       
       <!-- FM2 line: horizontal right, down, diagonal to knob -->
-      <polyline points="94,75 115,75 115,85 150,100" />
+      <polyline points="126,75 144,75 144,90 165,118" />
       
       <!-- AUX line: horizontal right, down, diagonal to knob with T-junction for PA -->
-      <polyline points="116,75 135,75 135,82 160,92" />
+      <polyline points="160,75 176,75 176,85 175,110" />
       <!-- T-junction symbol for PA -->
-      <line x1="135" y1="78" x2="143" y2="78" />
-      <line x1="139" y1="74" x2="139" y2="82" />
+      <line x1="176" y1="80" x2="186" y2="80" />
+      <line x1="181" y1="75" x2="181" y2="85" />
       
-      <!-- NORMAL label - bottom far left below knob -->
-      <text x="58" y="148" fill="#c4a44a" font-size="7" font-weight="bold">NORMAL</text>
+      <!-- NORMAL label - bottom left below knob -->
+      <text x="75" y="148" fill="#c4a44a" font-size="7" font-weight="bold">NORMAL</text>
       
-      <!-- LIVE label - bottom left below knob -->
-      <text x="100" y="148" fill="#c4a44a" font-size="8" font-weight="bold">LIVE</text>
+      <!-- LIVE label - bottom center-left below knob -->
+      <text x="120" y="148" fill="#c4a44a" font-size="8" font-weight="bold">LIVE</text>
       
       <!-- Line from knob down to COM1 label -->
-      <polyline points="168,115 168,130 152,142" />
+      <polyline points="185,115 185,130 170,142" />
       
       <!-- COM1 label - bottom center below knob -->
-      <text x="145" y="152" fill="#c4a44a" font-size="8" font-weight="bold">COM1</text>
+      <text x="162" y="152" fill="#c4a44a" font-size="8" font-weight="bold">COM1</text>
       
       <!-- MUSIC bracket -->
-      <path d="M 280 18 L 280 10 L 325 10 L 325 18" />
-      <text x="285" y="8" fill="#ffffff" font-size="7" font-weight="bold">MUSIC</text>
-      <line x1="290" y1="18" x2="290" y2="48" />
+      <path d="M 300 18 L 300 10 L 345 10 L 345 18" />
+      <text x="305" y="8" fill="#ffffff" font-size="7" font-weight="bold">MUSIC</text>
+      <line x1="310" y1="18" x2="310" y2="48" />
+      <line x1="340" y1="18" x2="340" y2="48" />
     </svg>
 
     <!-- Top Row: RX Toggles -->
-    <div class="aa95-row">
-      <div class="toggle-group">
-        <div class="toggle up" id="tglCom1">
-          <div class="toggle-handle white"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+    <div class="aa95-row top-row">
+      <!-- RX-ON Section: COM1 through OFF -->
+      <div class="toggle-section rx-on">
+        <div class="toggle-group">
+          <div class="toggle up" id="tglCom1">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">COM<br>1</span>
         </div>
-        <span class="toggle-label">COM<br>1</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle up" id="tglCom2">
-          <div class="toggle-handle white"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+        <div class="toggle-group">
+          <div class="toggle up" id="tglCom2">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">COM<br>2</span>
         </div>
-        <span class="toggle-label">COM<br>2</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle down" id="tglFm1">
-          <div class="toggle-handle white"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+        <div class="toggle-group">
+          <div class="toggle down" id="tglFm1">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">FM1</span>
         </div>
-        <span class="toggle-label">FM1</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle down" id="tglFm2">
-          <div class="toggle-handle white"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+        <div class="toggle-group">
+          <div class="toggle down" id="tglFm2">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">FM2</span>
         </div>
-        <span class="toggle-label">FM2</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle down" id="tglAux">
-          <div class="toggle-handle white"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+        <div class="toggle-group">
+          <div class="toggle down" id="tglAux">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">AUX<br>PA</span>
         </div>
-        <span class="toggle-label">AUX<br>PA</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle down" id="tglAdf">
-          <div class="toggle-handle blue"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+        <div class="toggle-group">
+          <div class="toggle down" id="tglAdf">
+            <div class="toggle-handle blue"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">ADF</span>
         </div>
-        <span class="toggle-label">ADF</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle down" id="tglDplr">
-          <div class="toggle-handle blue"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+        <div class="toggle-group">
+          <div class="toggle down" id="tglDplr">
+            <div class="toggle-handle blue"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">DPLR</span>
         </div>
-        <span class="toggle-label">DPLR</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle down" id="tglOff">
-          <div class="toggle-handle white"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
+        <div class="toggle-group">
+          <div class="toggle down" id="tglOff">
+            <div class="toggle-handle white"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">OFF</span>
         </div>
-        <span class="toggle-label">OFF</span>
-      </div>
-
-      <div class="spacer-md"></div>
-
-      <div class="toggle-group">
-        <div class="toggle down" id="tglMusic">
-          <div class="toggle-handle blue"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
-        </div>
-        <span class="toggle-label">MUSIC</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle up" id="tglPatOn">
-          <div class="toggle-handle yellow"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
-        </div>
-        <span class="toggle-label">PAT<br>ON</span>
       </div>
 
-      <div class="spacer-sm"></div>
+      <!-- MUSIC Section -->
+      <div class="toggle-section music">
+        <div class="toggle-group">
+          <div class="toggle down" id="tglMusic">
+            <div class="toggle-handle blue"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">MUSIC</span>
+        </div>
+        <div class="toggle-group">
+          <div class="toggle up" id="tglPatOn">
+            <div class="toggle-handle yellow"></div>
+            <div class="toggle-stem"></div>
+            <div class="toggle-base"></div>
+          </div>
+          <span class="toggle-label">PAT<br>ON</span>
+        </div>
+      </div>
 
-      <div class="button-group">
-        <div class="push-btn gray" id="btnRx"></div>
-        <span class="btn-label">RX</span>
+      <!-- RX Button - far right -->
+      <div class="rx-button-wrap">
+        <div class="button-group">
+          <div class="push-btn gray" id="btnRx"></div>
+          <span class="btn-label">RX</span>
+        </div>
       </div>
     </div>
 
