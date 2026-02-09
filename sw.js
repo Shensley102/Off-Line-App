@@ -1,8 +1,10 @@
-const CACHE_NAME = 'rc9100-v4';
+const CACHE_NAME = 'rc9100-v5';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
+  '/radio',
   '/rc9100.html',
+  '/control-panel',
   '/aa95.html',
   '/manifest.json',
   '/codeplug.json',
