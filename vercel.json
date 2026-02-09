@@ -42,7 +42,15 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api|icons|sw.js|manifest.json|codeplug.json|rc9100.html|aa95.html).*)",
+      "source": "/radio",
+      "destination": "/rc9100.html"
+    },
+    {
+      "source": "/control-panel",
+      "destination": "/aa95.html"
+    },
+    {
+      "source": "/((?!api|icons|sw.js|manifest.json|codeplug.json|rc9100.html|aa95.html|radio|control-panel).*)",
       "destination": "/index.html"
     }
   ]
