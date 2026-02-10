@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rc9100-v5';
+const CACHE_NAME = 'rc9100-v6';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
