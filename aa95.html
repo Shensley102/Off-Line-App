@@ -751,23 +751,22 @@
       <!-- Routing lines from labels to COM selector knob -->
       <!-- COM1 = no line -->
       
-      <!-- COM2: from right of label (~x=72, y=68) diagonal to knob area -->
-      <polyline points="72,68 80,68 80,100 165,120" />
+      <!-- COM2: right of label → short horizontal → diagonal to knob top -->
+      <polyline points="72,68 85,68 182,92" />
       
-      <!-- FM1: from right of label (~x=105, y=68) diagonal to knob -->
-      <polyline points="105,68 112,68 112,95 172,118" />
+      <!-- FM1: right of label → short horizontal → diagonal to knob top -->
+      <polyline points="105,68 115,68 184,92" />
       
-      <!-- FM2: from right of label (~x=140, y=68) diagonal to knob -->
-      <polyline points="140,68 148,68 148,92 178,114" />
+      <!-- FM2: right of label → short horizontal → diagonal to knob top -->
+      <polyline points="140,68 148,68 186,92" />
       
-      <!-- AUX: short line straight down to knob center -->
-      <line x1="165" y1="76" x2="165" y2="88" />
-      <line x1="165" y1="88" x2="185" y2="100" />
+      <!-- AUX: nearly straight down to knob top -->
+      <polyline points="172,68 186,90" />
       
-      <!-- PA T-junction below AUX -->
-      <line x1="178" y1="88" x2="178" y2="98" />
-      <line x1="172" y1="93" x2="184" y2="93" />
-      <text x="180" y="102" fill="#c4a44a" font-size="6" font-weight="bold">PA</text>
+      <!-- PA T-junction below/right of AUX line -->
+      <line x1="180" y1="76" x2="192" y2="76" />
+      <line x1="186" y1="70" x2="186" y2="82" />
+      <text x="190" y="72" fill="#c4a44a" font-size="6" font-weight="bold">PA</text>
       
       <!-- NORMAL label - bottom left below knob -->
       <text x="75" y="148" fill="#c4a44a" font-size="7" font-weight="bold">NORMAL</text>
@@ -784,7 +783,7 @@
       <line x1="310" y1="18" x2="310" y2="48" />
       <line x1="340" y1="18" x2="340" y2="48" />
     
-    <!-- GRID OVERLAY - graph paper with axis labels -->
+    <!-- GRID OVERLAY -->
     <svg class="grid-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;" viewBox="0 0 420 160">
       <defs>
         <style>
@@ -796,8 +795,6 @@
           .ax-y { fill: #44ff44; text-anchor: end; }
         </style>
       </defs>
-      
-      <!-- Axis background strips -->
       <rect x="0" y="0" width="420" height="8" fill="rgba(0,0,0,0.75)"/>
       <rect x="0" y="152" width="420" height="8" fill="rgba(0,0,0,0.75)"/>
       <rect x="0" y="0" width="11" height="160" fill="rgba(0,0,0,0.75)"/>
