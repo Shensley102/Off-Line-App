@@ -748,30 +748,26 @@
       <line x1="218" y1="18" x2="218" y2="48" />
       <line x1="252" y1="18" x2="252" y2="48" />
       
-      <!-- ⌐ Right-side bracket indicators for selector position labels -->
+      <!-- Routing lines from labels to COM selector knob -->
+      <!-- COM1 = no line -->
       
-      <!-- COM2 bracket (right side only) -->
-      <path d="M 76,54 L 72,54 L 72,78" />
+      <!-- COM2: from right of label (~x=72, y=68) diagonal to knob area -->
+      <polyline points="72,68 80,68 80,100 165,120" />
       
-      <!-- FM1 bracket (right side only) -->
-      <path d="M 111,54 L 107,54 L 107,78" />
+      <!-- FM1: from right of label (~x=105, y=68) diagonal to knob -->
+      <polyline points="105,68 112,68 112,95 172,118" />
       
-      <!-- FM2 bracket (right side only) -->
-      <path d="M 145,54 L 141,54 L 141,78" />
+      <!-- FM2: from right of label (~x=140, y=68) diagonal to knob -->
+      <polyline points="140,68 148,68 148,92 178,114" />
       
-      <!-- AUX bracket (right side only) -->
-      <path d="M 179,54 L 175,54 L 175,78" />
+      <!-- AUX: short line straight down to knob center -->
+      <line x1="165" y1="76" x2="165" y2="88" />
+      <line x1="165" y1="88" x2="185" y2="100" />
       
-      <!-- Routing lines from bracket edges down to COM selector knob -->
-      <polyline points="72,78 88,78 88,105 160,118" />
-      <polyline points="107,78 120,78 120,100 168,113" />
-      <polyline points="141,78 152,78 152,95 176,106" />
-      <polyline points="175,78 184,78 184,92 185,98" />
-      
-      <!-- PA T-junction to right of AUX routing line -->
-      <line x1="184" y1="83" x2="196" y2="83" />
-      <line x1="190" y1="78" x2="190" y2="88" />
-      <text x="194" y="96" fill="#c4a44a" font-size="6" font-weight="bold">PA</text>
+      <!-- PA T-junction below AUX -->
+      <line x1="178" y1="88" x2="178" y2="98" />
+      <line x1="172" y1="93" x2="184" y2="93" />
+      <text x="180" y="102" fill="#c4a44a" font-size="6" font-weight="bold">PA</text>
       
       <!-- NORMAL label - bottom left below knob -->
       <text x="75" y="148" fill="#c4a44a" font-size="7" font-weight="bold">NORMAL</text>
@@ -779,12 +775,8 @@
       <!-- LIVE label - bottom center-left below knob -->
       <text x="120" y="148" fill="#c4a44a" font-size="8" font-weight="bold">LIVE</text>
       
-      <!-- COM1 bracket below knob (right side only) -->
-      <path d="M 202,138 L 198,138 L 198,155" />
-      <text x="166" y="152" fill="#c4a44a" font-size="8" font-weight="bold">COM1</text>
-      
-      <!-- Route from knob bottom to COM1 bracket -->
-      <line x1="185" y1="125" x2="180" y2="138" />
+      <!-- COM1 label below knob -->
+      <text x="170" y="148" fill="#c4a44a" font-size="8" font-weight="bold">COM1</text>
       
       <!-- MUSIC bracket -->
       <path d="M 300 18 L 300 10 L 345 10 L 345 18" />
