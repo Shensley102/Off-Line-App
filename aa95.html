@@ -17,657 +17,147 @@
 <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-16.png">
 
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html, body {
-    min-height: 100%;
-    background: #1a1a1a;
-    font-family: Arial, sans-serif;
-  }
-
-  body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
-    gap: 20px;
-  }
-
-  /* Back link */
-  .back-link {
-    width: 100%;
-    max-width: 420px;
-    margin-bottom: -10px;
-  }
-
-  .back-link a {
-    color: #7fffb9;
-    text-decoration: none;
-    font-size: 14px;
-    opacity: 0.8;
-    transition: opacity 0.2s;
-  }
-
-  .back-link a:hover {
-    opacity: 1;
-  }
-
-  .panel-stack {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  /* ===== PANEL BASE ===== */
-  .panel {
-    background: #0a0a0a;
-    border: 2px solid #222;
-    border-radius: 3px;
-    position: relative;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.8);
-  }
-
-  .panel-id {
-    position: absolute;
-    color: #c4a44a;
-    font-size: 11px;
-    font-weight: bold;
-  }
-
-  .brand {
-    position: absolute;
-    color: #c4a44a;
-    font-size: 9px;
-    font-weight: bold;
-  }
-
-  .brand::before {
-    content: "✦";
-    margin-right: 2px;
-  }
-
-  /* ===== AA30 TOP PANEL ===== */
-  .aa30 {
-    width: 420px;
-    height: 90px;
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    gap: 30px;
-  }
-
-  .aa30 .panel-id {
-    top: 8px;
-    left: 12px;
-  }
-
-  .aa30 .brand {
-    top: 8px;
-    right: 12px;
-  }
-
-  /* Large selector knob */
-  .selector-knob-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: 40px;
-  }
-
-  .selector-knob {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #aaa 0%, #777 30%, #444 70%, #222 100%);
-    border: 2px solid #111;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.6);
-    transition: transform 0.15s ease;
-  }
-
-  .selector-knob::after {
-    content: '';
-    position: absolute;
-    top: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 16px;
-    background: #111;
-    border-radius: 2px;
-  }
-
-  .selector-positions {
-    display: flex;
-    gap: 12px;
-    margin-top: 4px;
-    font-size: 8px;
-    color: #ccc;
-  }
-
-  /* RX-ON Section */
-  .rx-on-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-left: auto;
-    margin-right: 30px;
-  }
-
-  .rx-on-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 6px;
-  }
-
-  .rx-on-label {
-    font-size: 9px;
-    color: #ccc;
-    border: 1px solid #666;
-    border-bottom: none;
-    padding: 2px 20px 0 20px;
-  }
-
-  .rx-on-numbers {
-    font-size: 7px;
-    color: #ccc;
-    letter-spacing: 8px;
-    padding-left: 4px;
-  }
-
-  .rx-on-toggles {
-    display: flex;
-    gap: 18px;
-  }
-
-  /* ===== AA95 BOTTOM PANEL ===== */
-  .aa95 {
-    width: 420px;
-    padding: 12px 15px 15px 15px;
-  }
-
-  .aa95 .panel-id {
-    top: 8px;
-    left: 12px;
-  }
-
-  .aa95 .brand {
-    bottom: 12px;
-    right: 12px;
-  }
-
-  /* Row layout */
-  .aa95-row {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    margin-bottom: 12px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .aa95-row.top-row {
-    justify-content: flex-start;
-    gap: 0;
-  }
-
-  /* Toggle sections for grouped spacing */
-  .toggle-section {
-    display: flex;
-    align-items: flex-end;
-    gap: 18px;
-  }
-
-  .toggle-section.rx-on {
-    gap: 20px;
-  }
-
-  .toggle-section.music {
-    gap: 20px;
-    margin-left: 30px;
-  }
-
-  .rx-button-wrap {
-    margin-left: auto;
-  }
-
-  .aa95-row:last-child {
-    margin-bottom: 0;
-  }
-
-  /* RX Section header */
-  .rx-header {
-    font-size: 8px;
-    color: #c4a44a;
-    border: 1px solid #c4a44a;
-    border-bottom: none;
-    padding: 1px 6px 0 6px;
-    margin-bottom: 4px;
-    align-self: flex-start;
-    margin-left: 50px;
-    font-weight: bold;
-  }
-
-  /* Routing lines SVG overlay */
-  .routing-lines {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .routing-lines line,
-  .routing-lines polyline,
-  .routing-lines path {
-    stroke: #ffffff;
-    stroke-width: 1.2;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  /* ===== TOGGLE SWITCH ===== */
-  .toggle-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    min-height: 60px;
-    justify-content: flex-end;
-  }
-
-  .toggle-label {
-    font-size: 7px;
-    color: #c4a44a;
-    text-align: center;
-    line-height: 1.2;
-    font-weight: bold;
-    min-height: 16px;
-  }
-
-  .toggle-label-top {
-    margin-bottom: 1px;
-  }
-
-  .toggle {
-    width: 14px;
-    height: 42px;
-    position: relative;
-    cursor: pointer;
-  }
-
-  /* Small dark hole in panel - center pivot point */
-  .toggle-base {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #111;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.8);
-  }
-
-  /* Metal stem - hidden */
-  .toggle-stem {
-    display: none;
-  }
-
-  /* Pill-shaped handle - stays vertical, moves up/down */
-  .toggle-handle {
-    position: absolute;
-    width: 9px;
-    height: 24px;
-    border-radius: 4.5px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 1px 2px 4px rgba(0,0,0,0.6);
-    transition: all 0.1s ease;
-  }
-
-  /* UP position - handle in upper half, crossing through center */
-  .toggle.up .toggle-handle {
-    top: 2px;
-  }
-
-  /* DOWN position - handle in lower half, crossing through center */
-  .toggle.down .toggle-handle {
-    top: 16px;
-  }
-
-  /* Toggle colors - cream/off-white for white toggles */
-  .toggle-handle.white {
-    background: linear-gradient(90deg, 
-      #c8c4b8 0%, 
-      #e8e4d8 25%, 
-      #f5f2e8 50%, 
-      #e8e4d8 75%, 
-      #c8c4b8 100%
-    );
-  }
-
-  .toggle-handle.blue {
-    background: linear-gradient(90deg, 
-      #2255aa 0%, 
-      #3377cc 25%, 
-      #4488dd 50%, 
-      #3377cc 75%, 
-      #2255aa 100%
-    );
-  }
-
-  .toggle-handle.yellow {
-    background: linear-gradient(90deg, 
-      #aa8800 0%, 
-      #ccaa22 25%, 
-      #ddbb44 50%, 
-      #ccaa22 75%, 
-      #aa8800 100%
-    );
-  }
-
-  .toggle-handle.orange {
-    background: linear-gradient(90deg, 
-      #aa6655 0%, 
-      #cc9988 25%, 
-      #ddaa99 50%, 
-      #cc9988 75%, 
-      #aa6655 100%
-    );
-  }
-
-  /* ===== LARGE COM KNOB ===== */
-  .com-knob-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 0 10px;
-  }
-
-  .com-knob {
-    width: 49px;
-    height: 49px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 40% 40%, #4a4a4a 0%, #333 50%, #1a1a1a 100%);
-    border: 2px solid #0a0a0a;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.1);
-    transition: transform 0.15s ease;
-  }
-
-  /* Diamond/chevron raised section */
-  .com-knob::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 32px;
-    height: 32px;
-    background: radial-gradient(circle at 35% 35%, #aaa 0%, #888 25%, #666 60%, #444 100%);
-    clip-path: polygon(50% 0%, 85% 35%, 85% 85%, 50% 100%, 15% 85%, 15% 35%);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-  }
-
-  /* Indicator line on the diamond */
-  .com-knob::after {
-    content: '';
-    position: absolute;
-    top: 9px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3px;
-    height: 11px;
-    background: linear-gradient(180deg, #111 0%, #000 100%);
-    border-radius: 1px;
-    z-index: 1;
-  }
-
-  .com-knob-label {
-    font-size: 9px;
-    color: #c4a44a;
-    margin-top: 4px;
-    font-weight: bold;
-  }
-
-  .com-positions {
-    display: flex;
-    justify-content: space-between;
-    width: 90px;
-    font-size: 6px;
-    color: #c4a44a;
-    margin-top: 2px;
-    font-weight: bold;
-  }
-
-  /* ===== SMALL KNOBS ===== */
-  .small-knob-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .small-knob {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #555 0%, #333 50%, #1a1a1a 100%);
-    border: 2px solid #0a0a0a;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-    transition: transform 0.1s ease;
-  }
-
-  .small-knob::after {
-    content: '';
-    position: absolute;
-    top: 4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 2px;
-    height: 8px;
-    background: #000;
-    border-radius: 1px;
-  }
-
-  .small-knob-label {
-    font-size: 6px;
-    color: #c4a44a;
-    text-align: center;
-    line-height: 1.2;
-    font-weight: bold;
-  }
-
-  /* VOX Knob - white surface with text */
-  .vox-knob-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .vox-knob {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, #fff 0%, #e8e8e0 40%, #d0d0c8 80%, #aaa 100%);
-    border: 3px solid #333;
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.5);
-    transition: transform 0.1s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .vox-knob-text {
-    font-size: 7px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-    pointer-events: none;
-  }
-
-  /* ===== PUSH BUTTONS ===== */
-  .button-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .push-btn {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    cursor: pointer;
-    border: 2px solid #111;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-    transition: transform 0.05s;
-  }
-
-  .push-btn:active {
-    transform: scale(0.92);
-  }
-
-  .push-btn.white {
-    background: radial-gradient(circle at 35% 35%, #fff 0%, #eee 40%, #ccc 100%);
-  }
-
-  .push-btn.cream {
-    background: radial-gradient(circle at 35% 35%, #fff8e8 0%, #f0e8d0 40%, #d8d0b8 100%);
-  }
-
-  .push-btn.gray {
-    background: radial-gradient(circle at 35% 35%, #888 0%, #555 50%, #333 100%);
-  }
-
-  .push-btn.orange {
-    background: radial-gradient(circle at 35% 35%, #ffaa55 0%, #dd7722 50%, #aa5511 100%);
-  }
-
-  .btn-label {
-    font-size: 6px;
-    color: #c4a44a;
-    text-align: center;
-    line-height: 1.2;
-    font-weight: bold;
-  }
-
-  /* ===== LED INDICATORS ===== */
-  .led-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .led {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 1px solid #222;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .led.red.off {
-    background: radial-gradient(circle at 40% 40%, #4a2020 0%, #2a1010 100%);
-  }
-
-  .led.red.on {
-    background: radial-gradient(circle at 35% 35%, #ff6666 0%, #ff2222 60%, #aa0000 100%);
-    box-shadow: 0 0 8px #ff3333, 0 0 16px rgba(255,0,0,0.4);
-  }
-
-  .led.green.off {
-    background: radial-gradient(circle at 40% 40%, #204a20 0%, #102a10 100%);
-  }
-
-  .led.green.on {
-    background: radial-gradient(circle at 35% 35%, #66ff66 0%, #22ff22 60%, #00aa00 100%);
-    box-shadow: 0 0 8px #33ff33, 0 0 16px rgba(0,255,0,0.4);
-  }
-
-  .led-label {
-    font-size: 6px;
-    color: #c4a44a;
-    font-weight: bold;
-  }
-
-  /* ===== SPACERS ===== */
-  .spacer-sm { width: 8px; }
-  .spacer-md { width: 16px; }
-  .spacer-lg { width: 24px; }
-  .flex-grow { flex-grow: 1; }
-
-  /* ===== STATUS DISPLAY ===== */
-  .status {
-    background: #0a1a10;
-    border: 1px solid #041;
-    border-radius: 4px;
-    padding: 12px 16px;
-    width: 420px;
-    font-family: 'Courier New', monospace;
-    color: #7fffb9;
-    font-size: 11px;
-  }
-
-  .status h3 {
-    margin: 0 0 8px 0;
-    font-size: 12px;
-    border-bottom: 1px solid #143;
-    padding-bottom: 6px;
-  }
-
-  .status-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 2px 0;
-  }
-
-  .status-label { color: #5fdf99; }
-  .status-value { color: #fff; }
-
-  /* ===== GUIDE ===== */
-  .guide {
-    background: #151515;
-    border: 1px solid #333;
-    border-radius: 6px;
-    padding: 16px 20px;
-    width: 420px;
-    color: #aaa;
-    font-size: 12px;
-  }
-
-  .guide h2 {
-    color: #7fffb9;
-    font-size: 14px;
-    margin: 0 0 10px 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .guide p {
-    margin: 0 0 6px 0;
-    line-height: 1.4;
-  }
-
-  .guide .key {
-    color: #7fffb9;
-    font-weight: bold;
-  }
+:root{ --w:940px; --h:314px; }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100%;
+  background: #222;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  padding: max(20px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  gap: 20px;
+}
+
+/* Back link */
+.back-link {
+  width: 100%;
+  max-width: var(--w);
+}
+
+.back-link a {
+  color: #7fffb9;
+  text-decoration: none;
+  font-size: 14px;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.back-link a:hover { opacity: 1; }
+
+/* Panel wrapper — scales to viewport */
+.panel-wrap {
+  width: 100%;
+  max-width: var(--w);
+}
+
+.panel {
+  width: 100%;
+  aspect-ratio: 940 / 314;
+  position: relative;
+  user-select: none;
+  touch-action: none;
+}
+
+svg { width: 100%; height: 100%; }
+
+/* invisible hotspots */
+.hotspot { fill: rgba(0,0,0,0); cursor: pointer; }
+
+/* ===== REALISTIC LEVER ===== */
+.lever {
+  pointer-events: none;
+  transform-origin: center 20%;
+  transition:
+    transform 120ms cubic-bezier(.2,.8,.4,1),
+    filter 120ms linear;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,.35));
+}
+
+.lever.on {
+  transform:
+    translateY(10px)
+    rotateX(18deg);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.6));
+}
+
+.lever.press {
+  transform: translateY(4px);
+}
+
+.lever rect:first-child {
+  fill: url(#leverGrad);
+}
+
+/* selector debug needle */
+.needle { opacity: 0; }
+.debug .needle { opacity: 1; }
+
+/* ===== STATUS DISPLAY ===== */
+.status {
+  background: #0a1a10;
+  border: 1px solid #041;
+  border-radius: 4px;
+  padding: 12px 16px;
+  width: 100%;
+  max-width: var(--w);
+  font-family: 'Courier New', monospace;
+  color: #7fffb9;
+  font-size: 11px;
+}
+
+.status h3 {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  border-bottom: 1px solid #143;
+  padding-bottom: 6px;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 0;
+}
+
+.status-label { color: #5fdf99; }
+.status-value { color: #fff; }
+
+/* ===== GUIDE ===== */
+.guide {
+  background: #151515;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 16px 20px;
+  width: 100%;
+  max-width: var(--w);
+  color: #aaa;
+  font-size: 12px;
+}
+
+.guide h2 {
+  color: #7fffb9;
+  font-size: 14px;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.guide p {
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+
+.guide .key {
+  color: #7fffb9;
+  font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -676,430 +166,71 @@
   <a href="/">← HOME</a>
 </div>
 
-<div class="panel-stack">
-  <!-- ===== AA30 TOP PANEL ===== -->
-  <div class="panel aa30">
+<div class="panel-wrap">
+  <div class="panel" id="panel">
+  <svg viewBox="0 0 940 314">
 
-    <!-- Main Selector Knob -->
-    <div class="selector-knob-area">
-      <div class="selector-knob" id="mainSelector" title="Click or scroll"></div>
-      <div class="selector-positions">
-        <span>OFF</span>
-        <span>1</span>
-        <span>2</span>
-        <span>3</span>
-      </div>
-    </div>
+  <defs>
+  <linearGradient id="leverGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%"   stop-color="#ffffff"/>
+    <stop offset="60%"  stop-color="#e9e9e9"/>
+    <stop offset="100%" stop-color="#dcdcdc"/>
+  </linearGradient>
+  </defs>
 
-    <div class="flex-grow"></div>
+  <!-- BACKGROUND -->
+  <image href="control-panel.jpg" x="0" y="0" width="940" height="314"/>
 
-    <!-- RX-ON Section -->
-    <div class="rx-on-section">
-      <div class="rx-on-header">
-        <span class="rx-on-label">RX-ON</span>
-        <span class="rx-on-numbers">1 2 3</span>
-      </div>
-      <div class="rx-on-toggles">
-        <div class="toggle-group">
-          <div class="toggle up" id="tglSatCom">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">SAT<br>COM</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle up" id="tgl800">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">800</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle down" id="tglVhfLo">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">VHF<br>LO</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- ===== LEVER OVERLAYS ===== -->
 
-  <!-- ===== AA95 BOTTOM PANEL ===== -->
-  <div class="panel aa95">
+  <g id="lever-com1" class="lever">
+    <rect x="147" y="18" width="26" height="62" rx="11"/>
+  </g>
 
-    <!-- Routing Lines SVG Overlay -->
-    <svg class="routing-lines" viewBox="0 0 420 160" preserveAspectRatio="xMidYMid meet">
-      <!-- RX-ON bracket at top spanning toggles (wider now) -->
-      <path d="M 14 18 L 14 10 L 255 10 L 255 18" />
-      <text x="120" y="8" fill="#ffffff" font-size="7" font-weight="bold">RX-ON</text>
-      
-      <!-- Vertical drops from RX-ON bracket to each toggle base -->
-      <!-- COM1=14, COM2=48, FM1=82, FM2=116, AUX=150, ADF=184, DPLR=218, OFF=252 -->
-      <line x1="14" y1="18" x2="14" y2="48" />
-      <line x1="48" y1="18" x2="48" y2="48" />
-      <line x1="82" y1="18" x2="82" y2="48" />
-      <line x1="116" y1="18" x2="116" y2="48" />
-      <line x1="150" y1="18" x2="150" y2="48" />
-      <line x1="184" y1="18" x2="184" y2="48" />
-      <line x1="218" y1="18" x2="218" y2="48" />
-      <line x1="252" y1="18" x2="252" y2="48" />
-      
-      <!-- Routing lines from labels to COM selector knob -->
-      <!-- COM1 = no line -->
-      
-      <!-- COM2: right of label → short horizontal → diagonal to knob top -->
-      <polyline points="72,68 85,68 182,92" />
-      
-      <!-- FM1: right of label → short horizontal → diagonal to knob top -->
-      <polyline points="105,68 115,68 184,92" />
-      
-      <!-- FM2: right of label → short horizontal → diagonal to knob top -->
-      <polyline points="140,68 148,68 186,92" />
-      
-      <!-- AUX: nearly straight down to knob top -->
-      <polyline points="172,68 186,90" />
-      
-      <!-- PA T-junction below/right of AUX line -->
-      <line x1="180" y1="76" x2="192" y2="76" />
-      <line x1="186" y1="70" x2="186" y2="82" />
-      <text x="190" y="72" fill="#c4a44a" font-size="6" font-weight="bold">PA</text>
-      
-      <!-- NORMAL label - bottom left below knob -->
-      <text x="75" y="148" fill="#c4a44a" font-size="7" font-weight="bold">NORMAL</text>
-      
-      <!-- LIVE label - bottom center-left below knob -->
-      <text x="120" y="148" fill="#c4a44a" font-size="8" font-weight="bold">LIVE</text>
-      
-      <!-- COM1 label below knob -->
-      <text x="170" y="148" fill="#c4a44a" font-size="8" font-weight="bold">COM1</text>
-      
-      <!-- MUSIC bracket -->
-      <path d="M 300 18 L 300 10 L 345 10 L 345 18" />
-      <text x="305" y="8" fill="#ffffff" font-size="7" font-weight="bold">MUSIC</text>
-      <line x1="310" y1="18" x2="310" y2="48" />
-      <line x1="340" y1="18" x2="340" y2="48" />
-    
-    <!-- GRID OVERLAY -->
-    <svg class="grid-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;" viewBox="0 0 420 160">
-      <defs>
-        <style>
-          .grid-major { stroke: rgba(255,255,255,0.5); stroke-width: 0.8; }
-          .grid-mid { stroke: rgba(255,255,255,0.25); stroke-width: 0.5; }
-          .grid-minor { stroke: rgba(255,255,255,0.12); stroke-width: 0.3; }
-          .ax { font-family: monospace; font-weight: bold; font-size: 5px; }
-          .ax-x { fill: #ff4444; text-anchor: middle; }
-          .ax-y { fill: #44ff44; text-anchor: end; }
-        </style>
-      </defs>
-      <rect x="0" y="0" width="420" height="8" fill="rgba(0,0,0,0.75)"/>
-      <rect x="0" y="152" width="420" height="8" fill="rgba(0,0,0,0.75)"/>
-      <rect x="0" y="0" width="11" height="160" fill="rgba(0,0,0,0.75)"/>
-      <line x1="10" y1="8" x2="10" y2="152" class="grid-minor"/>
-      <line x1="30" y1="8" x2="30" y2="152" class="grid-minor"/>
-      <line x1="50" y1="8" x2="50" y2="152" class="grid-minor"/>
-      <line x1="70" y1="8" x2="70" y2="152" class="grid-minor"/>
-      <line x1="90" y1="8" x2="90" y2="152" class="grid-minor"/>
-      <line x1="110" y1="8" x2="110" y2="152" class="grid-minor"/>
-      <line x1="130" y1="8" x2="130" y2="152" class="grid-minor"/>
-      <line x1="150" y1="8" x2="150" y2="152" class="grid-minor"/>
-      <line x1="170" y1="8" x2="170" y2="152" class="grid-minor"/>
-      <line x1="190" y1="8" x2="190" y2="152" class="grid-minor"/>
-      <line x1="210" y1="8" x2="210" y2="152" class="grid-minor"/>
-      <line x1="230" y1="8" x2="230" y2="152" class="grid-minor"/>
-      <line x1="250" y1="8" x2="250" y2="152" class="grid-minor"/>
-      <line x1="270" y1="8" x2="270" y2="152" class="grid-minor"/>
-      <line x1="290" y1="8" x2="290" y2="152" class="grid-minor"/>
-      <line x1="310" y1="8" x2="310" y2="152" class="grid-minor"/>
-      <line x1="330" y1="8" x2="330" y2="152" class="grid-minor"/>
-      <line x1="350" y1="8" x2="350" y2="152" class="grid-minor"/>
-      <line x1="370" y1="8" x2="370" y2="152" class="grid-minor"/>
-      <line x1="390" y1="8" x2="390" y2="152" class="grid-minor"/>
-      <line x1="410" y1="8" x2="410" y2="152" class="grid-minor"/>
-      <line x1="11" y1="10" x2="420" y2="10" class="grid-minor"/>
-      <line x1="11" y1="30" x2="420" y2="30" class="grid-minor"/>
-      <line x1="11" y1="50" x2="420" y2="50" class="grid-minor"/>
-      <line x1="11" y1="70" x2="420" y2="70" class="grid-minor"/>
-      <line x1="11" y1="90" x2="420" y2="90" class="grid-minor"/>
-      <line x1="11" y1="110" x2="420" y2="110" class="grid-minor"/>
-      <line x1="11" y1="130" x2="420" y2="130" class="grid-minor"/>
-      <line x1="11" y1="150" x2="420" y2="150" class="grid-minor"/>
-      <line x1="20" y1="8" x2="20" y2="152" class="grid-mid"/>
-      <line x1="40" y1="8" x2="40" y2="152" class="grid-mid"/>
-      <line x1="60" y1="8" x2="60" y2="152" class="grid-mid"/>
-      <line x1="80" y1="8" x2="80" y2="152" class="grid-mid"/>
-      <line x1="120" y1="8" x2="120" y2="152" class="grid-mid"/>
-      <line x1="140" y1="8" x2="140" y2="152" class="grid-mid"/>
-      <line x1="160" y1="8" x2="160" y2="152" class="grid-mid"/>
-      <line x1="180" y1="8" x2="180" y2="152" class="grid-mid"/>
-      <line x1="220" y1="8" x2="220" y2="152" class="grid-mid"/>
-      <line x1="240" y1="8" x2="240" y2="152" class="grid-mid"/>
-      <line x1="260" y1="8" x2="260" y2="152" class="grid-mid"/>
-      <line x1="280" y1="8" x2="280" y2="152" class="grid-mid"/>
-      <line x1="320" y1="8" x2="320" y2="152" class="grid-mid"/>
-      <line x1="340" y1="8" x2="340" y2="152" class="grid-mid"/>
-      <line x1="360" y1="8" x2="360" y2="152" class="grid-mid"/>
-      <line x1="380" y1="8" x2="380" y2="152" class="grid-mid"/>
-      <line x1="11" y1="20" x2="420" y2="20" class="grid-mid"/>
-      <line x1="11" y1="40" x2="420" y2="40" class="grid-mid"/>
-      <line x1="11" y1="60" x2="420" y2="60" class="grid-mid"/>
-      <line x1="11" y1="80" x2="420" y2="80" class="grid-mid"/>
-      <line x1="11" y1="120" x2="420" y2="120" class="grid-mid"/>
-      <line x1="11" y1="140" x2="420" y2="140" class="grid-mid"/>
-      <line x1="0" y1="8" x2="0" y2="152" class="grid-major"/>
-      <line x1="100" y1="8" x2="100" y2="152" class="grid-major"/>
-      <line x1="200" y1="8" x2="200" y2="152" class="grid-major"/>
-      <line x1="300" y1="8" x2="300" y2="152" class="grid-major"/>
-      <line x1="400" y1="8" x2="400" y2="152" class="grid-major"/>
-      <line x1="11" y1="0" x2="420" y2="0" class="grid-major"/>
-      <line x1="11" y1="100" x2="420" y2="100" class="grid-major"/>
-      <text x="0" y="6" class="ax ax-x">0</text>
-      <text x="0" y="158" class="ax ax-x">0</text>
-      <text x="20" y="6" class="ax ax-x">20</text>
-      <text x="20" y="158" class="ax ax-x">20</text>
-      <text x="40" y="6" class="ax ax-x">40</text>
-      <text x="40" y="158" class="ax ax-x">40</text>
-      <text x="60" y="6" class="ax ax-x">60</text>
-      <text x="60" y="158" class="ax ax-x">60</text>
-      <text x="80" y="6" class="ax ax-x">80</text>
-      <text x="80" y="158" class="ax ax-x">80</text>
-      <text x="100" y="6" class="ax ax-x">100</text>
-      <text x="100" y="158" class="ax ax-x">100</text>
-      <text x="120" y="6" class="ax ax-x">120</text>
-      <text x="120" y="158" class="ax ax-x">120</text>
-      <text x="140" y="6" class="ax ax-x">140</text>
-      <text x="140" y="158" class="ax ax-x">140</text>
-      <text x="160" y="6" class="ax ax-x">160</text>
-      <text x="160" y="158" class="ax ax-x">160</text>
-      <text x="180" y="6" class="ax ax-x">180</text>
-      <text x="180" y="158" class="ax ax-x">180</text>
-      <text x="200" y="6" class="ax ax-x">200</text>
-      <text x="200" y="158" class="ax ax-x">200</text>
-      <text x="220" y="6" class="ax ax-x">220</text>
-      <text x="220" y="158" class="ax ax-x">220</text>
-      <text x="240" y="6" class="ax ax-x">240</text>
-      <text x="240" y="158" class="ax ax-x">240</text>
-      <text x="260" y="6" class="ax ax-x">260</text>
-      <text x="260" y="158" class="ax ax-x">260</text>
-      <text x="280" y="6" class="ax ax-x">280</text>
-      <text x="280" y="158" class="ax ax-x">280</text>
-      <text x="300" y="6" class="ax ax-x">300</text>
-      <text x="300" y="158" class="ax ax-x">300</text>
-      <text x="320" y="6" class="ax ax-x">320</text>
-      <text x="320" y="158" class="ax ax-x">320</text>
-      <text x="340" y="6" class="ax ax-x">340</text>
-      <text x="340" y="158" class="ax ax-x">340</text>
-      <text x="360" y="6" class="ax ax-x">360</text>
-      <text x="360" y="158" class="ax ax-x">360</text>
-      <text x="380" y="6" class="ax ax-x">380</text>
-      <text x="380" y="158" class="ax ax-x">380</text>
-      <text x="400" y="6" class="ax ax-x">400</text>
-      <text x="400" y="158" class="ax ax-x">400</text>
-      <text x="420" y="6" class="ax ax-x">420</text>
-      <text x="420" y="158" class="ax ax-x">420</text>
-      <text x="10" y="2" class="ax ax-y">0</text>
-      <text x="10" y="12" class="ax ax-y">10</text>
-      <text x="10" y="22" class="ax ax-y">20</text>
-      <text x="10" y="32" class="ax ax-y">30</text>
-      <text x="10" y="42" class="ax ax-y">40</text>
-      <text x="10" y="52" class="ax ax-y">50</text>
-      <text x="10" y="62" class="ax ax-y">60</text>
-      <text x="10" y="72" class="ax ax-y">70</text>
-      <text x="10" y="82" class="ax ax-y">80</text>
-      <text x="10" y="92" class="ax ax-y">90</text>
-      <text x="10" y="102" class="ax ax-y">100</text>
-      <text x="10" y="112" class="ax ax-y">110</text>
-      <text x="10" y="122" class="ax ax-y">120</text>
-      <text x="10" y="132" class="ax ax-y">130</text>
-      <text x="10" y="142" class="ax ax-y">140</text>
-      <text x="10" y="152" class="ax ax-y">150</text>
-      <text x="10" y="162" class="ax ax-y">160</text>
-    </svg>
+  <g id="lever-com2" class="lever">
+    <rect x="227" y="18" width="26" height="62" rx="11"/>
+  </g>
 
-</svg>
+  <g id="lever-fm1" class="lever">
+    <rect x="307" y="18" width="26" height="62" rx="11"/>
+  </g>
 
-    <!-- Top Row: RX Toggles -->
-    <div class="aa95-row top-row">
-      <!-- RX-ON Section: COM1 through OFF -->
-      <div class="toggle-section rx-on">
-        <div class="toggle-group">
-          <div class="toggle up" id="tglCom1">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">COM<br>1</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle up" id="tglCom2">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">COM<br>2</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle down" id="tglFm1">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">FM1</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle down" id="tglFm2">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">FM2</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle down" id="tglAux">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">AUX<br>PA</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle down" id="tglAdf">
-            <div class="toggle-handle blue"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">ADF</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle down" id="tglDplr">
-            <div class="toggle-handle blue"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">DPLR</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle down" id="tglOff">
-            <div class="toggle-handle white"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">OFF</span>
-        </div>
-      </div>
+  <g id="lever-fm2" class="lever">
+    <rect x="387" y="18" width="26" height="62" rx="11"/>
+  </g>
 
-      <!-- MUSIC Section -->
-      <div class="toggle-section music">
-        <div class="toggle-group">
-          <div class="toggle down" id="tglMusic">
-            <div class="toggle-handle blue"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">MUSIC</span>
-        </div>
-        <div class="toggle-group">
-          <div class="toggle up" id="tglPatOn">
-            <div class="toggle-handle yellow"></div>
-            <div class="toggle-stem"></div>
-            <div class="toggle-base"></div>
-          </div>
-          <span class="toggle-label">PAT<br>ON</span>
-        </div>
-      </div>
+  <g id="lever-aux" class="lever">
+    <rect x="467" y="18" width="26" height="62" rx="11"/>
+  </g>
 
-      <!-- RX Button - far right -->
-      <div class="rx-button-wrap">
-        <div class="button-group">
-          <div class="push-btn gray" id="btnRx"></div>
-          <span class="btn-label">RX</span>
-        </div>
-      </div>
-    </div>
+  <!-- ISO / KEY -->
+  <g id="lever-iso" class="lever">
+    <rect x="86" y="188" width="30" height="72" rx="13"/>
+  </g>
 
-    <!-- Bottom Row: Main Controls -->
-    <div class="aa95-row" style="margin-top: 8px;">
-      <div class="toggle-group">
-        <span class="toggle-label toggle-label-top">ISO/EMR</span>
-        <div class="toggle up" id="tglIsoEmr">
-          <div class="toggle-handle orange"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
-        </div>
-      </div>
-      <div class="toggle-group">
-        <span class="toggle-label toggle-label-top">TX</span>
-        <div class="toggle down" id="tglTx">
-          <div class="toggle-handle white"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
-        </div>
-      </div>
+  <g id="lever-key" class="lever">
+    <rect x="753" y="188" width="30" height="72" rx="13"/>
+  </g>
 
-      <div class="spacer-sm"></div>
+  <!-- selector debug needle -->
+  <line id="needle" class="needle" x1="470" y1="215" x2="560" y2="215"
+  stroke="white" stroke-width="3"/>
 
-      <!-- LIVE LED - red, unlit by default (lights when transmitting) -->
-      <div class="led-group">
-        <div class="led red off" id="ledLive"></div>
-        <span class="led-label">LIVE</span>
-      </div>
-      
-      <!-- VOX rotary knob with label on knob surface -->
-      <div class="vox-knob-group">
-        <div class="vox-knob" id="knobVox" title="Click or scroll">
-          <span class="vox-knob-text">VOX</span>
-        </div>
-      </div>
+  <!-- ===== HOTSPOTS ===== -->
 
-      <!-- COM 1 Knob -->
-      <div class="com-knob-area">
-        <div class="com-knob" id="comSelector" title="Click or scroll"></div>
-      </div>
+  <rect class="hotspot" id="com1_toggle" x="120" y="5"  width="80" height="100"/>
+  <rect class="hotspot" id="com2_toggle" x="200" y="5"  width="80" height="100"/>
+  <rect class="hotspot" id="fm1_toggle"  x="280" y="5"  width="80" height="100"/>
+  <rect class="hotspot" id="fm2_toggle"  x="360" y="5"  width="80" height="100"/>
+  <rect class="hotspot" id="aux_toggle"  x="440" y="5"  width="80" height="100"/>
 
-      <div class="toggle-group">
-        <div class="toggle up" id="tglPlt">
-          <div class="toggle-handle blue"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
-        </div>
-        <span class="toggle-label">PLT</span>
-      </div>
-      <div class="toggle-group">
-        <div class="toggle down" id="tglIso">
-          <div class="toggle-handle blue"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
-        </div>
-        <span class="toggle-label">ISO</span>
-      </div>
+  <rect class="hotspot" id="iso_emr"    x="40"  y="160" width="120" height="140"/>
+  <rect class="hotspot" id="key_toggle" x="720" y="160" width="90"  height="140"/>
 
-      <div class="button-group">
-        <div class="push-btn cream" id="btnIcsCall"></div>
-        <span class="btn-label">ICS<br>CALL</span>
-      </div>
+  <!-- selector -->
+  <rect class="hotspot" id="selector_knob" x="350" y="60" width="260" height="240"/>
 
-      <div class="small-knob-group">
-        <div class="small-knob" id="knobIcsVox" title="Click or scroll"></div>
-        <span class="small-knob-label">ICS<br>VOX</span>
-      </div>
-
-      <div class="toggle-group">
-        <div class="toggle down" id="tglKey">
-          <div class="toggle-handle orange"></div>
-          <div class="toggle-stem"></div>
-          <div class="toggle-base"></div>
-        </div>
-        <span class="toggle-label">KEY</span>
-      </div>
-
-      <div class="small-knob-group">
-        <div class="small-knob" id="knobIcs" title="Click or scroll"></div>
-        <span class="small-knob-label">ICS</span>
-      </div>
-    </div>
+  </svg>
   </div>
 </div>
 
@@ -1107,153 +238,144 @@
 <div class="status">
   <h3>Panel Status</h3>
   <div class="status-row">
-    <span class="status-label">Main Selector:</span>
-    <span class="status-value" id="statMain">OFF</span>
-  </div>
-  <div class="status-row">
-    <span class="status-label">COM Selector:</span>
-    <span class="status-value" id="statCom">NORMAL</span>
+    <span class="status-label">Selector:</span>
+    <span class="status-value" id="statSelector">COM1</span>
   </div>
   <div class="status-row">
     <span class="status-label">Active RX:</span>
-    <span class="status-value" id="statRx">COM1, COM2</span>
+    <span class="status-value" id="statRx">None</span>
+  </div>
+  <div class="status-row">
+    <span class="status-label">ISO/EMR:</span>
+    <span class="status-value" id="statIso">OFF</span>
+  </div>
+  <div class="status-row">
+    <span class="status-label">KEY:</span>
+    <span class="status-value" id="statKey">OFF</span>
   </div>
 </div>
 
 <!-- Guide -->
 <div class="guide">
   <h2>How to Operate</h2>
-  <p><span class="key">Toggles:</span> Click to flip up/down</p>
-  <p><span class="key">Knobs:</span> Click to rotate CW, scroll wheel, or right-click for CCW</p>
-  <p><span class="key">Buttons:</span> Click to activate</p>
-  <p><span class="key">LEDs:</span> Click to toggle on/off</p>
+  <p><span class="key">RX Toggles (top row):</span> Click COM1, COM2, FM1, FM2, or AUX to toggle receive on/off</p>
+  <p><span class="key">ISO/EMR (lower left):</span> Click to toggle isolation / emergency</p>
+  <p><span class="key">KEY (lower right):</span> Click to toggle keying</p>
+  <p><span class="key">Selector Knob (center):</span> Click and drag to snap between COM1 → FM → AUX → PA</p>
 </div>
 
 <script>
-/* ===== STATE ===== */
-const state = {
-  mainSelector: 0,
-  comSelector: 0,
-  toggles: {},
-  knobs: { icsVox: 0, ics: 0 },
-  leds: { live: false, vox: true }
+const levers = {
+  com1_toggle: "lever-com1",
+  com2_toggle: "lever-com2",
+  fm1_toggle:  "lever-fm1",
+  fm2_toggle:  "lever-fm2",
+  aux_toggle:  "lever-aux",
+  iso_emr:     "lever-iso",
+  key_toggle:  "lever-key"
 };
 
-const mainPositions = ['OFF', '1', '2', '3'];
-const comPositions = ['NORMAL', 'LIVE', 'VOX'];
+const state = {};
+let currentSelector = "COM1";
 
-/* ===== TOGGLES ===== */
-document.querySelectorAll('.toggle').forEach(t => {
-  state.toggles[t.id] = t.classList.contains('up');
-  t.addEventListener('click', () => {
-    const isUp = t.classList.contains('up');
-    t.classList.toggle('up', !isUp);
-    t.classList.toggle('down', isUp);
-    state.toggles[t.id] = !isUp;
-    updateStatus();
-  });
-});
+function emit(d) {
+  window.dispatchEvent(new CustomEvent("panel:change", { detail: d }));
+}
 
-/* ===== MAIN SELECTOR ===== */
-const mainSel = document.getElementById('mainSelector');
-function updateMainKnob() {
-  const angle = state.mainSelector * 45 - 45;
-  mainSel.style.transform = `rotate(${angle}deg)`;
+function flip(id) {
+  const next = !state[id];
+  state[id] = next;
+
+  const el = document.getElementById(levers[id]);
+  if (el) el.classList.toggle("on", next);
+
+  emit({ type: "toggle", id, value: next });
   updateStatus();
 }
-mainSel.addEventListener('click', () => {
-  state.mainSelector = (state.mainSelector + 1) % 4;
-  updateMainKnob();
-});
-mainSel.addEventListener('contextmenu', e => {
-  e.preventDefault();
-  state.mainSelector = (state.mainSelector + 3) % 4;
-  updateMainKnob();
-});
-mainSel.addEventListener('wheel', e => {
-  e.preventDefault();
-  state.mainSelector = (state.mainSelector + (e.deltaY < 0 ? 1 : 3)) % 4;
-  updateMainKnob();
+
+/* tactile press */
+document.querySelectorAll(".hotspot").forEach(h => {
+  const id = h.id;
+
+  if (levers[id]) {
+    h.onpointerdown = () => {
+      const l = document.getElementById(levers[id]);
+      l.classList.add("press");
+    };
+    h.onpointerup = () => {
+      const l = document.getElementById(levers[id]);
+      l.classList.remove("press");
+      flip(id);
+    };
+  }
 });
 
-/* ===== COM SELECTOR ===== */
-const comSel = document.getElementById('comSelector');
-function updateComKnob() {
-  const angle = state.comSelector * 45 - 22;
-  comSel.style.transform = `rotate(${angle}deg)`;
-  updateStatus();
+/* ===== SELECTOR DETENTS ===== */
+
+const detents = [
+  { name: "COM1", deg: -120 },
+  { name: "FM",   deg: -40  },
+  { name: "AUX",  deg:  40  },
+  { name: "PA",   deg:  120 }
+];
+
+const cx = 470, cy = 215;
+
+function angle(x, y) {
+  return Math.atan2(y - cy, x - cx) * 180 / Math.PI;
 }
-comSel.addEventListener('click', () => {
-  state.comSelector = (state.comSelector + 1) % 3;
-  updateComKnob();
-});
-comSel.addEventListener('contextmenu', e => {
-  e.preventDefault();
-  state.comSelector = (state.comSelector + 2) % 3;
-  updateComKnob();
-});
-comSel.addEventListener('wheel', e => {
-  e.preventDefault();
-  state.comSelector = (state.comSelector + (e.deltaY < 0 ? 1 : 2)) % 3;
-  updateComKnob();
-});
 
-/* ===== SMALL KNOBS ===== */
-['knobIcsVox', 'knobIcs', 'knobVox'].forEach(id => {
-  const knob = document.getElementById(id);
-  if (!knob) return;
-  const key = id.replace('knob', '').toLowerCase();
-  state.knobs[key] = 0;
-  
-  knob.addEventListener('click', () => {
-    state.knobs[key] = (state.knobs[key] + 30) % 360;
-    knob.style.transform = `rotate(${state.knobs[key]}deg)`;
+function nearest(a) {
+  let best = 0, d = 999;
+  detents.forEach((s, i) => {
+    const diff = Math.abs(a - s.deg);
+    if (diff < d) { d = diff; best = i; }
   });
-  knob.addEventListener('contextmenu', e => {
-    e.preventDefault();
-    state.knobs[key] = (state.knobs[key] + 330) % 360;
-    knob.style.transform = `rotate(${state.knobs[key]}deg)`;
-  });
-  knob.addEventListener('wheel', e => {
-    e.preventDefault();
-    state.knobs[key] = (state.knobs[key] + (e.deltaY < 0 ? 15 : 345)) % 360;
-    knob.style.transform = `rotate(${state.knobs[key]}deg)`;
-  });
-});
+  return best;
+}
 
-/* ===== LEDs ===== */
-document.querySelectorAll('.led').forEach(led => {
-  led.addEventListener('click', () => {
-    const isOn = led.classList.contains('on');
-    led.classList.toggle('on', !isOn);
-    led.classList.toggle('off', isOn);
-    if (led.id === 'ledLive') state.leds.live = !isOn;
-    if (led.id === 'ledVox') state.leds.vox = !isOn;
-  });
-});
+document.getElementById("selector_knob").onpointermove = e => {
+  if (e.buttons !== 1) return;
+  const r = e.target.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (940 / r.width);
+  const y = (e.clientY - r.top)  * (314 / r.height);
 
-/* ===== PUSH BUTTONS ===== */
-document.querySelectorAll('.push-btn').forEach(btn => {
-  btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.9)');
-  btn.addEventListener('mouseup', () => btn.style.transform = '');
-  btn.addEventListener('mouseleave', () => btn.style.transform = '');
-});
+  const a = angle(x, y);
+  const i = nearest(a);
 
-/* ===== STATUS UPDATE ===== */
+  const rad = detents[i].deg * Math.PI / 180;
+  const x2  = cx + Math.cos(rad) * 90;
+  const y2  = cy + Math.sin(rad) * 90;
+
+  const n = document.getElementById("needle");
+  n.setAttribute("x2", x2);
+  n.setAttribute("y2", y2);
+
+  currentSelector = detents[i].name;
+  emit({ type: "selector", step: detents[i].name });
+  updateStatus();
+};
+
+/* ===== STATUS ===== */
 function updateStatus() {
-  document.getElementById('statMain').textContent = mainPositions[state.mainSelector];
-  document.getElementById('statCom').textContent = comPositions[state.comSelector];
-  
-  const activeRx = Object.entries(state.toggles)
-    .filter(([id, up]) => up && id.startsWith('tgl'))
-    .map(([id]) => id.replace('tgl', ''))
-    .join(', ');
-  document.getElementById('statRx').textContent = activeRx || 'None';
+  document.getElementById("statSelector").textContent = currentSelector;
+
+  const rxMap = {
+    com1_toggle: "COM1",
+    com2_toggle: "COM2",
+    fm1_toggle:  "FM1",
+    fm2_toggle:  "FM2",
+    aux_toggle:  "AUX"
+  };
+  const activeRx = Object.entries(rxMap)
+    .filter(([id]) => state[id])
+    .map(([, label]) => label)
+    .join(", ");
+  document.getElementById("statRx").textContent  = activeRx  || "None";
+  document.getElementById("statIso").textContent = state["iso_emr"]    ? "ON" : "OFF";
+  document.getElementById("statKey").textContent = state["key_toggle"] ? "ON" : "OFF";
 }
 
-// Initialize
-updateMainKnob();
-updateComKnob();
 updateStatus();
 
 /* ===== SERVICE WORKER ===== */
