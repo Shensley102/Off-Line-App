@@ -783,7 +783,146 @@
       <text x="305" y="8" fill="#ffffff" font-size="7" font-weight="bold">MUSIC</text>
       <line x1="310" y1="18" x2="310" y2="48" />
       <line x1="340" y1="18" x2="340" y2="48" />
+    
+    <!-- GRID OVERLAY - graph paper with axis labels -->
+    <svg class="grid-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9998;" viewBox="0 0 420 160">
+      <defs>
+        <style>
+          .grid-major { stroke: rgba(255,255,255,0.5); stroke-width: 0.8; }
+          .grid-mid { stroke: rgba(255,255,255,0.25); stroke-width: 0.5; }
+          .grid-minor { stroke: rgba(255,255,255,0.12); stroke-width: 0.3; }
+          .ax { font-family: monospace; font-weight: bold; font-size: 5px; }
+          .ax-x { fill: #ff4444; text-anchor: middle; }
+          .ax-y { fill: #44ff44; text-anchor: end; }
+        </style>
+      </defs>
+      
+      <!-- Axis background strips -->
+      <rect x="0" y="0" width="420" height="8" fill="rgba(0,0,0,0.75)"/>
+      <rect x="0" y="152" width="420" height="8" fill="rgba(0,0,0,0.75)"/>
+      <rect x="0" y="0" width="11" height="160" fill="rgba(0,0,0,0.75)"/>
+      <line x1="10" y1="8" x2="10" y2="152" class="grid-minor"/>
+      <line x1="30" y1="8" x2="30" y2="152" class="grid-minor"/>
+      <line x1="50" y1="8" x2="50" y2="152" class="grid-minor"/>
+      <line x1="70" y1="8" x2="70" y2="152" class="grid-minor"/>
+      <line x1="90" y1="8" x2="90" y2="152" class="grid-minor"/>
+      <line x1="110" y1="8" x2="110" y2="152" class="grid-minor"/>
+      <line x1="130" y1="8" x2="130" y2="152" class="grid-minor"/>
+      <line x1="150" y1="8" x2="150" y2="152" class="grid-minor"/>
+      <line x1="170" y1="8" x2="170" y2="152" class="grid-minor"/>
+      <line x1="190" y1="8" x2="190" y2="152" class="grid-minor"/>
+      <line x1="210" y1="8" x2="210" y2="152" class="grid-minor"/>
+      <line x1="230" y1="8" x2="230" y2="152" class="grid-minor"/>
+      <line x1="250" y1="8" x2="250" y2="152" class="grid-minor"/>
+      <line x1="270" y1="8" x2="270" y2="152" class="grid-minor"/>
+      <line x1="290" y1="8" x2="290" y2="152" class="grid-minor"/>
+      <line x1="310" y1="8" x2="310" y2="152" class="grid-minor"/>
+      <line x1="330" y1="8" x2="330" y2="152" class="grid-minor"/>
+      <line x1="350" y1="8" x2="350" y2="152" class="grid-minor"/>
+      <line x1="370" y1="8" x2="370" y2="152" class="grid-minor"/>
+      <line x1="390" y1="8" x2="390" y2="152" class="grid-minor"/>
+      <line x1="410" y1="8" x2="410" y2="152" class="grid-minor"/>
+      <line x1="11" y1="10" x2="420" y2="10" class="grid-minor"/>
+      <line x1="11" y1="30" x2="420" y2="30" class="grid-minor"/>
+      <line x1="11" y1="50" x2="420" y2="50" class="grid-minor"/>
+      <line x1="11" y1="70" x2="420" y2="70" class="grid-minor"/>
+      <line x1="11" y1="90" x2="420" y2="90" class="grid-minor"/>
+      <line x1="11" y1="110" x2="420" y2="110" class="grid-minor"/>
+      <line x1="11" y1="130" x2="420" y2="130" class="grid-minor"/>
+      <line x1="11" y1="150" x2="420" y2="150" class="grid-minor"/>
+      <line x1="20" y1="8" x2="20" y2="152" class="grid-mid"/>
+      <line x1="40" y1="8" x2="40" y2="152" class="grid-mid"/>
+      <line x1="60" y1="8" x2="60" y2="152" class="grid-mid"/>
+      <line x1="80" y1="8" x2="80" y2="152" class="grid-mid"/>
+      <line x1="120" y1="8" x2="120" y2="152" class="grid-mid"/>
+      <line x1="140" y1="8" x2="140" y2="152" class="grid-mid"/>
+      <line x1="160" y1="8" x2="160" y2="152" class="grid-mid"/>
+      <line x1="180" y1="8" x2="180" y2="152" class="grid-mid"/>
+      <line x1="220" y1="8" x2="220" y2="152" class="grid-mid"/>
+      <line x1="240" y1="8" x2="240" y2="152" class="grid-mid"/>
+      <line x1="260" y1="8" x2="260" y2="152" class="grid-mid"/>
+      <line x1="280" y1="8" x2="280" y2="152" class="grid-mid"/>
+      <line x1="320" y1="8" x2="320" y2="152" class="grid-mid"/>
+      <line x1="340" y1="8" x2="340" y2="152" class="grid-mid"/>
+      <line x1="360" y1="8" x2="360" y2="152" class="grid-mid"/>
+      <line x1="380" y1="8" x2="380" y2="152" class="grid-mid"/>
+      <line x1="11" y1="20" x2="420" y2="20" class="grid-mid"/>
+      <line x1="11" y1="40" x2="420" y2="40" class="grid-mid"/>
+      <line x1="11" y1="60" x2="420" y2="60" class="grid-mid"/>
+      <line x1="11" y1="80" x2="420" y2="80" class="grid-mid"/>
+      <line x1="11" y1="120" x2="420" y2="120" class="grid-mid"/>
+      <line x1="11" y1="140" x2="420" y2="140" class="grid-mid"/>
+      <line x1="0" y1="8" x2="0" y2="152" class="grid-major"/>
+      <line x1="100" y1="8" x2="100" y2="152" class="grid-major"/>
+      <line x1="200" y1="8" x2="200" y2="152" class="grid-major"/>
+      <line x1="300" y1="8" x2="300" y2="152" class="grid-major"/>
+      <line x1="400" y1="8" x2="400" y2="152" class="grid-major"/>
+      <line x1="11" y1="0" x2="420" y2="0" class="grid-major"/>
+      <line x1="11" y1="100" x2="420" y2="100" class="grid-major"/>
+      <text x="0" y="6" class="ax ax-x">0</text>
+      <text x="0" y="158" class="ax ax-x">0</text>
+      <text x="20" y="6" class="ax ax-x">20</text>
+      <text x="20" y="158" class="ax ax-x">20</text>
+      <text x="40" y="6" class="ax ax-x">40</text>
+      <text x="40" y="158" class="ax ax-x">40</text>
+      <text x="60" y="6" class="ax ax-x">60</text>
+      <text x="60" y="158" class="ax ax-x">60</text>
+      <text x="80" y="6" class="ax ax-x">80</text>
+      <text x="80" y="158" class="ax ax-x">80</text>
+      <text x="100" y="6" class="ax ax-x">100</text>
+      <text x="100" y="158" class="ax ax-x">100</text>
+      <text x="120" y="6" class="ax ax-x">120</text>
+      <text x="120" y="158" class="ax ax-x">120</text>
+      <text x="140" y="6" class="ax ax-x">140</text>
+      <text x="140" y="158" class="ax ax-x">140</text>
+      <text x="160" y="6" class="ax ax-x">160</text>
+      <text x="160" y="158" class="ax ax-x">160</text>
+      <text x="180" y="6" class="ax ax-x">180</text>
+      <text x="180" y="158" class="ax ax-x">180</text>
+      <text x="200" y="6" class="ax ax-x">200</text>
+      <text x="200" y="158" class="ax ax-x">200</text>
+      <text x="220" y="6" class="ax ax-x">220</text>
+      <text x="220" y="158" class="ax ax-x">220</text>
+      <text x="240" y="6" class="ax ax-x">240</text>
+      <text x="240" y="158" class="ax ax-x">240</text>
+      <text x="260" y="6" class="ax ax-x">260</text>
+      <text x="260" y="158" class="ax ax-x">260</text>
+      <text x="280" y="6" class="ax ax-x">280</text>
+      <text x="280" y="158" class="ax ax-x">280</text>
+      <text x="300" y="6" class="ax ax-x">300</text>
+      <text x="300" y="158" class="ax ax-x">300</text>
+      <text x="320" y="6" class="ax ax-x">320</text>
+      <text x="320" y="158" class="ax ax-x">320</text>
+      <text x="340" y="6" class="ax ax-x">340</text>
+      <text x="340" y="158" class="ax ax-x">340</text>
+      <text x="360" y="6" class="ax ax-x">360</text>
+      <text x="360" y="158" class="ax ax-x">360</text>
+      <text x="380" y="6" class="ax ax-x">380</text>
+      <text x="380" y="158" class="ax ax-x">380</text>
+      <text x="400" y="6" class="ax ax-x">400</text>
+      <text x="400" y="158" class="ax ax-x">400</text>
+      <text x="420" y="6" class="ax ax-x">420</text>
+      <text x="420" y="158" class="ax ax-x">420</text>
+      <text x="10" y="2" class="ax ax-y">0</text>
+      <text x="10" y="12" class="ax ax-y">10</text>
+      <text x="10" y="22" class="ax ax-y">20</text>
+      <text x="10" y="32" class="ax ax-y">30</text>
+      <text x="10" y="42" class="ax ax-y">40</text>
+      <text x="10" y="52" class="ax ax-y">50</text>
+      <text x="10" y="62" class="ax ax-y">60</text>
+      <text x="10" y="72" class="ax ax-y">70</text>
+      <text x="10" y="82" class="ax ax-y">80</text>
+      <text x="10" y="92" class="ax ax-y">90</text>
+      <text x="10" y="102" class="ax ax-y">100</text>
+      <text x="10" y="112" class="ax ax-y">110</text>
+      <text x="10" y="122" class="ax ax-y">120</text>
+      <text x="10" y="132" class="ax ax-y">130</text>
+      <text x="10" y="142" class="ax ax-y">140</text>
+      <text x="10" y="152" class="ax ax-y">150</text>
+      <text x="10" y="162" class="ax ax-y">160</text>
     </svg>
+
+</svg>
 
     <!-- Top Row: RX Toggles -->
     <div class="aa95-row top-row">
