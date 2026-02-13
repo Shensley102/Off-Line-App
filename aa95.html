@@ -74,7 +74,12 @@ svg { width: 100%; height: 100%; }
 
 
 /* photo-real switch patches (DOWN state overlays) */
-.switchPatch { pointer-events: none; }
+.switchPatch {
+  pointer-events: none;
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+  transform-box: fill-box;
+  transform-origin: center center;
+}
 /* selector debug needle */
 .needle { opacity: 0; }
 .debug .needle { opacity: 1; }
@@ -264,6 +269,7 @@ function renderSwitch(id) {
   const isOn = !!state[id];
   const show = patchShowsWhenOn ? isOn : !isOn;
   p.style.opacity = show ? "1" : "0";
+  p.style.transform = show ? "translateY(0)" : "translateY(-3px)";
 }
 
 function flip(id) {
