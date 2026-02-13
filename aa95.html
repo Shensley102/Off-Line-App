@@ -244,12 +244,12 @@ const defaultState = {
   iso_emr: false,
   key_toggle: true
 };
+let currentSelector = "COM1";
+
 Object.assign(state, defaultState);
 // Render initial toggle visuals
 toggleIds.forEach(renderSwitch);
 updateStatus();
-
-let currentSelector = "COM1";
 
 function emit(d) {
   window.dispatchEvent(new CustomEvent("panel:change", { detail: d }));
