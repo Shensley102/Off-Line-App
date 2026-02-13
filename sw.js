@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rc9100-v6';
+const CACHE_NAME = 'rc9100-v7';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -9,7 +9,18 @@ const ASSETS_TO_CACHE = [
   '/manifest.json',
   '/codeplug.json',
   '/icons/icon-192.png',
-  '/icons/icon-512.png'
+  '/icons/icon-512.png',
+  '/images/aa95/panel-bg.jpg',
+  '/images/aa95/com1_toggle.png',
+  '/images/aa95/com2_toggle.png',
+  '/images/aa95/fm1_toggle.png',
+  '/images/aa95/fm2_toggle.png',
+  '/images/aa95/aux_toggle.png',
+  '/images/aa95/adf_toggle.png',
+  '/images/aa95/dplr_toggle.png',
+  '/images/aa95/pat_toggle.png',
+  '/images/aa95/iso_emr.png',
+  '/images/aa95/key_toggle.png'
 ];
 
 // Install event - cache assets
