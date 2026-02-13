@@ -1,0 +1,12 @@
+/* AA95 refactor: small additive tweaks (keeps original inline CSS intact). */
+
+.hotspot {
+  /* makes touch dragging/presses more reliable */
+  touch-action: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lever, .bgDown {
+    transition: none !important;
+  }
+}
