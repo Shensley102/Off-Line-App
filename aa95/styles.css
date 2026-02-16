@@ -1,12 +1,63 @@
-/* AA95 refactor: small additive tweaks (keeps original inline CSS intact). */
-
-.hotspot {
-  /* makes touch dragging/presses more reliable */
-  touch-action: none;
+:root{
+  --bg:#0b0b0c;
+  --panel:#121214;
+  --panel2:#1a1a1d;
+  --stroke:#3a3a3f;
+  --text:#e8e8ee;
+  --muted:#a7a7b0;
+  --accent:#d94b4b;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .lever, .bgDown {
-    transition: none !important;
-  }
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 }
+
+.wrap{min-height:100%; display:flex; align-items:center; justify-content:center; padding:18px}
+.panelShell{width:min(980px, 100%); display:flex; flex-direction:column; gap:14px}
+
+.panelContainer{
+  width:100%;
+  aspect-ratio: 940 / 314;
+  background:transparent;
+}
+#aa95_svg{width:100%; height:100%; display:block}
+
+.panelBg{fill:var(--panel); stroke:var(--stroke); stroke-width:2}
+.panelInset{fill:var(--panel2); stroke:#26262a; stroke-width:2}
+
+.panelTitle{fill:var(--text); font-weight:700; font-size:18px; letter-spacing:1px}
+.panelSubtitle{fill:var(--muted); font-size:12px}
+
+.toggleLayer.bgUp{fill:#242428; stroke:#45454b; stroke-width:2}
+.toggleLayer.bgDown{fill:#2f1c1c; stroke:#7a3a3a; stroke-width:2; opacity:0; transition:opacity .12s linear}
+.toggleLayer.leverUp{fill:#d8d8de; opacity:1; transition:opacity .08s linear}
+.toggleLayer.leverDown{fill:#d8d8de; opacity:0; transition:opacity .08s linear}
+
+.controlLabel{fill:var(--muted); font-size:12px; font-weight:600; letter-spacing:.5px}
+.selectorText{fill:var(--text); font-size:14px; font-weight:700; letter-spacing:.6px}
+
+.knobOuter{fill:#222227; stroke:#505058; stroke-width:3}
+.knobInner{fill:#141418; stroke:#2b2b31; stroke-width:2}
+.knobPointer{stroke:#d8d8de; stroke-width:4; stroke-linecap:round}
+
+.knobOuterDown{fill:#2a1a1a; stroke:#7a3a3a; stroke-width:3; opacity:0.65}
+.knobInnerDown{fill:#1a1111; stroke:#402020; stroke-width:2; opacity:0.65}
+.knobPointerDown{stroke:#d94b4b; stroke-width:4; stroke-linecap:round; opacity:0.65}
+.knobDown{opacity:0}
+
+.hotspot{fill:transparent; cursor:pointer}
+.hotspot:active{fill:rgba(255,255,255,0.04)}
+
+.readout{
+  border:1px solid #232326;
+  border-radius:12px;
+  padding:12px 14px;
+  background:rgba(255,255,255,0.02);
+}
+.readout strong{color:var(--muted)}
+.hint{margin-top:6px; color:var(--muted); font-size:12px}
