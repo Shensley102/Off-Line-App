@@ -418,3 +418,19 @@
   }
 
 })();
+```
+
+---
+
+## Repo Structure
+
+Your `/aa95/` folder should look like:
+```
+/aa95/
+├── aa95.html (or rename to index.html)
+├── styles.css
+├── panel.js
+└── assests/
+    ├── img_001.webp
+    ├── img_002.webp
+    └── ... (all 41 images)
