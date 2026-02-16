@@ -1,56 +1,6 @@
 {
-  "version": 2,
-  "headers": [
-    {
-      "source": "/sw.js",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    },
-    {
-      "source": "/aa95.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    },
-    {
-      "source": "/index.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    },
-    {
-      "source": "/rc9100.html",
-      "headers": [
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    },
-    {
-      "source": "/app/aa95/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/icons/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
-    }
+  "rewrites": [
+    { "source": "/control-panel", "destination": "/aa95.html" },
+    { "source": "/control-panel/(.*)", "destination": "/aa95.html" }
   ]
 }
