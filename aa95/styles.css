@@ -1,21 +1,16 @@
 :root{
-  --bg:#0e0f12;
-  --panel:#13151a;
-  --stroke:#2b2f38;
-  --stroke2:#3a414d;
-  --text:#e9eef7;
-  --muted:#b9c1cf;
-  --accent:#4cc2ff;
-  --on:#44f0a6;
+  --bg:#0b0b0c;
+  --text:#e8e8ee;
+  --muted:#a7a7b0;
 }
 
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 }
 
 .wrap{
@@ -23,51 +18,30 @@ body{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:24px;
-}
-
-.panel{
-  width:min(1100px,100%);
-  background:linear-gradient(180deg,#0f1116,#0b0c10);
-  border:1px solid #20242c;
-  border-radius:18px;
   padding:18px;
-  box-shadow:0 14px 40px rgba(0,0,0,.55);
 }
 
-.readout{
-  margin-top:12px;
+.panelShell{
+  width:min(1100px, 100%);
   display:flex;
-  gap:18px;
-  flex-wrap:wrap;
-  color:var(--muted);
-  font-size:14px;
+  flex-direction:column;
+  gap:14px;
 }
 
-.readout strong{color:var(--text)}
+.panelContainer{
+  width:100%;
+  aspect-ratio: 1000 / 260;
+  background:transparent;
+}
 
-svg{width:100%; height:auto; display:block}
+#aa95_svg{width:100%; height:100%; display:block}
 
-/* SVG styles */
-.face{fill:#0f1116; stroke:var(--stroke2); stroke-width:3}
-.bezel{fill:#141823; stroke:var(--stroke); stroke-width:3}
-
-.title{fill:var(--text); font-size:28px; letter-spacing:3px; font-weight:700}
-.subtitle{fill:var(--muted); font-size:14px; letter-spacing:2px}
-
-.sectionTitle{fill:var(--muted); font-size:14px; letter-spacing:1px}
-
-.knobBase{fill:#0b0d12; stroke:var(--stroke2); stroke-width:3}
-.knobFace{fill:#111522; stroke:#2e3440; stroke-width:2}
-.knobPointer{stroke:var(--accent); stroke-width:6; stroke-linecap:round}
-
-.ticks line{stroke:#5b6475; stroke-width:3; stroke-linecap:round; opacity:.65}
-.knobLabels text{fill:var(--muted); font-size:12px}
-
-.hotspot{fill:transparent; cursor:pointer}
-
-.btn rect{fill:#0c0f16; stroke:#2d3440; stroke-width:2}
-.btn .btnText{fill:var(--text); font-size:16px; letter-spacing:1px; user-select:none}
-.btn{cursor:pointer}
-.btn.on rect{stroke:var(--on); filter:drop-shadow(0 0 6px rgba(68,240,166,.35))}
-.btn.on .btnText{fill:var(--on)}
+/* Optional little status box (kept for debugging; hide if you want) */
+.readout{
+  border:1px solid #232326;
+  border-radius:12px;
+  padding:12px 14px;
+  background:rgba(255,255,255,0.02);
+}
+.readout strong{color:var(--muted)}
+.hint{margin-top:6px; color:var(--muted); font-size:12px}
