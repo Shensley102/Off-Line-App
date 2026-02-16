@@ -1,46 +1,279 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AA95 Audio Panel</title>
-
-  <!-- PWA -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#000000">
-
-  <!-- Styles -->
-  <link rel="stylesheet" href="./aa95/styles.css">
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
+  <main class="wrap">
+    <section class="panelShell" aria-label="AA95 control panel">
+      <div class="panelContainer">
+        <svg id="aa95_svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 314" role="img" aria-label="AA95 audio panel">
+          <defs>
+            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.35"/>
+            </filter>
+          </defs>
 
-  <!-- Back link -->
-  <div class="back-link">
-    <a href="/">← HOME</a>
-  </div>
+          <!-- Panel background -->
+          <rect x="6" y="6" width="928" height="302" rx="18" ry="18" class="panelBg" filter="url(#shadow)"/>
+          <rect x="18" y="18" width="904" height="278" rx="14" ry="14" class="panelInset"/>
 
-  <!-- Panel Container -->
-  <div class="panel-wrap">
+          <text x="34" y="44" class="panelTitle">AA95 AUDIO PANEL</text>
+          <text x="34" y="66" class="panelSubtitle">Functional layout (non-photo)</text>
 
-    <!-- SVG Panel -->
-    <object
-      id="aa95-svg"
-      type="image/svg+xml"
-      data="./aa95/aa95-panel.svg">
-    </object>
+          <!-- Controls (visuals) -->
 
-  </div>
+          <g id="com1_toggle_vis">
+            <rect id="com1_toggle_bgUp" class="toggleLayer bgUp" x="42.1" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="com1_toggle_bgDown" class="toggleLayer bgDown" x="42.1" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="com1_toggle_leverUp" class="toggleLayer leverUp" x="60.79" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="com1_toggle_leverDown" class="toggleLayer leverDown" x="60.79" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="67.2" y="183.7" text-anchor="middle">COM 1</text>
+          </g>
 
-  <!-- Status Display -->
-  <div id="status" class="status"></div>
+          <g id="com2_toggle_vis">
+            <rect id="com2_toggle_bgUp" class="toggleLayer bgUp" x="103.5" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="com2_toggle_bgDown" class="toggleLayer bgDown" x="103.5" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="com2_toggle_leverUp" class="toggleLayer leverUp" x="122.19" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="com2_toggle_leverDown" class="toggleLayer leverDown" x="122.19" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="128.6" y="183.7" text-anchor="middle">COM 2</text>
+          </g>
 
-  <!-- Guide -->
-  <div id="guide" class="guide"></div>
+          <g id="fm1_toggle_vis">
+            <rect id="fm1_toggle_bgUp" class="toggleLayer bgUp" x="165.0" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="fm1_toggle_bgDown" class="toggleLayer bgDown" x="165.0" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="fm1_toggle_leverUp" class="toggleLayer leverUp" x="183.69" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="fm1_toggle_leverDown" class="toggleLayer leverDown" x="183.69" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="190.1" y="183.7" text-anchor="middle">FM 1</text>
+          </g>
 
-  <!-- App Entry -->
-  <script type="module" src="./aa95/index.js"></script>
+          <g id="fm2_toggle_vis">
+            <rect id="fm2_toggle_bgUp" class="toggleLayer bgUp" x="226.4" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="fm2_toggle_bgDown" class="toggleLayer bgDown" x="226.4" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="fm2_toggle_leverUp" class="toggleLayer leverUp" x="245.09" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="fm2_toggle_leverDown" class="toggleLayer leverDown" x="245.09" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="251.5" y="183.7" text-anchor="middle">FM 2</text>
+          </g>
 
+          <g id="aux_toggle_vis">
+            <rect id="aux_toggle_bgUp" class="toggleLayer bgUp" x="524.2" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="aux_toggle_bgDown" class="toggleLayer bgDown" x="524.2" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="aux_toggle_leverUp" class="toggleLayer leverUp" x="542.89" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="aux_toggle_leverDown" class="toggleLayer leverDown" x="542.89" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="549.3" y="183.7" text-anchor="middle">AUX</text>
+          </g>
+
+          <g id="adf_toggle_vis">
+            <rect id="adf_toggle_bgUp" class="toggleLayer bgUp" x="585.6" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="adf_toggle_bgDown" class="toggleLayer bgDown" x="585.6" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="adf_toggle_leverUp" class="toggleLayer leverUp" x="604.29" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="adf_toggle_leverDown" class="toggleLayer leverDown" x="604.29" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="610.7" y="183.7" text-anchor="middle">ADF</text>
+          </g>
+
+          <g id="dplr_toggle_vis">
+            <rect id="dplr_toggle_bgUp" class="toggleLayer bgUp" x="647.0" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="dplr_toggle_bgDown" class="toggleLayer bgDown" x="647.0" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="dplr_toggle_leverUp" class="toggleLayer leverUp" x="665.69" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="dplr_toggle_leverDown" class="toggleLayer leverDown" x="665.69" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="672.1" y="183.7" text-anchor="middle">DPLR</text>
+          </g>
+
+          <g id="pat_toggle_vis">
+            <rect id="pat_toggle_bgUp" class="toggleLayer bgUp" x="708.4" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="pat_toggle_bgDown" class="toggleLayer bgDown" x="708.4" y="88.1" width="50.2" height="79.6" rx="6.024" ry="6.024"/>
+            <rect id="pat_toggle_leverUp" class="toggleLayer leverUp" x="727.09" y="97.652" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <rect id="pat_toggle_leverDown" class="toggleLayer leverDown" x="727.09" y="122.528" width="14.056" height="35.82" rx="2.1084" ry="2.1084"/>
+            <text class="controlLabel" x="733.5" y="183.7" text-anchor="middle">PAT</text>
+          </g>
+
+          <g id="selector_knob_up" class="knobLayer knobUp">
+            <circle cx="382.55" cy="122.95" r="33.39" class="knobOuter"/>
+            <circle cx="382.55" cy="122.95" r="24.0408" class="knobInner"/>
+            <line id="selector_pointer" x1="382.55" y1="122.95" x2="382.55" y2="95.5662" class="knobPointer"/>
+            <text id="selector_text" class="selectorText" x="382.55" y="182.34" text-anchor="middle">OFF</text>
+          </g>
+          <g id="selector_knob_down" class="knobLayer knobDown">
+            <circle cx="382.55" cy="122.95" r="33.39" class="knobOuterDown"/>
+            <circle cx="382.55" cy="122.95" r="24.0408" class="knobInnerDown"/>
+            <line x1="382.55" y1="122.95" x2="382.55" y2="95.5662" class="knobPointerDown"/>
+          </g>
+
+          <g id="iso_emr_vis">
+            <rect id="iso_emr_toggle_bgUp" class="toggleLayer bgUp" x="783.0" y="88.1" width="122.0" height="79.6" rx="6.368" ry="6.368"/>
+            <rect id="iso_emr_toggle_bgDown" class="toggleLayer bgDown" x="783.0" y="88.1" width="122.0" height="79.6" rx="6.368" ry="6.368"/>
+            <text class="controlLabel" x="844.0" y="116.1" text-anchor="middle">ISO / EMR</text>
+            <text id="iso_emr_text" class="selectorText" x="844.0" y="140.9" text-anchor="middle">ISO</text>
+          </g>
+
+          <g id="key_toggle_vis">
+            <rect id="key_toggle_bgUp" class="toggleLayer bgUp" x="437.0" y="199.3" width="96.6" height="63.4" rx="7.608" ry="7.608"/>
+            <rect id="key_toggle_bgDown" class="toggleLayer bgDown" x="437.0" y="199.3" width="96.6" height="63.4" rx="7.608" ry="7.608"/>
+            <text class="controlLabel" x="485.3" y="229.3" text-anchor="middle">KEY</text>
+            <text class="selectorText" x="485.3" y="249.0" text-anchor="middle">PTT</text>
+          </g>
+
+          <!-- Hotspots (click/touch targets) -->
+          <rect class="hotspot" id="com1_toggle" x="42.1" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="com2_toggle" x="103.5" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="fm1_toggle" x="165.0" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="fm2_toggle" x="226.4" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="selector_knob" x="338.2" y="78.6" width="88.7" height="88.7" />
+          <rect class="hotspot" id="key_toggle" x="437.0" y="199.3" width="96.6" height="63.4" />
+          <rect class="hotspot" id="aux_toggle" x="524.2" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="adf_toggle" x="585.6" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="dplr_toggle" x="647.0" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="pat_toggle" x="708.4" y="88.1" width="50.2" height="79.6" />
+          <rect class="hotspot" id="iso_emr" x="783.0" y="88.1" width="122.0" height="79.6" />
+        </svg>
+      </div>
+
+      <div class="readout" aria-live="polite">
+        <div><strong>Selector:</strong> <span id="readout_selector">OFF</span></div>
+        <div><strong>ISO/EMR:</strong> <span id="readout_iso">ISO</span></div>
+        <div class="hint">Tip: click toggles. Click selector to step; Shift+Click steps back; mouse-wheel also works. Hold KEY for momentary.</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+  'use strict';
+
+  const STORAGE_KEY = 'aa95_state_v2';
+
+  const knob = {
+    id: 'selector_knob',
+    center: { x: 382.55, y: 122.95 },
+    positions: ['OFF','COM1','COM2','BOTH','FM1','FM2','AUX','ADF','DPLR','PAT'],
+  };
+
+  const state = loadState();
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return Object.assign({
+        toggles: {},
+        isoEmr: 0,
+        knobIndex: 0,
+      }, JSON.parse(raw));
+    } catch (e) {}
+    return { toggles: {}, isoEmr: 0, knobIndex: 0 };
+  }
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function setToggleVisual(baseId, on) {
+    const bgDown = document.getElementById(baseId + '_bgDown');
+    const leverUp = document.getElementById(baseId + '_leverUp');
+    const leverDown = document.getElementById(baseId + '_leverDown');
+    if (!bgDown || !leverUp || !leverDown) return;
+
+    bgDown.style.opacity = on ? '1' : '0';
+    leverUp.style.opacity = on ? '0' : '1';
+    leverDown.style.opacity = on ? '1' : '0';
+  }
+
+  function toggle(baseId) {
+    state.toggles[baseId] = !state.toggles[baseId];
+    setToggleVisual(baseId, state.toggles[baseId]);
+    saveState();
+  }
+
+  function setIsoEmrVisual(idx) {
+    const txt = document.getElementById('iso_emr_text');
+    const bgDown = document.getElementById('iso_emr_toggle_bgDown');
+    if (txt) txt.textContent = (['ISO','BOTH','EMR'][idx] || 'ISO');
+    if (bgDown) bgDown.style.opacity = (idx === 2) ? '1' : '0';
+  }
+
+  function cycleIsoEmr() {
+    state.isoEmr = (state.isoEmr + 1) % 3;
+    setIsoEmrVisual(state.isoEmr);
+    saveState();
+  }
+
+  function setKnobVisual(index) {
+    const pointer = document.getElementById('selector_pointer');
+    const label = document.getElementById('selector_text');
+    const count = knob.positions.length;
+    const i = ((index % count) + count) % count;
+    const deg = -120 + (240 * (i / Math.max(1, (count - 1))));
+
+    if (pointer) {
+      pointer.setAttribute('transform', 'rotate(' + deg + ' ' + knob.center.x + ' ' + knob.center.y + ')');
+    }
+    if (label) label.textContent = knob.positions[i];
+  }
+
+  function stepKnob(delta) {
+    state.knobIndex = (state.knobIndex + delta + knob.positions.length) % knob.positions.length;
+    setKnobVisual(state.knobIndex);
+    saveState();
+  }
+
+  function pressKey(isDown) {
+    const bgDown = document.getElementById('key_toggle_bgDown');
+    if (bgDown) bgDown.style.opacity = isDown ? '1' : '0';
+  }
+
+  function bindHotspot(id, handler) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('click', (e) => {
+      e.preventDefault();
+      handler(e);
+    }, { passive: false });
+  }
+
+  const toggleIds = ['com1_toggle','com2_toggle','fm1_toggle','fm2_toggle','aux_toggle','adf_toggle','dplr_toggle','pat_toggle'];
+  toggleIds.forEach(id => bindHotspot(id, () => toggle(id)));
+
+  bindHotspot('iso_emr', cycleIsoEmr);
+
+  bindHotspot('selector_knob', (e) => stepKnob(e.shiftKey ? -1 : 1));
+  const knobHot = document.getElementById('selector_knob');
+  if (knobHot) {
+    knobHot.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      stepKnob(e.deltaY > 0 ? 1 : -1);
+    }, { passive: false });
+  }
+
+  const keyHot = document.getElementById('key_toggle');
+  if (keyHot) {
+    const down = (e) => { e.preventDefault(); pressKey(true); };
+    const up = () => { pressKey(false); };
+    keyHot.addEventListener('mousedown', down, { passive: false });
+    window.addEventListener('mouseup', up, { passive: true });
+    keyHot.addEventListener('touchstart', down, { passive: false });
+    window.addEventListener('touchend', up, { passive: true });
+    window.addEventListener('touchcancel', up, { passive: true });
+  }
+
+  toggleIds.forEach(id => setToggleVisual(id, !!state.toggles[id]));
+  setIsoEmrVisual(state.isoEmr || 0);
+  setKnobVisual(state.knobIndex || 0);
+
+  function syncReadout() {
+    const sel = (document.getElementById('selector_text') || {textContent:'OFF'}).textContent || 'OFF';
+    const iso = (document.getElementById('iso_emr_text') || {textContent:'ISO'}).textContent || 'ISO';
+    const rSel = document.getElementById('readout_selector');
+    const rIso = document.getElementById('readout_iso');
+    if (rSel) rSel.textContent = sel;
+    if (rIso) rIso.textContent = iso;
+  }
+
+  const _setKnob = setKnobVisual;
+  setKnobVisual = function(i) { _setKnob(i); syncReadout(); };
+  const _setIso = setIsoEmrVisual;
+  setIsoEmrVisual = function(i) { _setIso(i); syncReadout(); };
+  syncReadout();
+  </script>
 </body>
 </html>
