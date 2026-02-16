@@ -1,294 +1,89 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AA95 Control Panel (Vector)</title>
-  <link rel="stylesheet" href="styles_vector.css" />
+  <meta charset="UTF-8" />
+
+  <title>AA95 Control Panel</title>
+
+  <!-- Mobile / PWA -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#111111"/>
+  <link rel="manifest" href="/manifest.json"/>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/aa95/styles.css"/>
+
+  <style>
+    body{
+      margin:0;
+      background:#0b0c10;
+      font-family:system-ui, Arial;
+      color:white;
+      text-align:center;
+    }
+
+    .panel-wrap{
+      max-width:1100px;
+      margin:auto;
+      padding:20px;
+    }
+
+    .status{
+      margin-top:14px;
+      padding:12px;
+      background:#10151c;
+      border:1px solid #1f2a38;
+      border-radius:10px;
+      text-align:left;
+      font-size:14px;
+    }
+
+    .home-link{
+      display:inline-block;
+      margin:14px;
+      color:#4cc2ff;
+      text-decoration:none;
+      font-size:14px;
+    }
+
+  </style>
 </head>
+
 <body>
-  <main class="wrap">
-    <div class="panel" role="application" aria-label="AA95 Audio Panel">
-      <svg id="aa95_svg" viewBox="0 0 1000 360" xmlns="http://www.w3.org/2000/svg" aria-label="AA95 panel drawing">
-        <!-- PANEL FACE -->
-        <rect x="10" y="10" width="980" height="340" rx="20" class="face"/>
 
-        <!-- OUTER BEZEL -->
-        <rect x="28" y="28" width="944" height="304" rx="16" class="bezel"/>
+<a href="/" class="home-link">← HOME</a>
 
-        <!-- TITLE -->
-        <text x="500" y="62" text-anchor="middle" class="title">AA95</text>
-        <text x="500" y="84" text-anchor="middle" class="subtitle">AUDIO PANEL</text>
+<div class="panel-wrap">
 
-        <!-- LEFT SECTION (MIC SELECT) -->
-        <g class="section">
-          <text x="170" y="120" text-anchor="middle" class="sectionTitle">MIC SELECT</text>
+  <!-- PANEL SVG -->
+  <object
+    id="aa95Panel"
+    type="image/svg+xml"
+    data="/aa95/aa95-panel.svg"
+    width="100%"
+  ></object>
 
-          <!-- Selector knob base -->
-          <circle cx="170" cy="210" r="74" class="knobBase"/>
-          <circle cx="170" cy="210" r="54" class="knobFace"/>
+  <!-- STATUS BOX -->
+  <div class="status" id="panelStatus">
+    Loading panel…
+  </div>
 
-          <!-- Selector pointer (rotates) -->
-          <line id="selector_pointer" x1="170" y1="210" x2="170" y2="150" class="knobPointer"/>
+</div>
 
-          <!-- Detent marks -->
-          <g class="ticks">
-            <line x1="87" y1="248" x2="98" y2="242"/>
-            <line x1="78" y1="220" x2="90" y2="218"/>
-            <line x1="83" y1="190" x2="95" y2="195"/>
-            <line x1="102" y1="166" x2="112" y2="175"/>
-            <line x1="131" y1="150" x2="136" y2="162"/>
-            <line x1="170" y1="145" x2="170" y2="158"/>
-            <line x1="209" y1="150" x2="204" y2="162"/>
-            <line x1="238" y1="166" x2="228" y2="175"/>
-            <line x1="257" y1="190" x2="245" y2="195"/>
-            <line x1="262" y1="220" x2="250" y2="218"/>
-            <line x1="253" y1="248" x2="242" y2="242"/>
-          </g>
+<!-- MAIN MODULE -->
+<script type="module" src="/aa95/index.js"></script>
 
-          <!-- Labels -->
-          <g class="knobLabels">
-            <text x="76" y="260" text-anchor="end">OFF</text>
-            <text x="68" y="224" text-anchor="end">COM1</text>
-            <text x="74" y="192" text-anchor="end">COM2</text>
-            <text x="98" y="164" text-anchor="end">BOTH</text>
-            <text x="132" y="142" text-anchor="end">FM1</text>
+<!-- SERVICE WORKER -->
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then(() => console.log("SW registered"))
+      .catch(console.error);
+  });
+}
+</script>
 
-            <text x="170" y="132" text-anchor="middle">FM2</text>
-
-            <text x="208" y="142" text-anchor="start">AUX</text>
-            <text x="242" y="164" text-anchor="start">ADF</text>
-            <text x="266" y="192" text-anchor="start">DPLR</text>
-            <text x="272" y="224" text-anchor="start">PA</text>
-          </g>
-
-          <!-- Invisible hotspot for interaction -->
-          <rect id="selector_knob" x="90" y="130" width="160" height="160" class="hotspot" />
-        </g>
-
-        <!-- RIGHT SECTION (VOLUME) -->
-        <g class="section">
-          <text x="830" y="120" text-anchor="middle" class="sectionTitle">VOL</text>
-          <circle cx="830" cy="210" r="74" class="knobBase"/>
-          <circle cx="830" cy="210" r="54" class="knobFace"/>
-          <line id="vol_pointer" x1="830" y1="210" x2="830" y2="150" class="knobPointer"/>
-          <rect id="vol_knob" x="750" y="130" width="160" height="160" class="hotspot" />
-        </g>
-
-        <!-- CENTER BUTTON GRID -->
-        <g class="grid">
-          <!-- Column headings -->
-          <text x="500" y="120" text-anchor="middle" class="sectionTitle">AUDIO SELECT</text>
-
-          <!-- Buttons (vector) -->
-          <!-- Top row -->
-          <g class="btn" data-id="com1">
-            <rect x="340" y="140" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="390" y="174" text-anchor="middle" class="btnText">COM1</text>
-          </g>
-          <g class="btn" data-id="com2">
-            <rect x="450" y="140" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="500" y="174" text-anchor="middle" class="btnText">COM2</text>
-          </g>
-          <g class="btn" data-id="fm1">
-            <rect x="560" y="140" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="610" y="174" text-anchor="middle" class="btnText">FM1</text>
-          </g>
-
-          <!-- Middle row -->
-          <g class="btn" data-id="fm2">
-            <rect x="340" y="202" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="390" y="236" text-anchor="middle" class="btnText">FM2</text>
-          </g>
-          <g class="btn" data-id="aux">
-            <rect x="450" y="202" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="500" y="236" text-anchor="middle" class="btnText">AUX</text>
-          </g>
-          <g class="btn" data-id="adf">
-            <rect x="560" y="202" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="610" y="236" text-anchor="middle" class="btnText">ADF</text>
-          </g>
-
-          <!-- Bottom row -->
-          <g class="btn" data-id="dplr">
-            <rect x="340" y="264" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="390" y="298" text-anchor="middle" class="btnText">DPLR</text>
-          </g>
-          <g class="btn" data-id="pa">
-            <rect x="450" y="264" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="500" y="298" text-anchor="middle" class="btnText">PA</text>
-          </g>
-          <g class="btn" data-id="spare">
-            <rect x="560" y="264" width="100" height="54" rx="10" class="btnBase"/>
-            <text x="610" y="298" text-anchor="middle" class="btnText">SPARE</text>
-          </g>
-        </g>
-      </svg>
-
-      <!-- State readout -->
-      <div class="readout" aria-live="polite">
-        <div><strong>Selector:</strong> <span id="selector_value">OFF</span></div>
-        <div><strong>Volume:</strong> <span id="vol_value">50%</span></div>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    // --- Small state store ---
-    const state = {
-      selectorIndex: 0,
-      volumeIndex: 5,
-      buttons: {
-        com1:false, com2:false, fm1:false,
-        fm2:false, aux:false, adf:false,
-        dplr:false, pa:false, spare:false
-      }
-    };
-
-    // Selector knob positions
-    const selectorKnob = {
-      id: 'selector',
-      hotId: 'selector_knob',
-      pointerId: 'selector_pointer',
-      cx: 170, cy: 210,
-      positions: ['OFF','COM1','COM2','BOTH','FM1','FM2','AUX','ADF','DPLR','PA']
-    };
-
-    // Volume knob positions (0..10)
-    const volKnob = {
-      id: 'vol',
-      hotId: 'vol_knob',
-      pointerId: 'vol_pointer',
-      cx: 830, cy: 210,
-      positions: Array.from({length: 11}, (_,i)=>i)
-    };
-
-    function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
-
-    function setKnobVisual(pointerEl, idx, count, cx, cy){
-      // Map index to sweep angle (-120..120)
-      const minA = -120;
-      const maxA =  120;
-      const t = (count<=1) ? 0 : (idx/(count-1));
-      const angle = minA + (maxA-minA)*t;
-      pointerEl.setAttribute('transform', `rotate(${angle} ${cx} ${cy})`);
-    }
-
-    function setupKnob(knob, idxGetter, idxSetter, labelEl){
-      const knobHot = document.getElementById(knob.hotId);
-      const pointer = document.getElementById(knob.pointerId);
-
-      const setKnobIndex = (newIdx) => {
-        idxSetter(newIdx);
-        setKnobVisual(pointer, idxGetter(), knob.positions.length, knob.cx, knob.cy);
-        labelEl.textContent = (knob.id==='vol')
-          ? `${Math.round((idxGetter()/(knob.positions.length-1))*100)}%`
-          : knob.positions[idxGetter()];
-      };
-
-      // Initial render
-      setKnobIndex(idxGetter());
-
-      // Click to cycle
-      knobHot.addEventListener('click', () => {
-        setKnobIndex((idxGetter()+1) % knob.positions.length);
-      });
-
-      // Wheel to adjust
-      knobHot.addEventListener('wheel', (evt) => {
-        evt.preventDefault();
-        const dir = evt.deltaY > 0 ? 1 : -1;
-        setKnobIndex(clamp(idxGetter()+dir, 0, knob.positions.length-1));
-      });
-
-    // Drag-to-rotate (only for the selector knob)
-    if (knob.id === 'selector') {
-      const svg = document.getElementById('aa95_svg');
-      let dragging = false;
-      let moved = false;
-
-      const svgPointFromEvent = (evt) => {
-        const pt = svg.createSVGPoint();
-        pt.x = evt.clientX;
-        pt.y = evt.clientY;
-        return pt.matrixTransform(svg.getScreenCTM().inverse());
-      };
-
-      const norm180 = (deg) => ((deg + 180) % 360) - 180;
-
-      const setFromEvent = (evt) => {
-        const p = svgPointFromEvent(evt);
-        const dx = p.x - knob.cx;
-        const dy = p.y - knob.cy;
-
-        // Angle of the cursor relative to "up" (0° = up, +CW)
-        let rot = (Math.atan2(dy, dx) * 180 / Math.PI) + 90;
-        rot = norm180(rot);
-
-        // Clamp to knob sweep
-        const minA = -120, maxA = 120;
-        rot = Math.max(minA, Math.min(maxA, rot));
-
-        const step = (maxA - minA) / (knob.positions.length - 1);
-        const idx = Math.round((rot - minA) / step);
-        const clamped = Math.max(0, Math.min(knob.positions.length - 1, idx));
-        setKnobIndex(clamped);
-      };
-
-      knobHot.style.cursor = 'grab';
-
-      knobHot.addEventListener('pointerdown', (evt) => {
-        dragging = true;
-        moved = false;
-        knobHot.setPointerCapture(evt.pointerId);
-        knobHot.style.cursor = 'grabbing';
-        setFromEvent(evt);
-      });
-
-      knobHot.addEventListener('pointermove', (evt) => {
-        if (!dragging) return;
-        moved = true;
-        setFromEvent(evt);
-      });
-
-      const endDrag = () => {
-        if (!dragging) return;
-        dragging = false;
-        knobHot.style.cursor = 'grab';
-      };
-
-      knobHot.addEventListener('pointerup', endDrag);
-      knobHot.addEventListener('pointercancel', endDrag);
-
-      // Prevent click-to-cycle from also firing after a drag
-      knobHot.addEventListener('click', (evt) => {
-        if (moved) {
-          evt.stopImmediatePropagation();
-          evt.preventDefault();
-          moved = false;
-        }
-      }, true);
-    }
-    }
-
-    function setupButtons(){
-      document.querySelectorAll('g.btn').forEach(g => {
-        const id = g.getAttribute('data-id');
-        g.addEventListener('click', () => {
-          state.buttons[id] = !state.buttons[id];
-          g.classList.toggle('on', state.buttons[id]);
-        });
-      });
-    }
-
-    // Labels
-    const selectorValueEl = document.getElementById('selector_value');
-    const volValueEl = document.getElementById('vol_value');
-
-    // Init
-    setupKnob(selectorKnob, () => state.selectorIndex, (v)=>state.selectorIndex=v, selectorValueEl);
-    setupKnob(volKnob, () => state.volumeIndex, (v)=>state.volumeIndex=v, volValueEl);
-    setupButtons();
-  </script>
 </body>
 </html>
