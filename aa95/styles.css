@@ -1,47 +1,511 @@
-:root{
-  --bg:#0b0b0c;
-  --text:#e8e8ee;
-  --muted:#a7a7b0;
+/* AA95 Audio Control Panel - Photorealistic Styles */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+html, body {
+  height: 100%;
+  background: #1a1a1a;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
-.wrap{
-  min-height:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 }
 
-.panelShell{
-  width:min(1100px, 100%);
-  display:flex;
-  flex-direction:column;
-  gap:14px;
+.panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
-.panelContainer{
-  width:100%;
-  aspect-ratio: 1000 / 260;
-  background:transparent;
+.panel {
+  position: relative;
+  width: 940px;
+  height: 314px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-#aa95_svg{width:100%; height:100%; display:block}
-
-/* Optional little status box (kept for debugging; hide if you want) */
-.readout{
-  border:1px solid #232326;
-  border-radius:12px;
-  padding:12px 14px;
-  background:rgba(255,255,255,0.02);
+.panel-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 940px;
+  height: 314px;
+  pointer-events: none;
 }
-.readout strong{color:var(--muted)}
-.hint{margin-top:6px; color:var(--muted); font-size:12px}
+
+/* ============================================
+   TOGGLE SWITCHES (COM1, COM2, FM1, FM2, AUX)
+   ============================================ */
+
+.toggle {
+  position: absolute;
+  width: 28px;
+  height: 70px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.toggle-lever {
+  position: absolute;
+  width: 14px;
+  height: 44px;
+  left: 50%;
+  top: 8px;
+  transform: translateX(-50%) rotate(0deg);
+  transform-origin: center bottom;
+  background: linear-gradient(90deg, 
+    #d8d8d8 0%, 
+    #ffffff 30%, 
+    #f8f8f8 50%, 
+    #e8e8e8 70%, 
+    #c8c8c8 100%
+  );
+  border-radius: 7px 7px 4px 4px;
+  box-shadow: 
+    -1px 0 2px rgba(0,0,0,0.3),
+    1px 0 1px rgba(255,255,255,0.3),
+    0 -2px 3px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease;
+}
+
+.toggle[data-state="down"] .toggle-lever {
+  transform: translateX(-50%) rotate(35deg);
+  top: 20px;
+}
+
+.toggle:hover .toggle-lever {
+  filter: brightness(1.05);
+}
+
+.toggle:active .toggle-lever {
+  filter: brightness(0.95);
+}
+
+/* ============================================
+   SMALL TOGGLES (PAT, KEY)
+   ============================================ */
+
+.small-toggle {
+  position: absolute;
+  width: 20px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.small-toggle-lever {
+  position: absolute;
+  width: 10px;
+  height: 32px;
+  left: 50%;
+  top: 5px;
+  transform: translateX(-50%) rotate(0deg);
+  transform-origin: center bottom;
+  background: linear-gradient(90deg, 
+    #d0d0d0 0%, 
+    #ffffff 40%, 
+    #e0e0e0 100%
+  );
+  border-radius: 5px 5px 3px 3px;
+  box-shadow: 
+    -1px 0 2px rgba(0,0,0,0.3),
+    0 -1px 2px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease;
+}
+
+.small-toggle[data-state="down"] .small-toggle-lever {
+  transform: translateX(-50%) rotate(30deg);
+  top: 12px;
+}
+
+.small-toggle.vertical .small-toggle-lever {
+  width: 8px;
+  height: 28px;
+}
+
+.small-toggle.vertical[data-state="down"] .small-toggle-lever {
+  transform: translateX(-50%) rotate(25deg);
+}
+
+/* ============================================
+   ICS MIC TOGGLE (Orange lever)
+   ============================================ */
+
+.mic-toggle {
+  position: absolute;
+  width: 30px;
+  height: 50px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.mic-toggle-lever {
+  position: absolute;
+  width: 12px;
+  height: 36px;
+  left: 50%;
+  top: 5px;
+  transform: translateX(-50%) rotate(0deg);
+  transform-origin: center bottom;
+  background: linear-gradient(90deg, 
+    #c47f30 0%, 
+    #e8a050 30%, 
+    #d4903c 60%, 
+    #b87028 100%
+  );
+  border-radius: 6px 6px 3px 3px;
+  box-shadow: 
+    -1px 0 2px rgba(0,0,0,0.4),
+    1px 0 1px rgba(255,200,100,0.2),
+    0 -1px 2px rgba(0,0,0,0.2);
+  transition: transform 0.15s ease;
+}
+
+.mic-toggle[data-state="down"] .mic-toggle-lever {
+  transform: translateX(-50%) rotate(30deg);
+  top: 10px;
+}
+
+/* ============================================
+   MAIN SELECTOR KNOB
+   ============================================ */
+
+.selector-knob {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  cursor: grab;
+  z-index: 10;
+}
+
+.selector-knob:active {
+  cursor: grabbing;
+}
+
+.selector-knob .knob-pointer {
+  position: absolute;
+  width: 8px;
+  height: 45px;
+  left: 50%;
+  top: 12px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, 
+    #e0e0e0 0%, 
+    #ffffff 50%, 
+    #d0d0d0 100%
+  );
+  border-radius: 4px;
+  box-shadow: 
+    -1px 0 2px rgba(0,0,0,0.3),
+    1px 0 1px rgba(255,255,255,0.5);
+  transform-origin: center calc(100% + 20px);
+}
+
+/* ============================================
+   VOLUME KNOBS (RX VOL, ICS VOL)
+   ============================================ */
+
+.vol-knob {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  cursor: grab;
+  z-index: 10;
+}
+
+.vol-knob:active {
+  cursor: grabbing;
+}
+
+.vol-pointer {
+  position: absolute;
+  width: 20px;
+  height: 32px;
+  left: 50%;
+  top: 5px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, 
+    #c8c8c8 0%, 
+    #f0f0f0 30%, 
+    #e8e8e8 50%, 
+    #d0d0d0 70%,
+    #a8a8a8 100%
+  );
+  border-radius: 10px 10px 4px 4px;
+  box-shadow: 
+    -2px 0 3px rgba(0,0,0,0.4),
+    2px 0 2px rgba(255,255,255,0.2),
+    0 -2px 3px rgba(0,0,0,0.3);
+  transform-origin: center calc(100% + 5px);
+}
+
+/* ============================================
+   VOX KNOB
+   ============================================ */
+
+.vox-knob {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  cursor: grab;
+  z-index: 10;
+}
+
+.vox-knob:active {
+  cursor: grabbing;
+}
+
+.vox-pointer {
+  position: absolute;
+  width: 6px;
+  height: 18px;
+  left: 50%;
+  top: 8px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, 
+    #1a1a1a 0%, 
+    #3a3a3a 50%, 
+    #1a1a1a 100%
+  );
+  border-radius: 3px;
+  transform-origin: center calc(100% + 8px);
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.button {
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+  border-radius: 50%;
+  transition: filter 0.1s, transform 0.1s;
+}
+
+.button:hover {
+  filter: brightness(1.1);
+}
+
+.button:active {
+  transform: scale(0.95);
+  filter: brightness(0.9);
+}
+
+/* Blue buttons (ADF, DPLR) */
+.blue-btn {
+  width: 26px;
+  height: 26px;
+  background: radial-gradient(circle at 30% 30%, 
+    #5588cc 0%, 
+    #3366aa 40%, 
+    #224488 80%, 
+    #1a3366 100%
+  );
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.3);
+}
+
+.blue-btn[data-state="on"] {
+  background: radial-gradient(circle at 30% 30%, 
+    #77aaee 0%, 
+    #5588cc 40%, 
+    #3366aa 80%, 
+    #2255aa 100%
+  );
+  box-shadow: 
+    0 0 8px rgba(85, 136, 204, 0.6),
+    0 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.4);
+}
+
+/* Yellow button (SO) */
+.yellow-btn {
+  width: 28px;
+  height: 28px;
+  background: radial-gradient(circle at 30% 30%, 
+    #f0e080 0%, 
+    #d4c060 40%, 
+    #b8a040 80%, 
+    #9a8530 100%
+  );
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.4);
+}
+
+.yellow-btn[data-state="on"] {
+  background: radial-gradient(circle at 30% 30%, 
+    #fff8a0 0%, 
+    #f0e080 40%, 
+    #d4c060 80%, 
+    #c8b050 100%
+  );
+  box-shadow: 
+    0 0 10px rgba(240, 224, 128, 0.5),
+    0 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.5);
+}
+
+/* Pink button (ISO/EMR) */
+.pink-btn {
+  width: 32px;
+  height: 32px;
+  background: radial-gradient(circle at 30% 30%, 
+    #e8a8a0 0%, 
+    #d08880 40%, 
+    #b06860 80%, 
+    #905050 100%
+  );
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.3);
+}
+
+.pink-btn[data-state="emr"] {
+  background: radial-gradient(circle at 30% 30%, 
+    #ff9090 0%, 
+    #e87070 40%, 
+    #d05050 80%, 
+    #b04040 100%
+  );
+  box-shadow: 
+    0 0 12px rgba(255, 100, 100, 0.6),
+    0 2px 4px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.4);
+}
+
+/* White dome button (ICS CALL) */
+.dome-btn {
+  width: 48px;
+  height: 48px;
+  background: radial-gradient(circle at 35% 35%, 
+    #ffffff 0%, 
+    #f0f0f0 30%, 
+    #e0e0e0 60%, 
+    #c8c8c8 100%
+  );
+  box-shadow: 
+    0 3px 6px rgba(0,0,0,0.5),
+    0 1px 2px rgba(0,0,0,0.3),
+    inset 0 2px 4px rgba(255,255,255,0.8),
+    inset 0 -2px 4px rgba(0,0,0,0.1);
+}
+
+.dome-btn:active {
+  background: radial-gradient(circle at 35% 35%, 
+    #f8f8f8 0%, 
+    #e8e8e8 30%, 
+    #d8d8d8 60%, 
+    #c0c0c0 100%
+  );
+  box-shadow: 
+    0 1px 3px rgba(0,0,0,0.5),
+    inset 0 1px 2px rgba(255,255,255,0.6),
+    inset 0 -1px 2px rgba(0,0,0,0.15);
+  transform: scale(0.97);
+}
+
+/* ============================================
+   INDICATOR LIGHTS
+   ============================================ */
+
+.indicator {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  z-index: 10;
+  pointer-events: none;
+  background: radial-gradient(circle at 40% 40%, 
+    #1a3a1a 0%, 
+    #0a200a 60%, 
+    #051005 100%
+  );
+  box-shadow: 
+    inset 0 1px 3px rgba(0,0,0,0.5),
+    0 1px 1px rgba(255,255,255,0.1);
+}
+
+.indicator[data-state="on"] {
+  background: radial-gradient(circle at 40% 40%, 
+    #80ff80 0%, 
+    #40dd40 30%, 
+    #20aa20 60%, 
+    #108810 100%
+  );
+  box-shadow: 
+    0 0 15px rgba(64, 255, 64, 0.6),
+    0 0 30px rgba(64, 255, 64, 0.3),
+    inset 0 1px 3px rgba(255,255,255,0.4);
+}
+
+/* ============================================
+   STATUS BAR (Training feedback)
+   ============================================ */
+
+.status-bar {
+  position: absolute;
+  bottom: -40px;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  color: #7fffb9;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* ============================================
+   KNOB ROTATION (applied via JS)
+   ============================================ */
+
+.knob {
+  transform-origin: center center;
+}
+
+/* Hide native elements during interaction */
+.knob.dragging,
+.toggle.active,
+.button.pressed {
+  outline: none;
+}
+
+/* Invisible hitbox expansion */
+.toggle::before,
+.small-toggle::before,
+.mic-toggle::before,
+.button::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+}
+
+/* ============================================
+   RESPONSIVE SCALING (optional - disabled for training accuracy)
+   ============================================ */
+
+/*
+@media (max-width: 960px) {
+  .panel-wrapper {
+    transform: scale(calc(100vw / 960));
+    transform-origin: top center;
+  }
+}
+*/
