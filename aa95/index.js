@@ -1,33 +1,23 @@
-import { loadState, loadSelector } from "./state.js";
-import { renderAllSwitches } from "./render.js";
-import { updateStatus } from "./status.js";
-import { bindToggles } from "./toggles.js";
-import { bindSelector } from "./selector.js";
-import { registerSW } from "./pwa.js";
+// app/aa95/index.js
 
-const state = loadState();
-
-// IMPORTANT: initialize selector before first updateStatus() (prevents TDZ / undefined)
-const selectorRef = { current: loadSelector() };
-
-function init() {
-  renderAllSwitches(state);
-
-  // Ensure selector needle matches persisted selector
-  bindSelector(state, selectorRef);
-
-  // Bind toggle hotspots
-  bindToggles(state, () => selectorRef.current);
-
-  // First status paint
-  updateStatus(state, selectorRef.current);
-
-  // PWA
-  registerSW();
+async function loadPanelSVG() {
+  const container = document.getElementById("panel-container");
+  const response = await fetch("/app/aa95/aa95-panel.svg");
+  const svgText = await response.text();
+  container.innerHTML = svgText;
+  
+  // Once the SVG is in the DOM, run your initialization
+  initializePanel();
 }
 
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", init);
-} else {
-  init();
+// Your existing initialization logic
+function initializePanel() {
+  // import or call other modules as needed:
+  import("./dom.js").then(({ setupDOM }) => setupDOM());
+  import("./toggles.js").then(({ initToggles }) => initToggles());
+  import("./selector.js").then(({ initSelector }) => initSelector());
+  import("./status.js").then(({ initStatusUI }) => initStatusUI());
 }
+
+// Load panel
+loadPanelSVG();
