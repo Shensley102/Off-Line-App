@@ -1,7 +1,7 @@
 {
-  "routes": [
-    { "src": "/control-panel", "dest": "/aa95.html" },
-    { "src": "/radio", "dest": "/rc9100.html" }
+  "rewrites": [
+    { "source": "/control-panel", "destination": "/aa95.html" },
+    { "source": "/radio", "destination": "/rc9100.html" }
   ],
   "headers": [
     {
