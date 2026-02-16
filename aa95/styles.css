@@ -1,12 +1,16 @@
-/* AA95 refactor: small additive tweaks (keeps original inline CSS intact). */
+/* ===== AA95 ADD-ON STYLES ===== */
 
+/* Improve touch behavior on interactive areas */
 .hotspot {
-  /* makes touch dragging/presses more reliable */
   touch-action: none;
 }
 
+/* Respect accessibility: reduce motion */
 @media (prefers-reduced-motion: reduce) {
-  .lever, .bgDown {
+  .switchPatch,
+  .toggle,
+  .lever {
     transition: none !important;
+    animation: none !important;
   }
 }
