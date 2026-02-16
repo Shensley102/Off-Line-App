@@ -1,31 +1,23 @@
-/* Workbox powered service worker for aa95 panel with Option2 immediate updates */
+/**
+ * sw.js — Workbox service worker (local import)
+ * Option 2: immediate update with "Updating…" notification
+ */
 
-importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.6.2/workbox-sw.js');
+importScripts('/lib/workbox/workbox-sw.js');
 
 if (workbox) {
-  console.log('Workbox loaded successfully');
+  console.log('Workbox loaded');
 
-  // Turn off debug logging
   workbox.setConfig({ debug: false });
 
-  /**
-   * Precache manifest placeholder
-   * Workbox will replace `self.__WB_MANIFEST` with a precache list at build time,
-   * OR if you are manually generating a list, it will exist here.
-   */
+  // Precache all generated assets
   workbox.precaching.precacheAndRoute(self.__WB_MANIFEST || []);
 
-  /**
-   * Immediately take control of the page when a new service worker installs
-   * (skip waiting) and claim clients so the new SW starts controlling ASAP.
-   */
+  // Immediately activate new service worker
   workbox.core.skipWaiting();
   workbox.core.clientsClaim();
 
-  /**
-   * Send a message to the client so it can show a UI update prompt
-   * after activation, then reload the page (Option2 behavior).
-   */
+  // Notify client that update occurred
   self.addEventListener('activate', (event) => {
     event.waitUntil(
       clients.matchAll().then((clientsList) => {
@@ -36,23 +28,16 @@ if (workbox) {
     );
   });
 
-  /**
-   * Navigation route handler:
-   *   Use NetworkFirst for HTML pages (so updates fetch new HTML),
-   *   fallback to cache if offline.
-   */
+  // Navigation: network first
   workbox.routing.registerRoute(
     ({ request }) => request.mode === 'navigate',
     new workbox.strategies.NetworkFirst({
       cacheName: 'pages-cache',
-      networkTimeoutSeconds: 3
+      networkTimeoutSeconds: 3,
     })
   );
 
-  /**
-   * Static assets handler:
-   *   Use CacheFirst for scripts/styles/images with a long expiration.
-   */
+  // Static assets: cache first
   workbox.routing.registerRoute(
     ({ request }) =>
       request.destination === 'script' ||
@@ -63,13 +48,11 @@ if (workbox) {
       plugins: [
         new workbox.expiration.ExpirationPlugin({
           maxEntries: 300,
-          maxAgeSeconds: 60 * 60 * 24 * 30 // 30 Days
-        })
-      ]
+          maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+        }),
+      ],
     })
   );
-
-  console.log('Service Worker registered and routing set up.');
 
 } else {
   console.warn('Workbox failed to load.');
