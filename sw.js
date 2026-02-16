@@ -39,7 +39,7 @@ const ASSETS = [
   "/icons/icon-512.png"
 ];
 
-// Map clean URLs to actual HTML files for offline support
+// Map clean URLs to HTML files (for offline fallback only)
 const ROUTE_MAP = {
   "/control-panel": "/aa95.html",
   "/radio": "/rc9100.html"
@@ -73,41 +73,40 @@ self.addEventListener("fetch", (event) => {
 
   if (req.method !== "GET") return;
 
-  const url = new URL(req.url);
-
-  // Handle navigation requests (HTML pages)
+  // Navigation requests: network-first, cache fallback
   if (req.mode === "navigate") {
-    // Check if this is a mapped route
-    const mappedFile = ROUTE_MAP[url.pathname];
-    
     event.respondWith(
       fetch(req)
         .then(response => {
-          // If response is ok, return it
-          if (response.ok) return response;
-          
-          // If 404 and we have a mapped route, serve the cached HTML
-          if (response.status === 404 && mappedFile) {
-            return caches.match(mappedFile) || response;
+          // Clone and cache successful navigation responses
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(req, clone);
+            });
           }
           return response;
         })
         .catch(() => {
           // Network failed - serve from cache
+          const url = new URL(req.url);
+          const mappedFile = ROUTE_MAP[url.pathname];
+          
+          // Try the mapped HTML file first, then the exact URL, then index
           if (mappedFile) {
             return caches.match(mappedFile);
           }
-          return caches.match(url.pathname) || caches.match("/index.html");
+          return caches.match(req) || caches.match("/index.html");
         })
     );
     return;
   }
 
-  // Cache-first for other assets
+  // Other assets: cache-first
   event.respondWith(
     caches.match(req).then(cached => {
       if (cached) return cached;
-      
+
       return fetch(req).then(resp => {
         if (resp.ok && resp.type === "basic") {
           const copy = resp.clone();
