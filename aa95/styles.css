@@ -496,16 +496,3 @@ body {
   right: -5px;
   bottom: -5px;
 }
-
-/* ============================================
-   RESPONSIVE SCALING (optional - disabled for training accuracy)
-   ============================================ */
-
-/*
-@media (max-width: 960px) {
-  .panel-wrapper {
-    transform: scale(calc(100vw / 960));
-    transform-origin: top center;
-  }
-}
-*/
