@@ -2,88 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <title>AA95 Control Panel</title>
+  <title>AA95 Audio Panel</title>
 
-  <!-- Mobile / PWA -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta name="theme-color" content="#111111"/>
-  <link rel="manifest" href="/manifest.json"/>
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#000000">
 
   <!-- Styles -->
-  <link rel="stylesheet" href="/aa95/styles.css"/>
-
-  <style>
-    body{
-      margin:0;
-      background:#0b0c10;
-      font-family:system-ui, Arial;
-      color:white;
-      text-align:center;
-    }
-
-    .panel-wrap{
-      max-width:1100px;
-      margin:auto;
-      padding:20px;
-    }
-
-    .status{
-      margin-top:14px;
-      padding:12px;
-      background:#10151c;
-      border:1px solid #1f2a38;
-      border-radius:10px;
-      text-align:left;
-      font-size:14px;
-    }
-
-    .home-link{
-      display:inline-block;
-      margin:14px;
-      color:#4cc2ff;
-      text-decoration:none;
-      font-size:14px;
-    }
-
-  </style>
+  <link rel="stylesheet" href="./aa95/styles.css">
 </head>
 
 <body>
 
-<a href="/" class="home-link">← HOME</a>
-
-<div class="panel-wrap">
-
-  <!-- PANEL SVG -->
-  <object
-    id="aa95Panel"
-    type="image/svg+xml"
-    data="/aa95/aa95-panel.svg"
-    width="100%"
-  ></object>
-
-  <!-- STATUS BOX -->
-  <div class="status" id="panelStatus">
-    Loading panel…
+  <!-- Back link -->
+  <div class="back-link">
+    <a href="/">← HOME</a>
   </div>
 
-</div>
+  <!-- Panel Container -->
+  <div class="panel-wrap">
 
-<!-- MAIN MODULE -->
-<script type="module" src="/aa95/index.js"></script>
+    <!-- SVG Panel -->
+    <object
+      id="aa95-svg"
+      type="image/svg+xml"
+      data="./aa95/aa95-panel.svg">
+    </object>
 
-<!-- SERVICE WORKER -->
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker
-      .register("/sw.js")
-      .then(() => console.log("SW registered"))
-      .catch(console.error);
-  });
-}
-</script>
+  </div>
+
+  <!-- Status Display -->
+  <div id="status" class="status"></div>
+
+  <!-- Guide -->
+  <div id="guide" class="guide"></div>
+
+  <!-- App Entry -->
+  <script type="module" src="./aa95/index.js"></script>
 
 </body>
 </html>
