@@ -1,26 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AA95 Panel</title>
+  <meta charset="UTF-8">
+  <title>AA95 Audio Panel</title>
 
-  <!-- Load shared styles -->
-  <link rel="stylesheet" href="/app/aa95/styles.css" />
+  <!-- Mobile / PWA -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#000000">
+
+  <!-- Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Icons -->
+  <link rel="icon" href="icons/icon-192.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+    }
+
+    #panel-container {
+      max-width: 1100px;
+      margin: auto;
+      position: relative;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      user-select: none;
+    }
+
+    /* Update popup */
+    #updatePopup {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 8px;
+      border: 1px solid #444;
+      display: none;
+      z-index: 999;
+    }
+
+    #updatePopup button {
+      margin-left: 10px;
+      padding: 6px 10px;
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #555;
+      cursor: pointer;
+    }
+
+  </style>
 </head>
+
 <body>
 
-  <!-- Container for the loaded panel -->
-  <div id="panel-container"></div>
+<h2>AA95 Audio Control Panel</h2>
 
-  <!-- Status display UI -->
-  <div id="status-display"></div>
+<div id="panel-container">
 
-  <!-- Guide text -->
-  <div id="guide-text"></div>
+  <!-- ===== SVG PANEL ===== -->
+  <!-- Replace href if your SVG lives elsewhere -->
+  <object
+    id="aa95svg"
+    type="image/svg+xml"
+    data="app/aa95/aa95.svg">
+  </object>
 
-  <!-- App logic modules -->
-  <script type="module" src="/app/aa95/index.js"></script>
-  <script type="module" src="/app/aa95/sw-helper.js"></script>
+</div>
+
+<!-- Update popup -->
+<div id="updatePopup">
+  Updating...
+  <button onclick="window.location.reload()">Reload</button>
+</div>
+
+<!-- ===== MODULE SCRIPTS ===== -->
+<script type="module">
+
+  import "./app/aa95/state.js";
+  import "./app/aa95/config.js";
+  import "./app/aa95/dom.js";
+  import "./app/aa95/toggles.js";
+  import "./app/aa95/toggleMotion.js";
+  import "./app/aa95/selector.js";
+  import "./app/aa95/render.js";
+  import "./app/aa95/status.js";
+  import "./app/aa95/event.js";
+  import "./app/aa95/pwa.js";
+  import "./app/aa95/sw-helper.js";
+  import "./app/aa95/index.js";
+
+</script>
+
+<!-- ===== SERVICE WORKER ===== -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").then(reg => {
+
+    reg.addEventListener("updatefound", () => {
+      document.getElementById("updatePopup").style.display = "block";
+    });
+
+  });
+}
+</script>
+
 </body>
 </html>
