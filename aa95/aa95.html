@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AA95 Audio Control Panel</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="panel-wrapper">
+    <div class="panel" id="panel">
+      <!-- Base panel image -->
+      <img src="assets/img_001.webp" alt="AA95 Panel" class="panel-base" draggable="false">
+      
+      <!-- Toggle switches (COM1, COM2, FM1, FM2, AUX) -->
+      <div class="toggle" id="com1" data-state="up" style="left: 127px; top: 18px;">
+        <div class="toggle-lever"></div>
+      </div>
+      <div class="toggle" id="com2" data-state="up" style="left: 187px; top: 18px;">
+        <div class="toggle-lever"></div>
+      </div>
+      <div class="toggle" id="fm1" data-state="up" style="left: 247px; top: 18px;">
+        <div class="toggle-lever"></div>
+      </div>
+      <div class="toggle" id="fm2" data-state="up" style="left: 307px; top: 18px;">
+        <div class="toggle-lever"></div>
+      </div>
+      <div class="toggle" id="aux" data-state="up" style="left: 367px; top: 18px;">
+        <div class="toggle-lever"></div>
+      </div>
+      
+      <!-- Main selector knob -->
+      <div class="knob selector-knob" id="selector" data-angle="-120" style="left: 398px; top: 118px;">
+        <div class="knob-pointer"></div>
+      </div>
+      
+      <!-- ADF button (blue) -->
+      <div class="button blue-btn" id="adf" data-state="off" style="left: 519px; top: 22px;"></div>
+      
+      <!-- DPLR button (blue) -->
+      <div class="button blue-btn" id="dplr" data-state="off" style="left: 567px; top: 22px;"></div>
+      
+      <!-- PAT toggle -->
+      <div class="small-toggle" id="pat" data-state="up" style="left: 638px; top: 12px;">
+        <div class="small-toggle-lever"></div>
+      </div>
+      
+      <!-- OFF/SO button (yellow) -->
+      <div class="button yellow-btn" id="so" data-state="off" style="left: 703px; top: 22px;"></div>
+      
+      <!-- RX VOL knob -->
+      <div class="knob vol-knob" id="rxvol" data-angle="0" style="left: 858px; top: 30px;">
+        <div class="vol-pointer"></div>
+      </div>
+      
+      <!-- ISO/EMR button (pink) -->
+      <div class="button pink-btn" id="iso_emr" data-state="normal" style="left: 108px; top: 214px;"></div>
+      
+      <!-- TX indicator light -->
+      <div class="indicator" id="tx_light" data-state="on" style="left: 207px; top: 204px;"></div>
+      
+      <!-- VOX knob -->
+      <div class="knob vox-knob" id="vox" data-angle="0" style="left: 262px; top: 188px;">
+        <div class="vox-pointer"></div>
+      </div>
+      
+      <!-- ICS CALL button (white dome) -->
+      <div class="button dome-btn" id="ics_call" style="left: 560px; top: 200px;"></div>
+      
+      <!-- PLT indicator light -->
+      <div class="indicator" id="plt_light" data-state="on" style="left: 665px; top: 158px;"></div>
+      
+      <!-- ICS MIC toggle (orange lever) -->
+      <div class="mic-toggle" id="ics_mic" data-state="up" style="left: 728px; top: 190px;">
+        <div class="mic-toggle-lever"></div>
+      </div>
+      
+      <!-- KEY toggle -->
+      <div class="small-toggle vertical" id="key" data-state="up" style="left: 775px; top: 224px;">
+        <div class="small-toggle-lever"></div>
+      </div>
+      
+      <!-- ICS VOL knob -->
+      <div class="knob vol-knob" id="icsvol" data-angle="0" style="left: 858px; top: 182px;">
+        <div class="vol-pointer"></div>
+      </div>
+      
+      <!-- Status display (optional, for training feedback) -->
+      <div class="status-bar" id="statusBar">
+        <span id="statusText">Ready</span>
+      </div>
+    </div>
+  </div>
+  
+  <script src="panel.js"></script>
+</body>
+</html>
