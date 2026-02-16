@@ -1,7 +1,6 @@
 /**
  * sw-helper.js
- * Listens for messages from the service worker and shows
- * an updating prompt when a new version is installed.
+ * Displays an overlay when the service worker signals an update.
  */
 
 function createUpdatingOverlay() {
@@ -26,11 +25,7 @@ function createUpdatingOverlay() {
 
 navigator.serviceWorker.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SW_UPDATED') {
-    // Show updating overlay
     createUpdatingOverlay();
-    // Reload after a short delay so the user can see the message
-    setTimeout(() => {
-      window.location.reload();
-    }, 1200);
+    setTimeout(() => window.location.reload(), 1200);
   }
 });
