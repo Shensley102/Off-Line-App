@@ -115,25 +115,67 @@
       position: absolute;
       bottom: 18px;
       left: 50%;
-      width: 12px;
-      height: 42px;
-      background: linear-gradient(to right, #ccc, #fff 50%, #bbb);
-      border-radius: 6px 6px 2px 2px;
+      width: 14px;
+      height: 38px;
+      background: linear-gradient(90deg, #b0b0b0 0%, #e8e8e8 30%, #ffffff 50%, #e8e8e8 70%, #b0b0b0 100%);
+      border-radius: 7px 7px 4px 4px;
       transform-origin: bottom center;
-      margin-left: -6px;
+      margin-left: -7px;
       transition: transform 0.18s var(--snap-curve), filter 0.2s;
       z-index: 2;
+      box-shadow: 
+        inset 0 -2px 4px rgba(0,0,0,0.2),
+        0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    /* Rounded cap on top of lever */
+    .lever::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 12px;
+      background: radial-gradient(circle at 40% 40%, #ffffff 0%, #e0e0e0 50%, #c0c0c0 100%);
+      border-radius: 50%;
+      box-shadow: inset 0 -1px 2px rgba(0,0,0,0.15);
+    }
+    
+    /* Small dimple/dot on cap */
+    .lever::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background: radial-gradient(circle, #999 0%, #bbb 100%);
+      border-radius: 50%;
     }
     
     .assembly-toggle.small .lever {
-      width: 10px;
-      height: 32px;
-      margin-left: -5px;
+      width: 11px;
+      height: 28px;
+      margin-left: -5.5px;
       bottom: 14px;
     }
     
-    [data-active="true"] .lever { transform: rotateX(15deg); filter: brightness(1.1); }
-    [data-active="false"] .lever { transform: rotateX(-15deg); filter: brightness(0.6); }
+    .assembly-toggle.small .lever::before {
+      width: 9px;
+      height: 9px;
+      top: -1px;
+    }
+    
+    .assembly-toggle.small .lever::after {
+      width: 3px;
+      height: 3px;
+      top: 2px;
+    }
+    
+    [data-active="true"] .lever { transform: rotateX(20deg) rotateZ(-5deg); filter: brightness(1.1); }
+    [data-active="false"] .lever { transform: rotateX(-20deg) rotateZ(5deg); filter: brightness(0.85); }
 
     .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
     .toggle.orange .lever { background: linear-gradient(to right, #a62, #f94 50%, #841); }
