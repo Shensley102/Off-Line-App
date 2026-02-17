@@ -6,9 +6,10 @@
 :root {
   --panel-aspect: calc(940 / 314);
   
-  /* Animation timing */
-  --transition-mechanical: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-fast: 0.1s ease-out;
+  /* Animation timing - "Mechanical Weight" feels stiff at start, snaps at end */
+  --transition-mechanical: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-snap: 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); /* Slight overshoot for snap feel */
+  --transition-fast: 0.08s ease-out;
   
   /* Colors */
   --color-active: rgba(127, 255, 185, 0.5);
@@ -118,20 +119,36 @@ body {
 }
 
 /* Toggle UP - lever toward viewer, dome visible */
+/* Light hits the top; shadow falls behind and down */
 .hotspot.toggle[data-active="true"] .cutout {
   transform: rotateX(-35deg);
-  filter: brightness(1.1) drop-shadow(0px 8px 4px rgba(0,0,0,0.5));
+  filter: 
+    drop-shadow(0px 8px 4px rgba(0,0,0,0.5)) 
+    drop-shadow(0px 4px 2px rgba(0,0,0,0.3))
+    brightness(1.1);
 }
 
 /* Toggle DOWN - lever away, shaft visible */
+/* Shadow moves up; face of toggle dims as it tilts away from light */
 .hotspot.toggle[data-active="false"] .cutout {
   transform: rotateX(35deg);
-  filter: brightness(0.9) drop-shadow(0px -4px 6px rgba(0,0,0,0.4));
+  filter: 
+    drop-shadow(0px -4px 6px rgba(0,0,0,0.4)) 
+    drop-shadow(0px -2px 3px rgba(0,0,0,0.2))
+    brightness(0.85);
 }
 
-/* Hover highlight */
+/* Hover highlight - pre-interaction glow */
 .hotspot.toggle:hover .cutout {
-  filter: brightness(1.15) drop-shadow(0px 8px 6px rgba(0,0,0,0.6));
+  filter: 
+    drop-shadow(0px 10px 8px rgba(0,0,0,0.6)) 
+    drop-shadow(0 0 8px rgba(127, 255, 185, 0.2))
+    brightness(1.15);
+}
+
+/* Active/clicking state - slight compression */
+.hotspot.toggle:active .cutout {
+  transition-duration: 0.05s;
 }
 
 /* Small toggle variant */
@@ -173,12 +190,23 @@ body {
 
 .hotspot.knob .cutout {
   transform-origin: center center;
+  /* Snap transition for detent feel */
+  transition: 
+    transform var(--transition-snap),
+    filter var(--transition-mechanical);
 }
 
 /* Selector rotation applied via inline style from JS */
 .hotspot.knob.selector .cutout {
-  /* Base shadow for depth */
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+  /* Base shadow for depth - knob sits proud of panel */
+  filter: 
+    drop-shadow(0 4px 8px rgba(0,0,0,0.5))
+    drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+/* Dragging state - remove snap transition for smooth rotation */
+.hotspot.knob.selector.dragging .cutout {
+  transition: filter var(--transition-mechanical);
 }
 
 .hotspot.knob.selector:hover .cutout {
@@ -212,11 +240,25 @@ body {
 }
 
 .hotspot.knob.volume .cutout {
-  filter: drop-shadow(0 3px 6px rgba(0,0,0,0.5));
+  filter: 
+    drop-shadow(0 3px 6px rgba(0,0,0,0.5))
+    drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+  transition: 
+    transform 0.1s ease-out,
+    filter var(--transition-mechanical);
 }
 
 .hotspot.knob.volume:hover .cutout {
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)) brightness(1.05);
+  filter: 
+    drop-shadow(0 4px 8px rgba(0,0,0,0.6)) 
+    drop-shadow(0 0 6px rgba(127, 255, 185, 0.15))
+    brightness(1.05);
+}
+
+.hotspot.knob.volume:active .cutout {
+  filter: 
+    drop-shadow(0 2px 4px rgba(0,0,0,0.4))
+    brightness(0.95);
 }
 
 /* Responsive volume knob sizing */
@@ -244,14 +286,24 @@ body {
   transform-origin: center center;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
   transition: 
-    transform 0.08s ease-out,
-    filter 0.08s ease-out;
+    transform 0.06s cubic-bezier(0.4, 0, 0.2, 1),
+    filter 0.06s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Pressed state */
+/* Pressed state - pushed into the panel, moves away from cockpit lights */
 .hotspot.button.ics-call[data-active="true"] .cutout {
-  transform: scale(0.96);
-  filter: brightness(0.85) drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+  transform: scale(0.94) translateY(2px);
+  filter: 
+    brightness(0.8) 
+    contrast(1.2) 
+    drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+
+/* Released "snap back" with slight bounce */
+.hotspot.button.ics-call[data-active="false"] .cutout {
+  transition: 
+    transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.12s ease-out;
 }
 
 .hotspot.button.ics-call:hover .cutout {
@@ -300,7 +352,7 @@ body {
 }
 
 /* ============================================
-   LED INDICATORS - CSS Rendered
+   LED INDICATORS - Realistic Glow
    ============================================ */
 .hotspot.indicator.led {
   width: 22px;
@@ -308,23 +360,34 @@ body {
   border-radius: 50%;
   pointer-events: none;
   cursor: default;
-  transition: all 0.2s ease;
+  transition: 
+    background 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
-/* LED OFF */
+/* LED OFF - dim, no glow */
 .hotspot.indicator.led[data-active="false"] {
-  background: radial-gradient(circle at 40% 40%, #2a4a2a 0%, #1a2a1a 100%);
-  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  background: radial-gradient(circle at 35% 35%, #2a4a2a 0%, #1a2a1a 70%, #0a150a 100%);
+  box-shadow: 
+    inset 0 1px 3px rgba(0,0,0,0.5),
+    inset 0 -1px 2px rgba(255,255,255,0.05);
 }
 
-/* LED ON - Bright green glow */
+/* LED ON - Bright green glow with bloom */
 .hotspot.indicator.led[data-active="true"] {
-  background: radial-gradient(circle at 40% 40%, #88ff88 0%, var(--led-green-on) 50%, #00aa22 100%);
+  background: radial-gradient(circle at 35% 35%, 
+    #aaffaa 0%, 
+    #66ff66 20%,
+    var(--led-green-on) 50%, 
+    #00cc22 100%
+  );
   box-shadow: 
+    0 0 4px var(--led-green-on),
     0 0 8px var(--led-green-on),
-    0 0 16px rgba(0, 255, 68, 0.5),
-    0 0 24px rgba(0, 255, 68, 0.3),
-    inset 0 1px 2px rgba(255,255,255,0.3);
+    0 0 16px rgba(0, 255, 68, 0.6),
+    0 0 32px rgba(0, 255, 68, 0.3),
+    inset 0 1px 3px rgba(255,255,255,0.4),
+    inset 0 -1px 2px rgba(0,0,0,0.2);
 }
 
 /* Responsive LED sizing */
