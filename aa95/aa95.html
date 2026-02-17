@@ -85,7 +85,8 @@
       position: relative;
       width: 24px;
       height: 60px;
-      perspective: 1000px;
+      perspective: 800px;
+      transform-style: preserve-3d;
     }
     
     .assembly-toggle.small {
@@ -100,7 +101,7 @@
       width: 20px;
       height: 20px;
       background: radial-gradient(circle at 40% 40%, #555 0%, #333 50%, #222 100%);
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateZ(1px);
       border-radius: 50%;
       z-index: 1;
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.4);
@@ -125,8 +126,11 @@
       /* Pivot on lower axis (the base of the lever) */
       transform-origin: bottom center; 
       
+      /* Prevent rendering artifacts during flip */
+      backface-visibility: hidden;
+      
       /* Mechanical 'snap' animation */
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 4;
     }
     
@@ -176,14 +180,14 @@
       top: 2px;
     }
     
-    /* ON Position: 0 degrees (Vertical Up) */
+    /* ON Position: Vertical Up (toward viewer) */
     [data-active="true"] .lever {
-      transform: rotate(0deg);
+      transform: rotateX(0deg);
     }
     
-    /* OFF Position: 180 degrees (Vertical Down) */
+    /* OFF Position: Vertical Down (flipped away) */
     [data-active="false"] .lever {
-      transform: rotate(180deg) translateY(-4px);
+      transform: rotateX(-180deg);
     }
 
     .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
