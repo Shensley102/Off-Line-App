@@ -1,14 +1,14 @@
 /* ============================================
-   AA95 Audio Control Panel - Photo Cutout System
+   AA95 Audio Control Panel - Real Photo Cutouts
    Uses actual hardware photo segments for animation
    ============================================ */
 
 :root {
   --panel-aspect: calc(940 / 314);
   
-  /* Animation timing - "Mechanical Weight" feels stiff at start, snaps at end */
+  /* Animation timing - "Mechanical Weight" */
   --transition-mechanical: 0.22s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-snap: 0.15s cubic-bezier(0.34, 1.56, 0.64, 1); /* Slight overshoot for snap feel */
+  --transition-snap: 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
   --transition-fast: 0.08s ease-out;
   
   /* Colors */
@@ -68,7 +68,7 @@ body {
     0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
-/* Base panel photo - enhanced for texture pop */
+/* Base panel photo */
 .panel-base {
   position: absolute;
   top: 0;
@@ -77,8 +77,7 @@ body {
   height: 100%;
   object-fit: cover;
   pointer-events: none;
-  /* Enhance the weathered textures */
-  filter: contrast(1.1) saturate(1.1);
+  filter: contrast(1.05) saturate(1.05);
 }
 
 /* ============================================
@@ -91,7 +90,7 @@ body {
   z-index: 10;
 }
 
-/* All cutout images - non-interactive, transforms applied to parent */
+/* All cutout images */
 .hotspot .cutout {
   display: block;
   width: 100%;
@@ -104,145 +103,150 @@ body {
 }
 
 /* ============================================
-   TOGGLE SWITCHES - Photo Cutouts
+   TOGGLE SWITCHES - Real Photo Cutouts
    3D flip with shadow shift for depth
    ============================================ */
 .hotspot.toggle {
-  width: 24px;
-  height: 60px;
+  width: 28px;
+  height: 65px;
   perspective: 200px;
   perspective-origin: center 80%;
 }
 
 .hotspot.toggle .cutout {
-  transform-origin: center bottom;
+  transform-origin: center 75%;
 }
 
-/* Toggle UP - lever toward viewer, dome visible */
-/* Light hits the top; shadow falls behind and down */
+/* Toggle UP - lever toward viewer */
 .hotspot.toggle[data-active="true"] .cutout {
-  transform: rotateX(-35deg);
+  transform: rotateX(-30deg);
   filter: 
-    drop-shadow(0px 8px 4px rgba(0,0,0,0.5)) 
-    drop-shadow(0px 4px 2px rgba(0,0,0,0.3))
+    drop-shadow(0px 6px 4px rgba(0,0,0,0.5)) 
+    drop-shadow(0px 3px 2px rgba(0,0,0,0.3))
+    brightness(1.05);
+}
+
+/* Toggle DOWN - lever away */
+.hotspot.toggle[data-active="false"] .cutout {
+  transform: rotateX(30deg);
+  filter: 
+    drop-shadow(0px -3px 4px rgba(0,0,0,0.4)) 
+    drop-shadow(0px -1px 2px rgba(0,0,0,0.2))
+    brightness(0.88);
+}
+
+/* Hover highlight */
+.hotspot.toggle:hover .cutout {
+  filter: 
+    drop-shadow(0px 8px 6px rgba(0,0,0,0.6)) 
+    drop-shadow(0 0 6px rgba(127, 255, 185, 0.15))
     brightness(1.1);
 }
 
-/* Toggle DOWN - lever away, shaft visible */
-/* Shadow moves up; face of toggle dims as it tilts away from light */
-.hotspot.toggle[data-active="false"] .cutout {
-  transform: rotateX(35deg);
-  filter: 
-    drop-shadow(0px -4px 6px rgba(0,0,0,0.4)) 
-    drop-shadow(0px -2px 3px rgba(0,0,0,0.2))
-    brightness(0.85);
-}
-
-/* Hover highlight - pre-interaction glow */
-.hotspot.toggle:hover .cutout {
-  filter: 
-    drop-shadow(0px 10px 8px rgba(0,0,0,0.6)) 
-    drop-shadow(0 0 8px rgba(127, 255, 185, 0.2))
-    brightness(1.15);
-}
-
-/* Active/clicking state - slight compression */
-.hotspot.toggle:active .cutout {
-  transition-duration: 0.05s;
-}
-
-/* Small toggle variant */
+/* Small toggle variant (PAT, KEY) */
 .hotspot.toggle.small {
-  width: 18px;
-  height: 45px;
+  width: 20px;
+  height: 48px;
 }
 
 /* ICS MIC Toggle (Orange) */
 .hotspot.toggle.mic {
-  width: 28px;
-  height: 55px;
+  width: 30px;
+  height: 60px;
+}
+
+/* ISO/EMR Toggle (Red) */
+.hotspot.toggle.iso-emr {
+  width: 32px;
+  height: 65px;
 }
 
 /* Responsive toggle sizing */
 @media (max-width: 600px) {
   .hotspot.toggle {
-    width: 18px;
-    height: 45px;
+    width: 22px;
+    height: 50px;
   }
   .hotspot.toggle.small {
-    width: 14px;
-    height: 35px;
+    width: 16px;
+    height: 38px;
   }
   .hotspot.toggle.mic {
-    width: 22px;
-    height: 42px;
+    width: 24px;
+    height: 48px;
+  }
+  .hotspot.toggle.iso-emr {
+    width: 26px;
+    height: 52px;
   }
 }
 
 /* ============================================
-   SELECTOR KNOB - Photo Cutout
-   Rotates to 6 discrete positions
+   SELECTOR KNOB - Real Photo Cutout
+   Large gray knob with white stripe pointer
    ============================================ */
 .hotspot.knob.selector {
-  width: 130px;
-  height: 130px;
+  width: 110px;
+  height: 110px;
 }
 
 .hotspot.knob .cutout {
   transform-origin: center center;
-  /* Snap transition for detent feel */
   transition: 
     transform var(--transition-snap),
     filter var(--transition-mechanical);
 }
 
-/* Selector rotation applied via inline style from JS */
 .hotspot.knob.selector .cutout {
-  /* Base shadow for depth - knob sits proud of panel */
   filter: 
     drop-shadow(0 4px 8px rgba(0,0,0,0.5))
     drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
-/* Dragging state - remove snap transition for smooth rotation */
+/* Dragging state - smooth rotation */
 .hotspot.knob.selector.dragging .cutout {
   transition: filter var(--transition-mechanical);
 }
 
 .hotspot.knob.selector:hover .cutout {
-  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)) brightness(1.05);
+  filter: 
+    drop-shadow(0 6px 12px rgba(0,0,0,0.6)) 
+    drop-shadow(0 0 8px rgba(127, 255, 185, 0.1))
+    brightness(1.03);
 }
 
 .hotspot.knob.selector:active .cutout {
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)) brightness(0.95);
+  filter: 
+    drop-shadow(0 2px 4px rgba(0,0,0,0.4))
+    brightness(0.97);
 }
 
 /* Responsive selector sizing */
 @media (max-width: 600px) {
   .hotspot.knob.selector {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
   }
 }
 
 /* ============================================
-   VOLUME KNOBS - Photo Cutouts
-   Continuous rotation based on value
+   VOLUME KNOBS - Real Photo Cutouts
+   Black ribbed with white pointer tab
    ============================================ */
 .hotspot.knob.volume {
-  width: 60px;
-  height: 60px;
+  width: 55px;
+  height: 55px;
 }
 
 .hotspot.knob.volume.vox {
-  width: 50px;
-  height: 50px;
+  width: 48px;
+  height: 48px;
 }
 
 .hotspot.knob.volume .cutout {
   filter: 
-    drop-shadow(0 3px 6px rgba(0,0,0,0.5))
-    drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+    drop-shadow(0 3px 5px rgba(0,0,0,0.5))
+    drop-shadow(0 1px 2px rgba(0,0,0,0.3));
   transition: 
     transform 0.1s ease-out,
     filter var(--transition-mechanical);
@@ -251,35 +255,35 @@ body {
 .hotspot.knob.volume:hover .cutout {
   filter: 
     drop-shadow(0 4px 8px rgba(0,0,0,0.6)) 
-    drop-shadow(0 0 6px rgba(127, 255, 185, 0.15))
+    drop-shadow(0 0 5px rgba(127, 255, 185, 0.12))
     brightness(1.05);
 }
 
 .hotspot.knob.volume:active .cutout {
   filter: 
-    drop-shadow(0 2px 4px rgba(0,0,0,0.4))
+    drop-shadow(0 2px 3px rgba(0,0,0,0.4))
     brightness(0.95);
 }
 
 /* Responsive volume knob sizing */
 @media (max-width: 600px) {
   .hotspot.knob.volume {
-    width: 45px;
-    height: 45px;
+    width: 42px;
+    height: 42px;
   }
   .hotspot.knob.volume.vox {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
   }
 }
 
 /* ============================================
-   ICS CALL BUTTON - Momentary Press
-   Photo cutout with scale/brightness on press
+   ICS CALL BUTTON - Real Photo Cutout
+   White dome momentary button
    ============================================ */
 .hotspot.button.ics-call {
-  width: 55px;
-  height: 55px;
+  width: 50px;
+  height: 50px;
 }
 
 .hotspot.button.ics-call .cutout {
@@ -290,16 +294,16 @@ body {
     filter 0.06s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Pressed state - pushed into the panel, moves away from cockpit lights */
+/* Pressed state */
 .hotspot.button.ics-call[data-active="true"] .cutout {
   transform: scale(0.94) translateY(2px);
   filter: 
-    brightness(0.8) 
-    contrast(1.2) 
+    brightness(0.82) 
+    contrast(1.15) 
     drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
-/* Released "snap back" with slight bounce */
+/* Released snap back */
 .hotspot.button.ics-call[data-active="false"] .cutout {
   transition: 
     transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -307,20 +311,21 @@ body {
 }
 
 .hotspot.button.ics-call:hover .cutout {
-  filter: drop-shadow(0 5px 8px rgba(0,0,0,0.5)) brightness(1.05);
+  filter: 
+    drop-shadow(0 5px 8px rgba(0,0,0,0.5)) 
+    brightness(1.05);
 }
 
 /* Responsive ICS CALL sizing */
 @media (max-width: 600px) {
   .hotspot.button.ics-call {
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
   }
 }
 
 /* ============================================
    BUTTON HOTSPOTS (No Cutout - Invisible)
-   Uses glow effect for feedback
    ============================================ */
 .hotspot.button.round {
   border-radius: 50%;
@@ -339,18 +344,6 @@ body {
   border-color: rgba(100, 200, 255, 0.4);
 }
 
-/* ISO/EMR emergency mode */
-.hotspot.button.iso-emr[data-mode="emr"] {
-  box-shadow: 0 0 20px rgba(255, 80, 80, 0.6);
-  border-color: rgba(255, 80, 80, 0.5);
-  animation: emr-pulse 1s ease-in-out infinite;
-}
-
-@keyframes emr-pulse {
-  0%, 100% { box-shadow: 0 0 15px rgba(255, 80, 80, 0.5); }
-  50% { box-shadow: 0 0 30px rgba(255, 80, 80, 0.8); }
-}
-
 /* ============================================
    LED INDICATORS - Realistic Glow
    ============================================ */
@@ -365,7 +358,7 @@ body {
     box-shadow 0.2s ease;
 }
 
-/* LED OFF - dim, no glow */
+/* LED OFF */
 .hotspot.indicator.led[data-active="false"] {
   background: radial-gradient(circle at 35% 35%, #2a4a2a 0%, #1a2a1a 70%, #0a150a 100%);
   box-shadow: 
@@ -373,7 +366,7 @@ body {
     inset 0 -1px 2px rgba(255,255,255,0.05);
 }
 
-/* LED ON - Bright green glow with bloom */
+/* LED ON */
 .hotspot.indicator.led[data-active="true"] {
   background: radial-gradient(circle at 35% 35%, 
     #aaffaa 0%, 
@@ -473,17 +466,4 @@ body {
   .status-bar { font-size: 10px; padding: 4px 10px; }
   .tip { display: none; }
   .master-check-btn { display: none; }
-}
-
-/* ============================================
-   LOADING STATE - While cutouts load
-   ============================================ */
-.hotspot .cutout[src=""] {
-  visibility: hidden;
-}
-
-/* Fallback rectangle when image missing */
-.hotspot .cutout:not([src]):not([src=""]) {
-  background: rgba(255, 0, 0, 0.2);
-  border: 1px dashed rgba(255, 0, 0, 0.5);
 }
