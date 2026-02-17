@@ -2,23 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="theme-color" content="#050505">
-  <title>AA95 Audio Control Panel</title>
+  <title>AA95 High-Fidelity Simulator</title>
   <style>
     :root {
-      --panel-black: #121212;
-      --label-white: #e8e8e8;
-      --boundary-line: rgba(255, 255, 255, 0.25);
+      --panel-black: #0c0c0c;
+      --label-white: #d0d0d0;
+      --boundary-line: rgba(255, 255, 255, 0.2);
       --snap-curve: cubic-bezier(0.34, 1.56, 0.64, 1);
-      --accent-green: #0f4;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; user-select: none; }
 
     body {
       background: #050505;
@@ -29,777 +22,266 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 20px;
-      overflow-x: hidden;
+      margin: 0;
     }
 
-    /* THE MAIN PANEL CONSOLE */
+    /* THE MAIN PANEL */
     .panel {
       position: relative;
-      width: 940px;
-      height: 314px;
-      background: linear-gradient(180deg, #222 0%, #151515 20%, #111 100%);
-      border: 3px solid #000;
-      border-radius: 10px;
-      box-shadow: 0 50px 100px rgba(0,0,0,0.9), inset 0 0 40px #000;
+      width: 960px;
+      height: 340px;
+      background: linear-gradient(180deg, #222 0%, #151515 15%, #0c0c0c 100%);
+      border-radius: 12px;
+      border: 4px solid #000;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 2px 5px rgba(255,255,255,0.05);
       padding: 20px;
-      user-select: none;
-      -webkit-user-select: none;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(6, 1fr);
     }
 
-    /* BOUNDARY LINES - EXACT REPLICATION */
-    .boundary-box {
+    /* BOUNDARY LINES (Silk-screened Boxes) */
+    .boundary {
       position: absolute;
       border: 1px solid var(--boundary-line);
       pointer-events: none;
     }
-    .box-comms { width: 340px; height: 110px; left: 80px; top: 30px; }
-    .box-music { width: 200px; height: 110px; left: 450px; top: 30px; }
-    .box-ics { width: 320px; height: 110px; right: 40px; bottom: 30px; }
+    .box-comms { width: 340px; height: 120px; left: 85px; top: 35px; border-radius: 4px; }
+    .box-ics { width: 330px; height: 110px; right: 50px; bottom: 40px; border-radius: 4px; }
 
-    /* COMPONENT SPACING GRID */
+    /* COMPONENT WRAPPERS */
     .component {
-      position: absolute;
       display: flex;
       flex-direction: column;
       align-items: center;
-      cursor: pointer;
+      justify-content: center;
+      position: relative;
     }
 
     .label {
-      font-size: 10px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin-bottom: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.8px;
       text-transform: uppercase;
-      color: #999;
+      margin-bottom: 8px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+      color: #bbb;
     }
 
-    .label-bottom {
-      margin-bottom: 0;
-      margin-top: 5px;
-    }
-
-    /* THE "WALL-SWITCH" TOGGLE LOGIC */
-    .assembly-toggle {
+    /* TOGGLE SWITCHES - 180 DEGREE DOWN LOGIC */
+    .toggle { cursor: pointer; }
+    .toggle-base {
+      width: 28px;
+      height: 65px;
       position: relative;
-      width: 24px;
-      height: 60px;
-      perspective: 1000px;
+      perspective: 800px;
     }
-    
-    .assembly-toggle.small {
-      width: 18px;
-      height: 45px;
-    }
-    
     .nut {
       position: absolute;
-      bottom: 15px;
-      left: 50%;
-      width: 22px;
-      height: 8px;
-      background: #444;
-      transform: translateX(-50%);
-      border-radius: 2px;
-      z-index: 1;
-    }
-    
-    .assembly-toggle.small .nut {
-      width: 16px;
-      height: 6px;
       bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 10px;
+      background: #333;
+      border: 1px solid #111;
+      border-radius: 2px;
+      z-index: 5;
     }
-    
     .lever {
       position: absolute;
-      bottom: 18px;
+      bottom: 16px; /* Lower Axis Pivot Point */
       left: 50%;
-      width: 14px;
-      height: 38px;
-      background: linear-gradient(90deg, #b0b0b0 0%, #e8e8e8 30%, #ffffff 50%, #e8e8e8 70%, #b0b0b0 100%);
-      border-radius: 7px 7px 4px 4px;
-      transform-origin: bottom center;
-      margin-left: -7px;
-      transition: transform 0.18s var(--snap-curve), filter 0.2s;
-      z-index: 2;
-      box-shadow: 
-        inset 0 -2px 4px rgba(0,0,0,0.2),
-        0 2px 4px rgba(0,0,0,0.3);
-    }
-    
-    /* Rounded cap on top of lever */
-    .lever::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: 50%;
-      transform: translateX(-50%);
       width: 12px;
-      height: 12px;
-      background: radial-gradient(circle at 40% 40%, #ffffff 0%, #e0e0e0 50%, #c0c0c0 100%);
-      border-radius: 50%;
-      box-shadow: inset 0 -1px 2px rgba(0,0,0,0.15);
+      height: 44px;
+      margin-left: -6px;
+      background: linear-gradient(to right, #777, #eee 50%, #777);
+      border-radius: 6px 6px 3px 3px;
+      transform-origin: bottom center; 
+      transition: transform 0.25s var(--snap-curve), filter 0.2s ease;
+      z-index: 4;
     }
     
-    /* Small dimple/dot on cap */
-    .lever::after {
-      content: '';
+    /* 180 Degree Down Transition */
+    [data-active="true"] .lever { transform: rotate(0deg); filter: brightness(1.1); }
+    [data-active="false"] .lever { 
+      transform: rotate(180deg) translateY(-4px); 
+      filter: brightness(0.6); 
+    }
+
+    .toggle.red .lever { background: linear-gradient(to right, #922, #f44 50%, #922); }
+    .toggle.orange .lever { background: linear-gradient(to right, #a62, #f94 50%, #a62); }
+
+    /* SELECTOR KNOB (Chicken Head) */
+    .selector-container {
+      width: 120px;
+      height: 120px;
+      position: relative;
+    }
+    .selector-base {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, #222, #0a0a0a);
+      border: 4px solid #000;
+    }
+    .chicken-head {
       position: absolute;
-      top: 2px;
+      width: 44px;
+      height: 70px;
+      top: 10px;
       left: 50%;
-      transform: translateX(-50%);
-      width: 4px;
-      height: 4px;
-      background: radial-gradient(circle, #999 0%, #bbb 100%);
-      border-radius: 50%;
-    }
-    
-    .assembly-toggle.small .lever {
-      width: 11px;
-      height: 28px;
-      margin-left: -5.5px;
-      bottom: 14px;
-    }
-    
-    .assembly-toggle.small .lever::before {
-      width: 9px;
-      height: 9px;
-      top: -1px;
-    }
-    
-    .assembly-toggle.small .lever::after {
-      width: 3px;
-      height: 3px;
-      top: 2px;
-    }
-    
-    [data-active="true"] .lever { transform: rotateX(-5deg); filter: brightness(1.1); }
-    [data-active="false"] .lever { transform: rotateX(45deg); filter: brightness(0.9); }
-
-    .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
-    .toggle.orange .lever { background: linear-gradient(to right, #a62, #f94 50%, #841); }
-
-    /* VOLUME KNOBS - RIBBED TEXTURE */
-    .knob-vol {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: repeating-conic-gradient(#222 0deg 10deg, #111 10deg 20deg);
-      box-shadow: inset 0 0 10px #000, 0 5px 10px rgba(0,0,0,0.5);
-      position: relative;
-      cursor: pointer;
-      touch-action: none;
-    }
-    .knob-vol::after {
-      content: '';
-      position: absolute;
-      top: 5px; left: 5px; right: 5px; bottom: 5px;
-      background: radial-gradient(circle, #333, #1a1a1a);
-      border-radius: 50%;
-    }
-    .vol-pointer {
-      position: absolute;
-      width: 3px; height: 15px; background: #fff;
-      top: 8px; left: 50%; transform: translateX(-50%);
-      z-index: 3; transform-origin: center 17px;
-      transition: transform 0.1s ease-out;
-    }
-    
-    .knob-vol.small {
-      width: 40px;
-      height: 40px;
-    }
-    .knob-vol.small .vol-pointer {
-      height: 12px;
-      top: 6px;
-      transform-origin: center 14px;
-    }
-
-    /* SELECTOR KNOB - THE CHICKEN HEAD */
-    .knob-selector-base {
-      width: 110px; height: 110px; border-radius: 50%;
-      background: radial-gradient(circle at 50% 50%, #333 0%, #111 70%);
-      border: 4px solid #222;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-      position: relative;
-      cursor: pointer;
-      touch-action: none;
-    }
-    .selector-pointer {
-      position: absolute;
-      width: 40px; height: 60px;
-      top: 8px; left: 50%;
       transform-origin: bottom center;
       transform: translateX(-50%) rotate(-130deg);
-      background: linear-gradient(135deg, #666 0%, #333 50%, #111 100%);
+      background: #222;
       clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-      transition: transform 0.15s var(--snap-curve);
+      transition: transform 0.2s var(--snap-curve);
+      z-index: 10;
     }
-    .selector-pointer::after {
+    .chicken-head::after {
       content: ''; position: absolute; top: 0; left: 50%;
       width: 4px; height: 40%; background: #fff; transform: translateX(-50%);
-      box-shadow: 0 0 5px rgba(255,255,255,0.5);
-    }
-    .knob-selector-base.dragging .selector-pointer {
-      transition: none;
     }
 
-    /* PUSH BUTTONS */
-    .btn-round {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
+    /* VOLUME KNOBS (Ribbed/Knurled Aluminum) */
+    .knob-ribbed {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: repeating-conic-gradient(from 0deg, #111 0deg 5deg, #252525 5deg 10deg);
+      border: 2px solid #000; position: relative; cursor: ns-resize;
+    }
+    .knob-cap {
+      position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px;
+      background: radial-gradient(circle, #333, #151515); border-radius: 50%; z-index: 2;
+    }
+    .knob-indicator {
+      position: absolute; width: 3px; height: 18px; background: #fff;
+      top: 6px; left: 50%; transform: translateX(-50%);
+      z-index: 3; transform-origin: center 20px;
+    }
+
+    /* RECESSED BUTTONS */
+    .btn-recessed {
+      width: 38px; height: 38px; border-radius: 50%; background: #222; border: 3px solid #000;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 3px 6px rgba(0,0,0,0.5);
       cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
-      border: none;
-    }
-    
-    .btn-round.blue {
-      background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.3) 0%, transparent 50%),
-                  linear-gradient(180deg, #5588cc 0%, #3366aa 50%, #224488 100%);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-    }
-    
-    .btn-round.black {
-      background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.15) 0%, transparent 50%),
-                  linear-gradient(180deg, #4a4a4a 0%, #333333 50%, #1a1a1a 100%);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
-    }
-    
-    .btn-round.yellow {
-      background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.4) 0%, transparent 50%),
-                  linear-gradient(180deg, #ffdd44 0%, #ddbb22 50%, #aa8800 100%);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
-    }
-    
-    .btn-round[data-active="true"] {
-      transform: scale(0.95);
-      filter: brightness(0.85);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
-    /* ICS CALL - WHITE DOME */
-    .btn-ics-call {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255,255,255,0.9) 0%, transparent 60%),
-                  radial-gradient(circle at 50% 50%, #ffffff 0%, #e8e8e8 40%, #cccccc 80%, #aaaaaa 100%);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      transition: transform 0.06s ease, box-shadow 0.06s ease;
-      border: none;
-    }
-    
-    .btn-ics-call[data-active="true"] {
-      transform: scale(0.94) translateY(2px);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 2px 6px rgba(0, 0, 0, 0.2);
-    }
+    /* GRID POSITIONING */
+    .pos-com1 { grid-column: 2; grid-row: 2; }
+    .pos-com2 { grid-column: 3; grid-row: 2; }
+    .pos-fm1 { grid-column: 4; grid-row: 2; }
+    .pos-fm2 { grid-column: 5; grid-row: 2; }
+    .pos-aux { grid-column: 6; grid-row: 2; }
+    .pos-selector { grid-column: 7 / 9; grid-row: 2 / 5; }
+    .pos-rxvol { grid-column: 10; grid-row: 2; }
+    .pos-vox { grid-column: 11; grid-row: 2; }
+    .pos-adf { grid-column: 10; grid-row: 3; }
+    .pos-dplr { grid-column: 10; grid-row: 4; }
+    .pos-so { grid-column: 10; grid-row: 5; }
+    .pos-iso { grid-column: 1; grid-row: 5; }
+    .pos-mic { grid-column: 8; grid-row: 5; }
+    .pos-key { grid-column: 9; grid-row: 5; }
+    .pos-icsvol { grid-column: 11; grid-row: 5; }
 
-    /* LED INDICATORS */
-    .led {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      transition: background 0.15s ease, box-shadow 0.2s ease;
-    }
-    
-    .led[data-active="false"] {
-      background: radial-gradient(circle at 35% 35%, #2a4a2a 0%, #1a2a1a 70%, #0a150a 100%);
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
-    }
-    
-    .led[data-active="true"] {
-      background: radial-gradient(circle at 35% 35%, #aaffaa 0%, #66ff66 20%, #00ff44 50%, #00cc22 100%);
-      box-shadow: 0 0 4px #00ff44, 0 0 8px #00ff44, 0 0 16px rgba(0, 255, 68, 0.6),
-                  inset 0 1px 3px rgba(255, 255, 255, 0.4);
-    }
-
-    /* STATUS BAR */
-    .status-bar {
-      margin-top: 20px;
-      padding: 10px 30px;
-      background: #000;
-      color: var(--accent-green);
-      font-family: 'Courier New', monospace;
-      border: 1px solid #333;
-      border-radius: 5px;
-      min-width: 400px;
-      text-align: center;
-    }
-
-    /* MASTER CHECK BUTTON */
-    .master-btn {
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: linear-gradient(180deg, #3a5a4a 0%, #2a4a3a 100%);
-      color: var(--accent-green);
-      border: 1px solid rgba(0, 255, 68, 0.3);
-      border-radius: 5px;
-      font-family: 'Courier New', monospace;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    
-    .master-btn:hover {
-      background: linear-gradient(180deg, #4a6a5a 0%, #3a5a4a 100%);
-      box-shadow: 0 0 12px rgba(0, 255, 68, 0.3);
-    }
-
-    .tip {
-      margin-top: 10px;
-      color: #555;
-      font-size: 12px;
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 980px) {
-      .panel {
-        width: 95vw;
-        height: auto;
-        aspect-ratio: 940 / 314;
-        transform: scale(0.9);
-        transform-origin: top center;
-      }
-    }
-    
-    @media (max-width: 768px) {
-      .panel {
-        transform: scale(0.7);
-      }
-      .status-bar {
-        min-width: 300px;
-        font-size: 12px;
-      }
-    }
-    
-    @media (max-width: 500px) {
-      .panel {
-        transform: scale(0.5);
-      }
+    .display {
+      background: #000; color: #0f4; font-family: monospace;
+      padding: 10px 20px; border: 1px solid #333; margin-top: 30px;
     }
   </style>
 </head>
 <body>
 
-<div class="panel" id="panel">
-  <!-- BOUNDARY BOXES -->
-  <div class="boundary-box box-comms"></div>
-  <div class="boundary-box box-music"></div>
-  <div class="boundary-box box-ics"></div>
+  <div class="panel">
+    <div class="boundary box-comms"></div>
+    <div class="boundary box-ics"></div>
 
-  <!-- TOP ROW: COM/FM/AUX TOGGLES -->
-  <div class="component toggle" id="com1" data-active="true" style="left:100px; top:45px;">
-    <span class="label">COM1</span>
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-  <div class="component toggle" id="com2" data-active="true" style="left:160px; top:45px;">
-    <span class="label">COM2</span>
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-  <div class="component toggle" id="fm1" data-active="true" style="left:220px; top:45px;">
-    <span class="label">FM1</span>
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-  <div class="component toggle" id="fm2" data-active="true" style="left:280px; top:45px;">
-    <span class="label">FM2</span>
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-  <div class="component toggle" id="aux" data-active="true" style="left:340px; top:45px;">
-    <span class="label">AUX</span>
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-
-  <!-- MUSIC SECTION -->
-  <div class="component" id="adf" data-active="false" style="left:470px; top:45px;">
-    <span class="label">ADF</span>
-    <div class="btn-round blue"></div>
-  </div>
-  <div class="component" id="dplr" data-active="false" style="left:520px; top:45px;">
-    <span class="label">DPLR</span>
-    <div class="btn-round black"></div>
-  </div>
-  <div class="component toggle" id="pat" data-active="true" style="left:570px; top:50px;">
-    <span class="label">PAT</span>
-    <div class="assembly-toggle small"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-  <div class="component" id="so" data-active="false" style="left:620px; top:45px;">
-    <span class="label">SO</span>
-    <div class="btn-round yellow"></div>
-  </div>
-
-  <!-- RX VOL -->
-  <div class="component" id="rxvol_wrap" style="right:60px; top:40px;">
-    <span class="label">RX VOL</span>
-    <div class="knob-vol" id="rxvol" data-value="50"><div class="vol-pointer" id="ptr_rx"></div></div>
-  </div>
-
-  <!-- SELECTOR KNOB -->
-  <div class="component" style="left:415px; top:170px;">
-    <div class="knob-selector-base" id="selector" data-position="COM1" data-angle="-130">
-      <div class="selector-pointer" id="sel_ptr"></div>
+    <div class="component pos-com1 toggle" id="com1" data-active="true">
+      <span class="label">COM 1</span>
+      <div class="toggle-base"><div class="nut"></div><div class="lever"></div></div>
     </div>
-    <span class="label label-bottom">SELECTOR</span>
+    <div class="component pos-com2 toggle" id="com2" data-active="true">
+      <span class="label">COM 2</span>
+      <div class="toggle-base"><div class="nut"></div><div class="lever"></div></div>
+    </div>
+    <div class="component pos-fm1 toggle" id="fm1" data-active="true">
+      <span class="label">FM 1</span>
+      <div class="toggle-base"><div class="nut"></div><div class="lever"></div></div>
+    </div>
+    <div class="component pos-fm2 toggle" id="fm2" data-active="true">
+      <span class="label">FM 2</span>
+      <div class="toggle-base"><div class="nut"></div><div class="lever"></div></div>
+    </div>
+    <div class="component pos-aux toggle" id="aux" data-active="true">
+      <span class="label">AUX</span>
+      <div class="toggle-base"><div class="nut"></div><div class="lever"></div></div>
+    </div>
+
+    <div class="component pos-selector">
+      <div class="selector-container">
+        <div class="selector-base"></div>
+        <div class="chicken-head" id="sel-ptr"></div>
+      </div>
+      <span class="label" style="margin-top:15px">SELECTOR</span>
+    </div>
+
+    <div class="component pos-rxvol">
+      <span class="label">RX VOL</span>
+      <div class="knob-ribbed" id="rxvol"><div class="knob-cap"></div><div class="knob-indicator"></div></div>
+    </div>
+    <div class="component pos-vox">
+      <span class="label">VOX</span>
+      <div class="knob-ribbed" id="vox"><div class="knob-cap"></div><div class="knob-indicator"></div></div>
+    </div>
+    <div class="component pos-adf"><span class="label">ADF</span><div class="btn-recessed"></div></div>
+    <div class="component pos-dplr"><span class="label">DPLR</span><div class="btn-recessed"></div></div>
+    <div class="component pos-so"><span class="label">SO</span><div class="btn-recessed"></div></div>
+
+    <div class="component pos-iso toggle red" id="iso" data-active="true">
+      <span class="label">ISO/EMR</span>
+      <div class="toggle-base"><div class="nut"></div><div class="lever"></div></div>
+    </div>
+    <div class="component pos-mic toggle orange" id="mic" data-active="true">
+      <span class="label">ICS MIC</span>
+      <div class="toggle-base"><div class="nut"></div><div class="lever"></div></div>
+    </div>
+    <div class="component pos-key"><span class="label">ICS KEY</span><div class="btn-recessed"></div></div>
+    <div class="component pos-icsvol">
+      <span class="label">ICS VOL</span>
+      <div class="knob-ribbed" id="icsvol"><div class="knob-cap"></div><div class="knob-indicator"></div></div>
+    </div>
   </div>
 
-  <!-- BOTTOM ROW -->
-  <!-- ISO/EMR -->
-  <div class="component toggle red" id="iso_emr" data-active="false" style="left:60px; bottom:50px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label label-bottom">ISO/EMR</span>
-  </div>
+  <div class="display" id="display">AA95 SYSTEMS NOMINAL - ALL TOGGLES ON</div>
 
-  <!-- TX LED -->
-  <div class="component" style="left:130px; bottom:55px;">
-    <div class="led" id="tx_light" data-active="true"></div>
-    <span class="label label-bottom">TX</span>
-  </div>
+  <script>
+    const display = document.getElementById('display');
 
-  <!-- VOX KNOB -->
-  <div class="component" id="vox_wrap" style="left:200px; bottom:45px;">
-    <span class="label">VOX</span>
-    <div class="knob-vol small" id="vox" data-value="50"><div class="vol-pointer" id="ptr_vox"></div></div>
-  </div>
-
-  <!-- ICS CALL -->
-  <div class="component" id="ics_call" data-active="false" style="right:280px; bottom:45px;">
-    <span class="label">ICS CALL</span>
-    <div class="btn-ics-call"></div>
-  </div>
-
-  <!-- PLT LED -->
-  <div class="component" style="right:220px; bottom:55px;">
-    <div class="led" id="plt_light" data-active="true"></div>
-    <span class="label label-bottom">PLT</span>
-  </div>
-
-  <!-- ICS MIC -->
-  <div class="component toggle orange" id="ics_mic" data-active="true" style="right:140px; bottom:45px;">
-    <span class="label">ICS MIC</span>
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-
-  <!-- KEY Toggle -->
-  <div class="component toggle" id="key" data-active="true" style="right:85px; bottom:50px;">
-    <span class="label">KEY</span>
-    <div class="assembly-toggle small"><div class="nut"></div><div class="lever"></div></div>
-  </div>
-
-  <!-- ICS VOL -->
-  <div class="component" id="icsvol_wrap" style="right:20px; bottom:45px;">
-    <span class="label">ICS VOL</span>
-    <div class="knob-vol" id="icsvol" data-value="50"><div class="vol-pointer" id="ptr_ics"></div></div>
-  </div>
-</div>
-
-<div class="status-bar" id="stat">AA95 SYSTEMS NOMINAL</div>
-<button class="master-btn" id="masterBtn">▶ RUN MASTER CHECK</button>
-<div class="tip">Tip: Click toggles, drag knobs, press M for Master Check</div>
-
-<script>
-(function() {
-  'use strict';
-
-  // ============================================
-  // PANEL STATE - All 14 Components
-  // ============================================
-  const panelState = {
-    // Toggles (9)
-    com1: true,
-    com2: true,
-    fm1: true,
-    fm2: true,
-    aux: true,
-    pat: true,
-    iso_emr: false,
-    ics_mic: true,
-    key: true,
-    
-    // Buttons (4)
-    adf: false,
-    dplr: false,
-    so: false,
-    ics_call: false,
-    
-    // Knobs (4)
-    selector: { position: 'COM1', angle: -130, index: 0 },
-    rxvol: 50,
-    vox: 50,
-    icsvol: 50,
-    
-    // Indicators (2)
-    tx_light: true,
-    plt_light: true
-  };
-
-  const CONFIG = {
-    selector: {
-      positions: ['COM1', 'COM2', 'FM1', 'FM2', 'AUX', 'PA'],
-      angles: [-130, -80, -30, 20, 70, 120]
-    },
-    volume: { min: 0, max: 100, angleMin: -150, angleMax: 150 }
-  };
-
-  const $ = id => document.getElementById(id);
-  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const mapRange = (v, inMin, inMax, outMin, outMax) => 
-    ((v - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
-
-  function setStatus(text) {
-    $('stat').innerText = text;
-  }
-
-  function sleep(ms) {
-    return new Promise(r => setTimeout(r, ms));
-  }
-
-  // ============================================
-  // SYNC STATE TO DOM
-  // ============================================
-  function syncState() {
-    // Toggles
-    ['com1','com2','fm1','fm2','aux','pat','iso_emr','ics_mic','key'].forEach(id => {
-      const el = $(id);
-      if (el) el.setAttribute('data-active', panelState[id]);
+    // Toggle Interaction Logic
+    document.querySelectorAll('.toggle').forEach(el => {
+      el.onclick = () => {
+        const isActive = el.getAttribute('data-active') === 'true';
+        el.setAttribute('data-active', !isActive);
+        display.innerText = `${el.id.toUpperCase()}: ${!isActive ? 'ON (UP)' : 'OFF (DOWN)'}`;
+      };
     });
-    
-    // Buttons
-    ['adf','dplr','so','ics_call'].forEach(id => {
-      const el = $(id);
-      if (el) el.setAttribute('data-active', panelState[id]);
-    });
-    
-    // LEDs
-    $('tx_light').setAttribute('data-active', panelState.tx_light);
-    $('plt_light').setAttribute('data-active', panelState.plt_light);
-    
-    // Selector
-    $('sel_ptr').style.transform = `translateX(-50%) rotate(${panelState.selector.angle}deg)`;
-    
-    // Volume knobs
-    ['rxvol','vox','icsvol'].forEach(id => {
-      const angle = mapRange(panelState[id], CONFIG.volume.min, CONFIG.volume.max, 
-                             CONFIG.volume.angleMin, CONFIG.volume.angleMax);
-      const ptr = $('ptr_' + (id === 'rxvol' ? 'rx' : id === 'icsvol' ? 'ics' : 'vox'));
-      if (ptr) ptr.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-    });
-  }
 
-  function updateIndicators() {
-    panelState.tx_light = ['com1','com2','fm1','fm2','aux'].some(id => panelState[id]);
-    panelState.plt_light = panelState.ics_mic;
-    syncState();
-  }
-
-  // ============================================
-  // MASTER CHECK
-  // ============================================
-  async function masterCheck() {
-    const toggles = ['com1','com2','fm1','fm2','aux'];
-    
-    setStatus("MASTER CHECK: INITIATING...");
-    toggles.forEach(id => { panelState[id] = false; });
-    updateIndicators();
-    
-    await sleep(400);
-    setStatus("MASTER CHECK: RESETTING SWITCHES...");
-    await sleep(300);
-    
-    for (let id of toggles) {
-      await sleep(150);
-      panelState[id] = true;
-      updateIndicators();
-      setStatus(id.toUpperCase() + " POSITION: UP [OK]");
-    }
-    
-    await sleep(200);
-    setStatus("✓ MASTER CHECK COMPLETE - ALL SYSTEMS NOMINAL");
-    
-    // Flash TX
-    for (let i = 0; i < 2; i++) {
-      panelState.tx_light = false; syncState(); await sleep(100);
-      panelState.tx_light = true; syncState(); await sleep(100);
-    }
-  }
-
-  // ============================================
-  // TOGGLE SWITCHES
-  // ============================================
-  ['com1','com2','fm1','fm2','aux','pat','iso_emr','ics_mic','key'].forEach(id => {
-    const el = $(id);
-    if (!el) return;
-    el.onclick = () => {
-      panelState[id] = !panelState[id];
-      setStatus(id.toUpperCase().replace('_',' ') + (panelState[id] ? ' UP (ON)' : ' DOWN (OFF)'));
-      updateIndicators();
+    // Selector Knob Snap
+    const selPtr = document.getElementById('sel-ptr');
+    const angles = [-130, -90, -45, 0, 45, 90, 130];
+    let curIdx = 3; // Start at center
+    document.querySelector('.selector-container').onclick = () => {
+      curIdx = (curIdx + 1) % angles.length;
+      selPtr.style.transform = `translateX(-50%) rotate(${angles[curIdx]}deg)`;
     };
-  });
 
-  // ============================================
-  // BUTTONS
-  // ============================================
-  ['adf','dplr','so'].forEach(id => {
-    const el = $(id);
-    if (!el) return;
-    el.onclick = () => {
-      panelState[id] = !panelState[id];
-      syncState();
-      setStatus(id.toUpperCase() + (panelState[id] ? ' ON' : ' OFF'));
+    // Volume Knob Logic
+    const initKnob = (id) => {
+      const knob = document.getElementById(id);
+      const ind = knob.querySelector('.knob-indicator');
+      let val = 50;
+      const redraw = () => ind.style.transform = `translateX(-50%) rotate(${(val/100)*300 - 150}deg)`;
+      knob.onwheel = (e) => { e.preventDefault(); val = Math.max(0, Math.min(100, val + (e.deltaY < 0 ? 5 : -5))); redraw(); };
+      redraw();
     };
-  });
-
-  // ICS CALL (momentary)
-  const icsCall = $('ics_call');
-  if (icsCall) {
-    const press = () => { panelState.ics_call = true; syncState(); setStatus('ICS CALL: PRESSED'); };
-    const release = () => { panelState.ics_call = false; syncState(); setStatus('ICS CALL: RELEASED'); };
-    icsCall.onmousedown = press;
-    icsCall.onmouseup = release;
-    icsCall.onmouseleave = release;
-    icsCall.ontouchstart = e => { e.preventDefault(); press(); };
-    icsCall.ontouchend = e => { e.preventDefault(); release(); };
-  }
-
-  // ============================================
-  // SELECTOR KNOB
-  // ============================================
-  const selector = $('selector');
-  if (selector) {
-    let dragging = false, startY, startAngle;
-    
-    function setSelAngle(angle, snap = false) {
-      const min = CONFIG.selector.angles[0];
-      const max = CONFIG.selector.angles[CONFIG.selector.angles.length - 1];
-      angle = clamp(angle, min, max);
-      
-      let nearestIdx = 0, nearestDist = Infinity;
-      CONFIG.selector.angles.forEach((a, i) => {
-        const d = Math.abs(angle - a);
-        if (d < nearestDist) { nearestDist = d; nearestIdx = i; }
-      });
-      
-      const finalAngle = snap ? CONFIG.selector.angles[nearestIdx] : angle;
-      panelState.selector = { 
-        position: CONFIG.selector.positions[nearestIdx], 
-        angle: finalAngle, 
-        index: nearestIdx 
-      };
-      $('sel_ptr').style.transform = `translateX(-50%) rotate(${finalAngle}deg)`;
-      setStatus('SELECTOR: ' + CONFIG.selector.positions[nearestIdx]);
-    }
-    
-    selector.onclick = e => {
-      if (dragging) return;
-      const next = (panelState.selector.index + 1) % CONFIG.selector.positions.length;
-      setSelAngle(CONFIG.selector.angles[next], true);
-    };
-    
-    selector.onmousedown = e => {
-      e.preventDefault();
-      dragging = false;
-      startY = e.clientY;
-      startAngle = panelState.selector.angle;
-      selector.classList.add('dragging');
-      
-      const move = e => {
-        const dy = startY - e.clientY;
-        if (Math.abs(dy) > 8) { dragging = true; setSelAngle(startAngle + dy * 0.8); }
-      };
-      const up = () => {
-        document.removeEventListener('mousemove', move);
-        document.removeEventListener('mouseup', up);
-        selector.classList.remove('dragging');
-        if (dragging) setSelAngle(panelState.selector.angle, true);
-        dragging = false;
-      };
-      document.addEventListener('mousemove', move);
-      document.addEventListener('mouseup', up);
-    };
-    
-    selector.onwheel = e => {
-      e.preventDefault();
-      const dir = e.deltaY < 0 ? 1 : -1;
-      const next = clamp(panelState.selector.index + dir, 0, CONFIG.selector.positions.length - 1);
-      setSelAngle(CONFIG.selector.angles[next], true);
-    };
-  }
-
-  // ============================================
-  // VOLUME KNOBS
-  // ============================================
-  [['rxvol','ptr_rx'], ['vox','ptr_vox'], ['icsvol','ptr_ics']].forEach(([id, ptrId]) => {
-    const knob = $(id);
-    const ptr = $(ptrId);
-    if (!knob || !ptr) return;
-    
-    let dragging = false, startY, startVal;
-    const label = id.toUpperCase().replace('VOL',' VOL');
-    
-    function setVol(val) {
-      val = clamp(Math.round(val), 0, 100);
-      panelState[id] = val;
-      const angle = mapRange(val, 0, 100, -150, 150);
-      ptr.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-      setStatus(label + ': ' + val + '%');
-    }
-    
-    knob.onclick = e => {
-      if (dragging) return;
-      setVol(panelState[id] < 50 ? 50 : 0);
-    };
-    
-    knob.onmousedown = e => {
-      e.preventDefault();
-      dragging = false;
-      startY = e.clientY;
-      startVal = panelState[id];
-      
-      const move = e => {
-        const dy = startY - e.clientY;
-        if (Math.abs(dy) > 5) { dragging = true; setVol(startVal + dy * 0.5); }
-      };
-      const up = () => {
-        document.removeEventListener('mousemove', move);
-        document.removeEventListener('mouseup', up);
-        dragging = false;
-      };
-      document.addEventListener('mousemove', move);
-      document.addEventListener('mouseup', up);
-    };
-    
-    knob.onwheel = e => {
-      e.preventDefault();
-      setVol(panelState[id] + (e.deltaY < 0 ? 5 : -5));
-    };
-  });
-
-  // ============================================
-  // KEYBOARD
-  // ============================================
-  document.onkeydown = e => {
-    const k = e.key.toLowerCase();
-    if (k === 'm') masterCheck();
-    else if (k === 'c') { panelState.ics_call = true; syncState(); setStatus('ICS CALL: PRESSED'); }
-    else if ('12345'.includes(k)) $(['com1','com2','fm1','fm2','aux'][+k-1])?.click();
-  };
-  document.onkeyup = e => {
-    if (e.key.toLowerCase() === 'c') { panelState.ics_call = false; syncState(); setStatus('ICS CALL: RELEASED'); }
-  };
-
-  // ============================================
-  // INIT
-  // ============================================
-  $('masterBtn').onclick = masterCheck;
-  syncState();
-  updateIndicators();
-  
-  console.log('AA95 Panel Initialized');
-  console.log('panelState:', panelState);
-  
-  window.AA95 = { panelState, masterCheck, updateIndicators, syncState };
-})();
-</script>
-
+    ['rxvol', 'vox', 'icsvol'].forEach(initKnob);
+  </script>
 </body>
 </html>
