@@ -1,30 +1,19 @@
 /* sw.js - service worker for Aviation Simulators PWA */
 
-const CACHE_NAME = "radio-sim-v3";
+const CACHE_NAME = "radio-sim-v4";
 
 const ASSETS = [
   "/",
   "/index.html",
-  "/aa95.html",
   "/rc9100.html",
   "/manifest.json",
   "/codeplug.json",
 
-  // AA95 assets
+  // AA95 assets (new photorealistic version)
+  "/aa95/aa95.html",
   "/aa95/styles.css",
-  "/aa95/index.js",
-  "/aa95/config.js",
-  "/aa95/dom.js",
-  "/aa95/event.js",
-  "/aa95/pwa.js",
-  "/aa95/render.js",
-  "/aa95/selector.js",
-  "/aa95/state.js",
-  "/aa95/status.js",
-  "/aa95/sw-helper.js",
-  "/aa95/toggleMotion.js",
-  "/aa95/toggles.js",
-  "/aa95/aa95-panel.svg",
+  "/aa95/panel.js",
+  "/aa95/assests/img_001.webp",
 
   // Icons
   "/icons/icon-16.png",
@@ -41,7 +30,7 @@ const ASSETS = [
 
 // Map clean URLs to HTML files (for offline fallback only)
 const ROUTE_MAP = {
-  "/control-panel": "/aa95.html",
+  "/control-panel": "/aa95/aa95.html",
   "/radio": "/rc9100.html"
 };
 
