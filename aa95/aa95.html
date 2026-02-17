@@ -10,64 +10,58 @@
 <body>
   <div class="panel-wrapper">
     <div class="panel" id="panel">
-      <!-- Base panel photo -->
+      <!-- Base panel photo with enhanced contrast -->
       <img src="/aa95/assests/img_001.webp" alt="AA95-729 Audio Panel" class="panel-base" draggable="false">
       
       <!-- ============================================
-           TOGGLE SWITCHES - CSS Rendered
-           White bat-handle toggles that flip up/down
+           TOGGLE SWITCHES - Photo Cutouts
+           Single <img> per toggle, transforms applied via CSS
            ============================================ -->
       
       <!-- COM1 Toggle -->
       <div class="hotspot toggle" id="com1" data-label="COM1" data-active="true"
            style="left: 13.51%; top: 22.29%;">
-        <div class="toggle-base"></div>
-        <div class="toggle-lever"></div>
+        <img src="/aa95/assests/toggle-white.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- COM2 Toggle -->
       <div class="hotspot toggle" id="com2" data-label="COM2" data-active="true"
            style="left: 19.89%; top: 22.29%;">
-        <div class="toggle-base"></div>
-        <div class="toggle-lever"></div>
+        <img src="/aa95/assests/toggle-white.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- FM1 Toggle -->
       <div class="hotspot toggle" id="fm1" data-label="FM1" data-active="true"
            style="left: 26.60%; top: 22.29%;">
-        <div class="toggle-base"></div>
-        <div class="toggle-lever"></div>
+        <img src="/aa95/assests/toggle-white.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- FM2 Toggle -->
       <div class="hotspot toggle" id="fm2" data-label="FM2" data-active="true"
            style="left: 33.30%; top: 22.29%;">
-        <div class="toggle-base"></div>
-        <div class="toggle-lever"></div>
+        <img src="/aa95/assests/toggle-white.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- AUX Toggle -->
       <div class="hotspot toggle" id="aux" data-label="AUX" data-active="true"
            style="left: 40.00%; top: 22.29%;">
-        <div class="toggle-base"></div>
-        <div class="toggle-lever"></div>
+        <img src="/aa95/assests/toggle-white.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- ============================================
-           SELECTOR KNOB - Large rotary with pointer
+           SELECTOR KNOB - Photo Cutout
+           Rotates to 6 snap positions
            ============================================ -->
       
       <div class="hotspot knob selector" id="selector" data-label="SELECTOR" 
            data-position="COM1" data-angle="-130" data-value="0"
            style="left: 48.50%; top: 60.00%;">
-        <div class="knob-body">
-          <div class="knob-pointer"></div>
-        </div>
+        <img src="/aa95/assests/selector-knob.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- ============================================
-           MUSIC SECTION BUTTONS - Invisible hotspots
-           (These are small and don't need visual overlay)
+           MUSIC SECTION BUTTONS - Invisible Hotspots
+           (Photo shows through, no cutout needed)
            ============================================ -->
       
       <!-- ADF Button (Blue) -->
@@ -86,12 +80,11 @@
       
       <div class="hotspot toggle small" id="pat" data-label="PAT" data-active="true"
            style="left: 67.50%; top: 16.00%;">
-        <div class="toggle-base"></div>
-        <div class="toggle-lever"></div>
+        <img src="/aa95/assests/toggle-small.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- ============================================
-           SO Button (Yellow) - Invisible hotspot
+           SO Button (Yellow) - Invisible Hotspot
            ============================================ -->
       
       <div class="hotspot button round" id="so" data-label="SO" data-active="false"
@@ -99,74 +92,65 @@
       </div>
       
       <!-- ============================================
-           RX VOL Knob - Volume control
+           RX VOL Knob - Photo Cutout
            ============================================ -->
       
       <div class="hotspot knob volume" id="rxvol" data-label="RX VOL" 
            data-value="50" data-angle="0"
            style="left: 93.50%; top: 26.00%;">
-        <div class="knob-body volume-knob">
-          <div class="knob-pointer"></div>
-        </div>
+        <img src="/aa95/assests/vol-knob.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- ============================================
            BOTTOM ROW
            ============================================ -->
       
-      <!-- ISO/EMR Button - Invisible hotspot -->
+      <!-- ISO/EMR Button - Invisible Hotspot -->
       <div class="hotspot button round iso-emr" id="iso_emr" data-label="ISO/EMR" data-active="false"
            data-mode="normal"
            style="left: 11.20%; top: 73.00%; width: 4%; height: 12%;">
       </div>
       
-      <!-- TX Indicator Light -->
+      <!-- TX Indicator Light - CSS Glow Effect -->
       <div class="hotspot indicator led" id="tx_light" data-label="TX" data-active="true"
            style="left: 20.50%; top: 71.00%;">
-        <div class="led-glow"></div>
       </div>
       
-      <!-- VOX Knob -->
+      <!-- VOX Knob - Photo Cutout -->
       <div class="hotspot knob volume vox" id="vox" data-label="VOX" 
            data-value="50" data-angle="0"
            style="left: 29.00%; top: 73.00%;">
-        <div class="knob-body vox-knob">
-          <div class="knob-pointer"></div>
-        </div>
+        <img src="/aa95/assests/vox-knob.webp" alt="" class="cutout" draggable="false">
       </div>
       
-      <!-- ICS CALL Button - Invisible hotspot -->
-      <div class="hotspot button momentary round" id="ics_call" data-label="ICS CALL" data-active="false"
-           style="left: 60.50%; top: 77.00%; width: 5.5%; height: 17%;">
+      <!-- ICS CALL Button - Photo Cutout with Press Effect -->
+      <div class="hotspot button momentary ics-call" id="ics_call" data-label="ICS CALL" data-active="false"
+           style="left: 60.50%; top: 77.00%;">
+        <img src="/aa95/assests/ics-call-btn.webp" alt="" class="cutout" draggable="false">
       </div>
       
-      <!-- PLT Indicator Light -->
+      <!-- PLT Indicator Light - CSS Glow Effect -->
       <div class="hotspot indicator led" id="plt_light" data-label="PLT" data-active="true"
            style="left: 70.50%; top: 55.00%;">
-        <div class="led-glow"></div>
       </div>
       
-      <!-- ICS MIC Toggle (Orange) -->
+      <!-- ICS MIC Toggle (Orange) - Photo Cutout -->
       <div class="hotspot toggle mic" id="ics_mic" data-label="ICS MIC" data-active="true"
            style="left: 77.50%; top: 75.00%;">
-        <div class="toggle-base mic-base"></div>
-        <div class="toggle-lever mic-lever"></div>
+        <img src="/aa95/assests/mic-lever.webp" alt="" class="cutout" draggable="false">
       </div>
       
       <!-- KEY Toggle (Small) -->
       <div class="hotspot toggle small" id="key" data-label="KEY" data-active="true"
            style="left: 82.50%; top: 85.00%;">
-        <div class="toggle-base"></div>
-        <div class="toggle-lever"></div>
+        <img src="/aa95/assests/toggle-small.webp" alt="" class="cutout" draggable="false">
       </div>
       
-      <!-- ICS VOL Knob -->
+      <!-- ICS VOL Knob - Photo Cutout -->
       <div class="hotspot knob volume" id="icsvol" data-label="ICS VOL" 
            data-value="50" data-angle="0"
            style="left: 93.50%; top: 76.00%;">
-        <div class="knob-body volume-knob">
-          <div class="knob-pointer"></div>
-        </div>
+        <img src="/aa95/assests/vol-knob.webp" alt="" class="cutout" draggable="false">
       </div>
     </div>
     
@@ -174,6 +158,9 @@
     <div class="status-bar" id="statusBar">
       <span id="statusText">AA95 Panel Ready - Click controls to interact</span>
     </div>
+    
+    <!-- Master Check Button for Testing -->
+    <button class="master-check-btn" id="masterCheckBtn">▶ Run Master Check</button>
     
     <div class="tip">
       Tip: Drag knobs to rotate. Click switches to toggle. Drag selector to snap positions.
