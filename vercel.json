@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/control-panel", "destination": "/aa95.html" },
+    { "source": "/control-panel", "destination": "/aa95/aa95.html" },
     { "source": "/radio", "destination": "/rc9100.html" }
   ],
   "headers": [
