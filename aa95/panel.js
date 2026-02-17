@@ -50,37 +50,62 @@
   }
 
   // ============================================
-  // MASTER CHECK - Staggered Toggle Test
+  // MASTER CHECK - Sequential Startup Simulation
+  // Updates data-active attributes which triggers CSS
   // ============================================
   
   async function executeMasterCheck() {
     const { toggleIds, staggerDelay } = CONFIG.masterCheck;
     
-    setStatus('▶ Running Master Check...');
+    setStatus('▶ MASTER CHECK: Initiating...');
     
-    // First, turn all OFF
-    for (const id of toggleIds) {
+    // Phase 1: All toggles DOWN (off)
+    toggleIds.forEach(id => {
       const el = $id(id);
       if (el) el.dataset.active = 'false';
-    }
+    });
+    updateIndicators();
     
+    await sleep(400);
+    setStatus('▶ MASTER CHECK: Resetting switches...');
     await sleep(300);
     
-    // Staggered turn ON
+    // Phase 2: Sequential activation with stagger
     for (let i = 0; i < toggleIds.length; i++) {
-      const el = $id(toggleIds[i]);
+      const id = toggleIds[i];
+      const el = $id(id);
+      
       if (el) {
+        // Update the data attribute - CSS handles the visual via Shadow Shift
         el.dataset.active = 'true';
-        setStatus(`Master Check: ${el.dataset.label || toggleIds[i].toUpperCase()} ✓`);
+        
+        // Status feedback
+        const label = el.dataset.label || id.toUpperCase();
+        setStatus(`▶ CHECKING: ${label} UP ✓`);
+        
+        // Update indicators after each toggle
+        updateIndicators();
       }
+      
+      // Stagger delay before next toggle
       await sleep(staggerDelay);
     }
     
-    // Update indicators
-    updateIndicators();
+    // Phase 3: Completion
+    await sleep(200);
+    setStatus('✓ MASTER CHECK COMPLETE - All Audio Paths Active');
     
-    await sleep(300);
-    setStatus('✓ Master Check Complete - All Systems GO');
+    // Flash TX light to confirm
+    const txLight = $id('tx_light');
+    if (txLight) {
+      txLight.dataset.active = 'false';
+      await sleep(100);
+      txLight.dataset.active = 'true';
+      await sleep(100);
+      txLight.dataset.active = 'false';
+      await sleep(100);
+      txLight.dataset.active = 'true';
+    }
   }
 
   function initMasterCheckButton() {
@@ -171,6 +196,7 @@
 
   // ============================================
   // SELECTOR KNOB - Photo Cutout Rotation
+  // Snaps to detent positions like real hardware
   // ============================================
   
   function initSelector() {
@@ -182,32 +208,55 @@
     let startY = 0;
     let startAngle = parseFloat(selector.dataset.angle) || -130;
     
-    function setAngle(angle, snap = false) {
-      angle = clamp(angle, CONFIG.selector.angles[0], CONFIG.selector.angles[CONFIG.selector.angles.length - 1]);
-      
-      // Find nearest position
+    function findNearestPosition(angle) {
       let nearestIdx = 0;
       let nearestDist = Infinity;
+      
       CONFIG.selector.angles.forEach((a, i) => {
         const dist = Math.abs(angle - a);
-        if (dist < nearestDist) { nearestDist = dist; nearestIdx = i; }
+        if (dist < nearestDist) {
+          nearestDist = dist;
+          nearestIdx = i;
+        }
       });
       
-      // If snapping, use exact position angle
-      const finalAngle = snap ? CONFIG.selector.angles[nearestIdx] : angle;
+      return {
+        index: nearestIdx,
+        angle: CONFIG.selector.angles[nearestIdx],
+        position: CONFIG.selector.positions[nearestIdx],
+        distance: nearestDist
+      };
+    }
+    
+    function setAngle(angle, snap = false) {
+      // Clamp to valid range
+      const minAngle = CONFIG.selector.angles[0];
+      const maxAngle = CONFIG.selector.angles[CONFIG.selector.angles.length - 1];
+      angle = clamp(angle, minAngle, maxAngle);
       
+      // Find nearest detent position
+      const nearest = findNearestPosition(angle);
+      
+      // If snapping, use exact position angle for perfect alignment
+      const finalAngle = snap ? nearest.angle : angle;
+      
+      // Update state
       selector.dataset.angle = finalAngle;
-      selector.dataset.position = CONFIG.selector.positions[nearestIdx];
+      selector.dataset.position = nearest.position;
       
-      // Apply rotation to photo cutout
+      // Apply rotation to the actual photo cutout
+      // This keeps the knob's markings aligned with panel labels
       if (cutout) {
         cutout.style.transform = `rotate(${finalAngle}deg)`;
       }
       
-      setStatus(`SELECTOR: ${CONFIG.selector.positions[nearestIdx]}`);
+      setStatus(`SELECTOR: ${nearest.position}`);
     }
     
     function snapToNearest() {
+      // Remove dragging class to enable snap transition
+      selector.classList.remove('dragging');
+      
       const currentAngle = parseFloat(selector.dataset.angle) || -130;
       setAngle(currentAngle, true);
     }
@@ -232,8 +281,12 @@
       
       const onMove = (e) => {
         const deltaY = startY - e.clientY;
-        if (Math.abs(deltaY) > 10) {
-          isDragging = true;
+        if (Math.abs(deltaY) > 8) {
+          if (!isDragging) {
+            isDragging = true;
+            // Add dragging class to disable snap transition during drag
+            selector.classList.add('dragging');
+          }
           setAngle(startAngle + deltaY * 0.8);
         }
       };
@@ -241,7 +294,9 @@
       const onUp = () => {
         document.removeEventListener('mousemove', onMove);
         document.removeEventListener('mouseup', onUp);
-        if (isDragging) snapToNearest();
+        if (isDragging) {
+          snapToNearest();
+        }
         isDragging = false;
       };
       
@@ -258,18 +313,23 @@
     
     selector.addEventListener('touchmove', (e) => {
       const deltaY = startY - e.touches[0].clientY;
-      if (Math.abs(deltaY) > 10) {
-        isDragging = true;
+      if (Math.abs(deltaY) > 8) {
+        if (!isDragging) {
+          isDragging = true;
+          selector.classList.add('dragging');
+        }
         setAngle(startAngle + deltaY * 0.8);
       }
     }, { passive: true });
     
     selector.addEventListener('touchend', () => {
-      if (isDragging) snapToNearest();
+      if (isDragging) {
+        snapToNearest();
+      }
       isDragging = false;
     });
     
-    // Scroll wheel
+    // Scroll wheel - direct position stepping
     selector.addEventListener('wheel', (e) => {
       e.preventDefault();
       const currentIdx = CONFIG.selector.positions.indexOf(selector.dataset.position || 'COM1');
