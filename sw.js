@@ -1,6 +1,6 @@
 /* sw.js - service worker for Aviation Simulators PWA */
 
-const CACHE_NAME = "radio-sim-v4";
+const CACHE_NAME = "radio-sim-v6";
 
 const ASSETS = [
   "/",
@@ -9,11 +9,23 @@ const ASSETS = [
   "/manifest.json",
   "/codeplug.json",
 
-  // AA95 assets (new photorealistic version)
+  // AA95 assets (real photo cutout system)
   "/aa95/aa95.html",
   "/aa95/styles.css",
   "/aa95/panel.js",
+  
+  // Base panel
   "/aa95/assests/img_001.webp",
+  
+  // Real photo cutouts
+  "/aa95/assests/toggle-white.webp",
+  "/aa95/assests/mic-lever.webp",
+  "/aa95/assests/iso-emr.webp",
+  "/aa95/assests/selector-knob.webp",
+  "/aa95/assests/rx-knob.webp",
+  "/aa95/assests/ics-knob.webp",
+  "/aa95/assests/vox-knob.webp",
+  "/aa95/assests/ics-call-btn.webp",
 
   // Icons
   "/icons/icon-16.png",
@@ -28,7 +40,7 @@ const ASSETS = [
   "/icons/icon-512.png"
 ];
 
-// Map clean URLs to HTML files (for offline fallback only)
+// Map clean URLs to HTML files
 const ROUTE_MAP = {
   "/control-panel": "/aa95/aa95.html",
   "/radio": "/rc9100.html"
@@ -62,12 +74,11 @@ self.addEventListener("fetch", (event) => {
 
   if (req.method !== "GET") return;
 
-  // Navigation requests: network-first, cache fallback
+  // Navigation requests: network-first
   if (req.mode === "navigate") {
     event.respondWith(
       fetch(req)
         .then(response => {
-          // Clone and cache successful navigation responses
           if (response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then(cache => {
@@ -77,11 +88,9 @@ self.addEventListener("fetch", (event) => {
           return response;
         })
         .catch(() => {
-          // Network failed - serve from cache
           const url = new URL(req.url);
           const mappedFile = ROUTE_MAP[url.pathname];
           
-          // Try the mapped HTML file first, then the exact URL, then index
           if (mappedFile) {
             return caches.match(mappedFile);
           }
