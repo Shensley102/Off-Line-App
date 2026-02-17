@@ -10,175 +10,171 @@
 <body>
   <div class="panel-wrapper">
     <div class="panel" id="panel">
-      <!-- Base panel photo - the visual foundation -->
+      <!-- Base panel photo -->
       <img src="/aa95/assests/img_001.webp" alt="AA95-729 Audio Panel" class="panel-base" draggable="false">
       
       <!-- ============================================
-           TOGGLE SWITCHES - Audio Source Selection
-           Each toggle has up/down image slots
-           data-active: true = UP (enabled), false = DOWN (disabled)
+           TOGGLE SWITCHES - CSS Rendered
+           White bat-handle toggles that flip up/down
            ============================================ -->
       
       <!-- COM1 Toggle -->
       <div class="hotspot toggle" id="com1" data-label="COM1" data-active="true"
-           style="left: 13.51%; top: 11.46%; width: 2.55%; height: 21.66%;">
-        <img class="toggle-up" src="/aa95/assests/toggle-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/toggle-down.webp" alt="" draggable="false">
+           style="left: 13.51%; top: 22.29%;">
+        <div class="toggle-base"></div>
+        <div class="toggle-lever"></div>
       </div>
       
       <!-- COM2 Toggle -->
       <div class="hotspot toggle" id="com2" data-label="COM2" data-active="true"
-           style="left: 19.89%; top: 11.46%; width: 2.55%; height: 21.66%;">
-        <img class="toggle-up" src="/aa95/assests/toggle-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/toggle-down.webp" alt="" draggable="false">
+           style="left: 19.89%; top: 22.29%;">
+        <div class="toggle-base"></div>
+        <div class="toggle-lever"></div>
       </div>
       
       <!-- FM1 Toggle -->
       <div class="hotspot toggle" id="fm1" data-label="FM1" data-active="true"
-           style="left: 26.60%; top: 11.46%; width: 2.55%; height: 21.66%;">
-        <img class="toggle-up" src="/aa95/assests/toggle-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/toggle-down.webp" alt="" draggable="false">
+           style="left: 26.60%; top: 22.29%;">
+        <div class="toggle-base"></div>
+        <div class="toggle-lever"></div>
       </div>
       
       <!-- FM2 Toggle -->
       <div class="hotspot toggle" id="fm2" data-label="FM2" data-active="true"
-           style="left: 32.98%; top: 11.46%; width: 2.55%; height: 21.66%;">
-        <img class="toggle-up" src="/aa95/assests/toggle-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/toggle-down.webp" alt="" draggable="false">
+           style="left: 33.30%; top: 22.29%;">
+        <div class="toggle-base"></div>
+        <div class="toggle-lever"></div>
       </div>
       
       <!-- AUX Toggle -->
       <div class="hotspot toggle" id="aux" data-label="AUX" data-active="true"
-           style="left: 39.36%; top: 11.46%; width: 2.55%; height: 21.66%;">
-        <img class="toggle-up" src="/aa95/assests/toggle-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/toggle-down.webp" alt="" draggable="false">
+           style="left: 40.00%; top: 22.29%;">
+        <div class="toggle-base"></div>
+        <div class="toggle-lever"></div>
       </div>
       
       <!-- ============================================
-           SELECTOR KNOB - Channel/Mode Selection
-           data-position: COM1, COM2, FM1, FM2, AUX, PA
-           data-angle: rotation in degrees
+           SELECTOR KNOB - Large rotary with pointer
            ============================================ -->
       
       <div class="hotspot knob selector" id="selector" data-label="SELECTOR" 
            data-position="COM1" data-angle="-130" data-value="0"
-           style="left: 49.20%; top: 53.34%; width: 14.36%; height: 42.99%;">
-        <img class="knob-cap" src="/aa95/assests/selector-knob.webp" alt="" draggable="false">
+           style="left: 48.50%; top: 60.00%;">
+        <div class="knob-body">
+          <div class="knob-pointer"></div>
+        </div>
       </div>
       
       <!-- ============================================
-           MUSIC SECTION - ADF & DPLR Buttons
-           data-active: true = pressed/on, false = off
+           MUSIC SECTION BUTTONS - Invisible hotspots
+           (These are small and don't need visual overlay)
            ============================================ -->
       
       <!-- ADF Button (Blue) -->
-      <div class="hotspot button" id="adf" data-label="ADF" data-active="false"
-           style="left: 55.32%; top: 7.64%; width: 2.55%; height: 7.64%;">
+      <div class="hotspot button round" id="adf" data-label="ADF" data-active="false"
+           style="left: 54.50%; top: 14.00%; width: 3%; height: 9%;">
       </div>
       
       <!-- DPLR Button (Black) -->
-      <div class="hotspot button" id="dplr" data-label="DPLR" data-active="false"
-           style="left: 60.43%; top: 7.64%; width: 2.55%; height: 7.64%;">
+      <div class="hotspot button round" id="dplr" data-label="DPLR" data-active="false"
+           style="left: 60.80%; top: 14.00%; width: 3%; height: 9%;">
       </div>
       
       <!-- ============================================
-           PAT ON/OFF Toggle
+           PAT ON/OFF Toggle (Small)
            ============================================ -->
       
       <div class="hotspot toggle small" id="pat" data-label="PAT" data-active="true"
-           style="left: 68.09%; top: 8.76%; width: 2.13%; height: 14.33%;">
-        <img class="toggle-up" src="/aa95/assests/toggle-sm-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/toggle-sm-down.webp" alt="" draggable="false">
+           style="left: 67.50%; top: 16.00%;">
+        <div class="toggle-base"></div>
+        <div class="toggle-lever"></div>
       </div>
       
       <!-- ============================================
-           SO Button (Yellow)
+           SO Button (Yellow) - Invisible hotspot
            ============================================ -->
       
-      <div class="hotspot button" id="so" data-label="SO" data-active="false"
-           style="left: 75.96%; top: 8.28%; width: 2.98%; height: 8.92%;">
+      <div class="hotspot button round" id="so" data-label="SO" data-active="false"
+           style="left: 75.50%; top: 14.00%; width: 3.5%; height: 10%;">
       </div>
       
       <!-- ============================================
-           RX VOL Knob - Receive Volume
-           data-value: 0-100
-           data-angle: calculated from value
+           RX VOL Knob - Volume control
            ============================================ -->
       
       <div class="hotspot knob volume" id="rxvol" data-label="RX VOL" 
            data-value="50" data-angle="0"
-           style="left: 95.85%; top: 19.27%; width: 6.60%; height: 27.07%;">
-        <img class="knob-cap" src="/aa95/assests/vol-knob.webp" alt="" draggable="false">
+           style="left: 93.50%; top: 26.00%;">
+        <div class="knob-body volume-knob">
+          <div class="knob-pointer"></div>
+        </div>
       </div>
       
       <!-- ============================================
-           BOTTOM ROW - Left Side
+           BOTTOM ROW
            ============================================ -->
       
-      <!-- ISO/EMR Button (Pink/Salmon) -->
-      <div class="hotspot button iso-emr" id="iso_emr" data-label="ISO/EMR" data-active="false"
+      <!-- ISO/EMR Button - Invisible hotspot -->
+      <div class="hotspot button round iso-emr" id="iso_emr" data-label="ISO/EMR" data-active="false"
            data-mode="normal"
-           style="left: 11.91%; top: 70.70%; width: 3.62%; height: 10.83%;">
+           style="left: 11.20%; top: 73.00%; width: 4%; height: 12%;">
       </div>
       
-      <!-- TX Indicator Light (Green LED) - Display Only -->
-      <div class="hotspot indicator" id="tx_light" data-label="TX" data-active="true"
-           style="left: 22.13%; top: 66.24%; width: 2.77%; height: 8.28%;">
+      <!-- TX Indicator Light -->
+      <div class="hotspot indicator led" id="tx_light" data-label="TX" data-active="true"
+           style="left: 20.50%; top: 71.00%;">
+        <div class="led-glow"></div>
       </div>
       
       <!-- VOX Knob -->
-      <div class="hotspot knob volume" id="vox" data-label="VOX" 
+      <div class="hotspot knob volume vox" id="vox" data-label="VOX" 
            data-value="50" data-angle="0"
-           style="left: 29.36%; top: 65.61%; width: 5.53%; height: 16.56%;">
-        <img class="knob-cap" src="/aa95/assests/vox-knob.webp" alt="" draggable="false">
+           style="left: 29.00%; top: 73.00%;">
+        <div class="knob-body vox-knob">
+          <div class="knob-pointer"></div>
+        </div>
       </div>
       
-      <!-- ============================================
-           CENTER - ICS CALL Button (Momentary)
-           Uses CSS :active state for press animation
-           ============================================ -->
-      
-      <div class="hotspot button momentary" id="ics_call" data-label="ICS CALL" data-active="false"
-           style="left: 60.85%; top: 69.75%; width: 5.11%; height: 15.29%;">
+      <!-- ICS CALL Button - Invisible hotspot -->
+      <div class="hotspot button momentary round" id="ics_call" data-label="ICS CALL" data-active="false"
+           style="left: 60.50%; top: 77.00%; width: 5.5%; height: 17%;">
       </div>
       
-      <!-- ============================================
-           RIGHT SIDE - PLT, ICS MIC, KEY, ICS VOL
-           ============================================ -->
-      
-      <!-- PLT Indicator Light (Green LED) - Display Only -->
-      <div class="hotspot indicator" id="plt_light" data-label="PLT" data-active="true"
-           style="left: 71.38%; top: 53.50%; width: 2.77%; height: 8.28%;">
+      <!-- PLT Indicator Light -->
+      <div class="hotspot indicator led" id="plt_light" data-label="PLT" data-active="true"
+           style="left: 70.50%; top: 55.00%;">
+        <div class="led-glow"></div>
       </div>
       
-      <!-- ICS MIC Toggle (Orange Lever) -->
+      <!-- ICS MIC Toggle (Orange) -->
       <div class="hotspot toggle mic" id="ics_mic" data-label="ICS MIC" data-active="true"
-           style="left: 77.87%; top: 66.88%; width: 2.98%; height: 15.92%;">
-        <img class="toggle-up" src="/aa95/assests/mic-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/mic-down.webp" alt="" draggable="false">
+           style="left: 77.50%; top: 75.00%;">
+        <div class="toggle-base mic-base"></div>
+        <div class="toggle-lever mic-lever"></div>
       </div>
       
-      <!-- KEY Toggle -->
+      <!-- KEY Toggle (Small) -->
       <div class="hotspot toggle small" id="key" data-label="KEY" data-active="true"
-           style="left: 82.66%; top: 78.98%; width: 1.91%; height: 12.74%;">
-        <img class="toggle-up" src="/aa95/assests/toggle-sm-up.webp" alt="" draggable="false">
-        <img class="toggle-down" src="/aa95/assests/toggle-sm-down.webp" alt="" draggable="false">
+           style="left: 82.50%; top: 85.00%;">
+        <div class="toggle-base"></div>
+        <div class="toggle-lever"></div>
       </div>
       
       <!-- ICS VOL Knob -->
       <div class="hotspot knob volume" id="icsvol" data-label="ICS VOL" 
            data-value="50" data-angle="0"
-           style="left: 95.85%; top: 69.27%; width: 6.60%; height: 27.07%;">
-        <img class="knob-cap" src="/aa95/assests/vol-knob.webp" alt="" draggable="false">
+           style="left: 93.50%; top: 76.00%;">
+        <div class="knob-body volume-knob">
+          <div class="knob-pointer"></div>
+        </div>
       </div>
     </div>
     
-    <!-- Status Display for Training Feedback -->
+    <!-- Status Display -->
     <div class="status-bar" id="statusBar">
       <span id="statusText">AA95 Panel Ready - Click controls to interact</span>
     </div>
     
-    <!-- Tip for Desktop Users -->
     <div class="tip">
       Tip: Drag knobs to rotate. Click switches to toggle. Drag selector to snap positions.
     </div>
