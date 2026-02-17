@@ -1,436 +1,199 @@
-/**
- * AA95 Audio Control Panel - Interactive Controls
- * Photorealistic training simulator
- */
+/* AA95 Audio Control Panel - Photorealistic Styles */
+/* The photo IS the visual. Hotspots are invisible interaction areas. */
 
-(function() {
-  'use strict';
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  // ============================================
-  // STATE
-  // ============================================
+html, body {
+  height: 100%;
+  background: #0a0a0a;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.panel-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Panel container - fixed size matching the photo */
+.panel {
+  position: relative;
+  width: 940px;
+  height: 314px;
+  user-select: none;
+  -webkit-user-select: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.8),
+    0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* The actual photo - this is ALL the user sees */
+.panel-base {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 940px;
+  height: 314px;
+  pointer-events: none;
+  display: block;
+}
+
+/* ============================================
+   HOTSPOTS - Invisible clickable areas
+   ============================================ */
+
+.hotspot {
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
   
-  const state = {
-    // Toggle switches
-    com1: true,
-    com2: true,
-    fm1: true,
-    fm2: true,
-    aux: true,
-    pat: true,
-    key: true,
-    ics_mic: true,
-    
-    // Buttons
-    adf: false,
-    dplr: false,
-    so: false,
-    iso_emr: 'normal', // 'normal' or 'emr'
-    
-    // Knobs (angle in degrees)
-    selector: -120, // COM1 position
-    rxvol: 0,
-    icsvol: 0,
-    vox: 0,
-    
-    // Indicators
-    tx_light: true,
-    plt_light: true
-  };
+  /* INVISIBLE by default */
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  
+  /* Smooth transitions */
+  transition: 
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease;
+}
 
-  // Selector positions (degrees from vertical)
-  const SELECTOR_POSITIONS = {
-    'COM1': -120,
-    'COM2': -70,
-    'FM1': -25,
-    'FM2': 20,
-    'AUX': 60,
-    'PA': 110
-  };
+/* Hover state - subtle highlight so user knows it's interactive */
+.hotspot:hover {
+  border-color: rgba(127, 255, 185, 0.5);
+  box-shadow: 0 0 12px rgba(127, 255, 185, 0.3);
+}
 
-  // ============================================
-  // UTILITY FUNCTIONS
-  // ============================================
+/* Active/click state */
+.hotspot:active {
+  border-color: rgba(127, 255, 185, 0.8);
+  background: rgba(127, 255, 185, 0.1);
+  box-shadow: 0 0 20px rgba(127, 255, 185, 0.5);
+}
 
-  function $(id) {
-    return document.getElementById(id);
-  }
+/* ============================================
+   TOGGLE-SPECIFIC STYLES
+   ============================================ */
 
-  function setStatus(text) {
-    const statusEl = $('statusText');
-    if (statusEl) {
-      statusEl.textContent = text;
-    }
-  }
+.hotspot.toggle {
+  border-radius: 6px;
+}
 
-  function getAngleFromCenter(element, clientX, clientY) {
-    const rect = element.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const deltaX = clientX - centerX;
-    const deltaY = clientY - centerY;
-    let angle = Math.atan2(deltaX, -deltaY) * (180 / Math.PI);
-    return angle;
-  }
+.hotspot.toggle[data-state="down"] {
+  /* Visual feedback that toggle is in DOWN position */
+  background: rgba(255, 100, 100, 0.08);
+  border-color: rgba(255, 100, 100, 0.2);
+}
 
-  function clamp(value, min, max) {
-    return Math.min(max, Math.max(min, value));
-  }
+.hotspot.toggle[data-state="down"]:hover {
+  border-color: rgba(255, 100, 100, 0.5);
+  box-shadow: 0 0 12px rgba(255, 100, 100, 0.3);
+}
 
-  function findNearestSelectorPosition(angle) {
-    let nearest = 'COM1';
-    let minDiff = Infinity;
-    
-    for (const [name, pos] of Object.entries(SELECTOR_POSITIONS)) {
-      const diff = Math.abs(angle - pos);
-      if (diff < minDiff) {
-        minDiff = diff;
-        nearest = name;
-      }
-    }
-    
-    return nearest;
-  }
+/* ============================================
+   BUTTON-SPECIFIC STYLES  
+   ============================================ */
 
-  // ============================================
-  // TOGGLE SWITCHES
-  // ============================================
+.hotspot.button {
+  border-radius: 50%;
+}
 
-  function initToggles() {
-    const toggleIds = ['com1', 'com2', 'fm1', 'fm2', 'aux'];
-    
-    toggleIds.forEach(id => {
-      const el = $(id);
-      if (!el) return;
-      
-      el.addEventListener('click', () => {
-        state[id] = !state[id];
-        el.dataset.state = state[id] ? 'up' : 'down';
-        setStatus(`${id.toUpperCase()}: ${state[id] ? 'ON' : 'OFF'}`);
-        updateIndicators();
-      });
-      
-      // Set initial state
-      el.dataset.state = state[id] ? 'up' : 'down';
-    });
-  }
+.hotspot.button[data-state="on"] {
+  /* Visual feedback that button is ON */
+  box-shadow: 0 0 15px rgba(100, 200, 255, 0.4);
+  border-color: rgba(100, 200, 255, 0.3);
+}
 
-  function initSmallToggles() {
-    const toggleIds = ['pat', 'key', 'ics_mic'];
-    
-    toggleIds.forEach(id => {
-      const el = $(id);
-      if (!el) return;
-      
-      el.addEventListener('click', () => {
-        state[id] = !state[id];
-        el.dataset.state = state[id] ? 'up' : 'down';
-        setStatus(`${id.toUpperCase().replace('_', ' ')}: ${state[id] ? 'ON' : 'OFF'}`);
-      });
-      
-      el.dataset.state = state[id] ? 'up' : 'down';
-    });
-  }
+/* ISO/EMR special states */
+.hotspot.button[data-state="emr"] {
+  box-shadow: 0 0 18px rgba(255, 80, 80, 0.5);
+  border-color: rgba(255, 80, 80, 0.4);
+}
 
-  // ============================================
-  // BUTTONS
-  // ============================================
+/* Momentary button (ICS CALL) */
+.hotspot.momentary:active {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+}
 
-  function initButtons() {
-    // ADF button
-    const adf = $('adf');
-    if (adf) {
-      adf.addEventListener('click', () => {
-        state.adf = !state.adf;
-        adf.dataset.state = state.adf ? 'on' : 'off';
-        setStatus(`ADF: ${state.adf ? 'ON' : 'OFF'}`);
-      });
-    }
-    
-    // DPLR button
-    const dplr = $('dplr');
-    if (dplr) {
-      dplr.addEventListener('click', () => {
-        state.dplr = !state.dplr;
-        dplr.dataset.state = state.dplr ? 'on' : 'off';
-        setStatus(`DPLR: ${state.dplr ? 'ON' : 'OFF'}`);
-      });
-    }
-    
-    // SO button
-    const so = $('so');
-    if (so) {
-      so.addEventListener('click', () => {
-        state.so = !state.so;
-        so.dataset.state = state.so ? 'on' : 'off';
-        setStatus(`SO: ${state.so ? 'ON' : 'OFF'}`);
-      });
-    }
-    
-    // ISO/EMR button
-    const isoEmr = $('iso_emr');
-    if (isoEmr) {
-      isoEmr.addEventListener('click', () => {
-        state.iso_emr = state.iso_emr === 'normal' ? 'emr' : 'normal';
-        isoEmr.dataset.state = state.iso_emr;
-        setStatus(`ISO/EMR: ${state.iso_emr.toUpperCase()}`);
-      });
-    }
-    
-    // ICS CALL button (momentary)
-    const icsCall = $('ics_call');
-    if (icsCall) {
-      icsCall.addEventListener('mousedown', () => {
-        icsCall.classList.add('pressed');
-        setStatus('ICS CALL: PRESSED');
-      });
-      
-      icsCall.addEventListener('mouseup', () => {
-        icsCall.classList.remove('pressed');
-        setStatus('ICS CALL: RELEASED');
-      });
-      
-      icsCall.addEventListener('mouseleave', () => {
-        icsCall.classList.remove('pressed');
-      });
-      
-      // Touch support
-      icsCall.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        icsCall.classList.add('pressed');
-        setStatus('ICS CALL: PRESSED');
-      });
-      
-      icsCall.addEventListener('touchend', () => {
-        icsCall.classList.remove('pressed');
-        setStatus('ICS CALL: RELEASED');
-      });
-    }
-  }
+/* ============================================
+   KNOB-SPECIFIC STYLES
+   ============================================ */
 
-  // ============================================
-  // ROTARY KNOBS
-  // ============================================
+.hotspot.knob {
+  border-radius: 50%;
+  cursor: grab;
+}
 
-  function initKnobs() {
-    // Main selector knob
-    initSelectorKnob();
-    
-    // Volume knobs
-    initVolumeKnob('rxvol', 'RX VOL');
-    initVolumeKnob('icsvol', 'ICS VOL');
-    initVolumeKnob('vox', 'VOX');
-  }
+.hotspot.knob:active {
+  cursor: grabbing;
+}
 
-  function initSelectorKnob() {
-    const knob = $('selector');
-    if (!knob) return;
-    
-    const pointer = knob.querySelector('.knob-pointer');
-    let isDragging = false;
-    let startAngle = 0;
-    let currentAngle = state.selector;
-    
-    function updatePointer() {
-      if (pointer) {
-        pointer.style.transform = `translateX(-50%) rotate(${currentAngle}deg)`;
-      }
-    }
-    
-    function handleStart(e) {
-      isDragging = true;
-      knob.classList.add('dragging');
-      
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      startAngle = getAngleFromCenter(knob, clientX, clientY) - currentAngle;
-      
-      e.preventDefault();
-    }
-    
-    function handleMove(e) {
-      if (!isDragging) return;
-      
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      
-      let newAngle = getAngleFromCenter(knob, clientX, clientY) - startAngle;
-      
-      // Clamp to valid range
-      newAngle = clamp(newAngle, -130, 120);
-      
-      currentAngle = newAngle;
-      state.selector = currentAngle;
-      updatePointer();
-      
-      // Find and display nearest position
-      const position = findNearestSelectorPosition(currentAngle);
-      setStatus(`SELECTOR: ${position}`);
-    }
-    
-    function handleEnd() {
-      if (!isDragging) return;
-      isDragging = false;
-      knob.classList.remove('dragging');
-      
-      // Snap to nearest position
-      const position = findNearestSelectorPosition(currentAngle);
-      currentAngle = SELECTOR_POSITIONS[position];
-      state.selector = currentAngle;
-      updatePointer();
-      setStatus(`SELECTOR: ${position} (snapped)`);
-    }
-    
-    // Mouse events
-    knob.addEventListener('mousedown', handleStart);
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleEnd);
-    
-    // Touch events
-    knob.addEventListener('touchstart', handleStart, { passive: false });
-    document.addEventListener('touchmove', handleMove, { passive: false });
-    document.addEventListener('touchend', handleEnd);
-    
-    // Initialize position
-    updatePointer();
-  }
+.hotspot.knob.selector {
+  /* Larger selector knob */
+  border-radius: 50%;
+}
 
-  function initVolumeKnob(id, label) {
-    const knob = $(id);
-    if (!knob) return;
-    
-    const pointer = knob.querySelector('.vol-pointer, .vox-pointer');
-    let isDragging = false;
-    let startAngle = 0;
-    let currentAngle = state[id];
-    
-    function updatePointer() {
-      if (pointer) {
-        pointer.style.transform = `translateX(-50%) rotate(${currentAngle}deg)`;
-      }
-    }
-    
-    function handleStart(e) {
-      isDragging = true;
-      knob.classList.add('dragging');
-      
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      startAngle = getAngleFromCenter(knob, clientX, clientY) - currentAngle;
-      
-      e.preventDefault();
-    }
-    
-    function handleMove(e) {
-      if (!isDragging) return;
-      
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      
-      let newAngle = getAngleFromCenter(knob, clientX, clientY) - startAngle;
-      
-      // Clamp to valid range (-150 to +150 degrees)
-      newAngle = clamp(newAngle, -150, 150);
-      
-      currentAngle = newAngle;
-      state[id] = currentAngle;
-      updatePointer();
-      
-      // Convert to percentage for display
-      const percent = Math.round(((currentAngle + 150) / 300) * 100);
-      setStatus(`${label}: ${percent}%`);
-    }
-    
-    function handleEnd() {
-      if (!isDragging) return;
-      isDragging = false;
-      knob.classList.remove('dragging');
-    }
-    
-    // Mouse events
-    knob.addEventListener('mousedown', handleStart);
-    document.addEventListener('mousemove', handleMove);
-    document.addEventListener('mouseup', handleEnd);
-    
-    // Touch events
-    knob.addEventListener('touchstart', handleStart, { passive: false });
-    document.addEventListener('touchmove', handleMove, { passive: false });
-    document.addEventListener('touchend', handleEnd);
-    
-    // Mouse wheel support
-    knob.addEventListener('wheel', (e) => {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? -5 : 5;
-      currentAngle = clamp(currentAngle + delta, -150, 150);
-      state[id] = currentAngle;
-      updatePointer();
-      
-      const percent = Math.round(((currentAngle + 150) / 300) * 100);
-      setStatus(`${label}: ${percent}%`);
-    }, { passive: false });
-    
-    // Initialize position
-    updatePointer();
-  }
+/* ============================================
+   INDICATOR LIGHTS (not clickable)
+   ============================================ */
 
-  // ============================================
-  // INDICATORS
-  // ============================================
+.hotspot.indicator {
+  border-radius: 50%;
+  pointer-events: none; /* Not clickable */
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
 
-  function updateIndicators() {
-    // TX light is on when any audio source is active
-    const anyActive = state.com1 || state.com2 || state.fm1 || state.fm2 || state.aux;
-    state.tx_light = anyActive;
-    
-    const txLight = $('tx_light');
-    if (txLight) {
-      txLight.dataset.state = state.tx_light ? 'on' : 'off';
-    }
-    
-    // PLT light (always on for now)
-    const pltLight = $('plt_light');
-    if (pltLight) {
-      pltLight.dataset.state = state.plt_light ? 'on' : 'off';
-    }
-  }
+.hotspot.indicator[data-state="on"] {
+  /* Subtle glow effect for ON indicators */
+  box-shadow: 0 0 20px rgba(50, 255, 100, 0.4) !important;
+}
 
-  // ============================================
-  // INITIALIZATION
-  // ============================================
+.hotspot.indicator[data-state="off"] {
+  box-shadow: none !important;
+}
 
-  function init() {
-    initToggles();
-    initSmallToggles();
-    initButtons();
-    initKnobs();
-    updateIndicators();
-    
-    setStatus('AA95 Panel Ready - Click controls to interact');
-    
-    console.log('AA95 Panel initialized');
-  }
+/* ============================================
+   STATUS BAR - Training feedback
+   ============================================ */
 
-  // Wait for DOM
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+.status-bar {
+  background: rgba(0, 0, 0, 0.85);
+  color: #7fffb9;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-align: center;
+  min-width: 400px;
+  border: 1px solid rgba(127, 255, 185, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
 
-})();
-```
+/* ============================================
+   DEBUG MODE (uncomment to see all hotspots)
+   ============================================ */
 
----
-
-## Repo Structure
-
-Your `/aa95/` folder should look like:
-```
-/aa95/
-├── aa95.html (or rename to index.html)
-├── styles.css
-├── panel.js
-└── assests/
-    ├── img_001.webp
-    ├── img_002.webp
-    └── ... (all 41 images)
+/*
+.hotspot {
+  background: rgba(255, 0, 0, 0.2) !important;
+  border: 2px solid rgba(255, 0, 0, 0.5) !important;
+}
+*/
