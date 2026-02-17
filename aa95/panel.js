@@ -1,12 +1,6 @@
 /**
- * AA95 Audio Control Panel - Data-Driven Controller
- * 
- * All state is stored in DOM data attributes:
- * - data-active: boolean for toggles and buttons
- * - data-value: 0-100 for volume knobs
- * - data-angle: rotation degrees for knobs
- * - data-position: named position for selector
- * - data-mode: special modes (e.g., "emr" for ISO/EMR)
+ * AA95 Audio Control Panel - Animation Controller
+ * Drives CSS-rendered components with smooth animations
  */
 
 (function() {
@@ -17,41 +11,30 @@
   // ============================================
   
   const CONFIG = {
-    // Selector knob positions and angles
     selector: {
       positions: ['COM1', 'COM2', 'FM1', 'FM2', 'AUX', 'PA'],
-      angles: [-130, -80, -30, 20, 70, 120], // degrees for each position
-      snapThreshold: 25 // degrees to snap to position
+      angles: [-130, -80, -30, 20, 70, 120]
     },
-    
-    // Volume knob settings
     volume: {
       min: 0,
       max: 100,
       angleMin: -150,
       angleMax: 150,
-      sensitivity: 0.5 // degrees per pixel of drag
-    },
-    
-    // Animation
-    transitionDuration: 150 // ms
+      sensitivity: 0.5
+    }
   };
 
   // ============================================
-  // UTILITY FUNCTIONS
+  // UTILITIES
   // ============================================
   
-  const $ = (selector) => document.querySelector(selector);
-  const $$ = (selector) => document.querySelectorAll(selector);
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
   const $id = (id) => document.getElementById(id);
-
-  function clamp(value, min, max) {
-    return Math.min(Math.max(value, min), max);
-  }
-
-  function mapRange(value, inMin, inMax, outMin, outMax) {
-    return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
-  }
+  
+  const clamp = (v, min, max) => Math.min(Math.max(v, min), max);
+  const mapRange = (v, inMin, inMax, outMin, outMax) => 
+    ((v - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
 
   function setStatus(text) {
     const el = $id('statusText');
@@ -59,163 +42,106 @@
   }
 
   // ============================================
-  // TOGGLE SWITCH CONTROLLER
+  // TOGGLE SWITCHES
   // ============================================
   
   function initToggles() {
-    const toggles = $$('.hotspot.toggle');
-    
-    toggles.forEach(toggle => {
-      // Click handler
+    $$('.hotspot.toggle').forEach(toggle => {
       toggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         
-        // Toggle the data-active attribute
         const isActive = toggle.dataset.active === 'true';
         toggle.dataset.active = (!isActive).toString();
         
-        // Update status
         const label = toggle.dataset.label || toggle.id.toUpperCase();
-        const state = toggle.dataset.active === 'true' ? 'ON (UP)' : 'OFF (DOWN)';
-        setStatus(`${label}: ${state}`);
+        setStatus(`${label}: ${toggle.dataset.active === 'true' ? 'ON (UP)' : 'OFF (DOWN)'}`);
         
-        // Update indicators
         updateIndicators();
-      });
-      
-      // Touch support (prevent double-firing)
-      toggle.addEventListener('touchend', (e) => {
-        e.preventDefault();
       });
     });
   }
 
   // ============================================
-  // BUTTON CONTROLLER
+  // BUTTONS
   // ============================================
   
   function initButtons() {
-    // Standard toggle buttons
-    const buttons = $$('.hotspot.button:not(.momentary):not(.iso-emr)');
-    buttons.forEach(initToggleButton);
-    
-    // ISO/EMR special button
-    initIsoEmrButton();
-    
-    // Momentary button (ICS CALL)
-    initMomentaryButton();
-  }
-
-  function initToggleButton(button) {
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      
-      const isActive = button.dataset.active === 'true';
-      button.dataset.active = (!isActive).toString();
-      
-      const label = button.dataset.label || button.id.toUpperCase();
-      setStatus(`${label}: ${button.dataset.active === 'true' ? 'ON' : 'OFF'}`);
+    // Standard toggle buttons (ADF, DPLR, SO)
+    $$('.hotspot.button.round:not(.momentary):not(.iso-emr)').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const isActive = btn.dataset.active === 'true';
+        btn.dataset.active = (!isActive).toString();
+        setStatus(`${btn.dataset.label}: ${btn.dataset.active === 'true' ? 'ON' : 'OFF'}`);
+      });
     });
-  }
-
-  function initIsoEmrButton() {
-    const button = $id('iso_emr');
-    if (!button) return;
     
-    button.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+    // ISO/EMR button
+    const isoEmr = $id('iso_emr');
+    if (isoEmr) {
+      isoEmr.addEventListener('click', (e) => {
+        e.preventDefault();
+        const mode = isoEmr.dataset.mode === 'emr' ? 'normal' : 'emr';
+        isoEmr.dataset.mode = mode;
+        isoEmr.dataset.active = (mode === 'emr').toString();
+        setStatus(`ISO/EMR: ${mode.toUpperCase()}`);
+      });
+    }
+    
+    // ICS CALL (momentary)
+    const icsCall = $id('ics_call');
+    if (icsCall) {
+      const press = () => { icsCall.dataset.active = 'true'; setStatus('ICS CALL: PRESSED'); };
+      const release = () => { icsCall.dataset.active = 'false'; setStatus('ICS CALL: RELEASED'); };
       
-      // Cycle through: normal -> emr -> normal
-      const mode = button.dataset.mode === 'emr' ? 'normal' : 'emr';
-      button.dataset.mode = mode;
-      button.dataset.active = (mode === 'emr').toString();
-      
-      setStatus(`ISO/EMR: ${mode.toUpperCase()}`);
-    });
-  }
-
-  function initMomentaryButton() {
-    const button = $id('ics_call');
-    if (!button) return;
-    
-    const label = button.dataset.label || 'ICS CALL';
-    
-    const press = () => {
-      button.dataset.active = 'true';
-      setStatus(`${label}: PRESSED`);
-    };
-    
-    const release = () => {
-      button.dataset.active = 'false';
-      setStatus(`${label}: RELEASED`);
-    };
-    
-    // Mouse events
-    button.addEventListener('mousedown', (e) => { e.preventDefault(); press(); });
-    button.addEventListener('mouseup', release);
-    button.addEventListener('mouseleave', release);
-    
-    // Touch events
-    button.addEventListener('touchstart', (e) => { e.preventDefault(); press(); });
-    button.addEventListener('touchend', (e) => { e.preventDefault(); release(); });
-    button.addEventListener('touchcancel', release);
+      icsCall.addEventListener('mousedown', (e) => { e.preventDefault(); press(); });
+      icsCall.addEventListener('mouseup', release);
+      icsCall.addEventListener('mouseleave', release);
+      icsCall.addEventListener('touchstart', (e) => { e.preventDefault(); press(); });
+      icsCall.addEventListener('touchend', (e) => { e.preventDefault(); release(); });
+    }
   }
 
   // ============================================
-  // SELECTOR KNOB CONTROLLER
+  // SELECTOR KNOB
   // ============================================
   
   function initSelector() {
     const selector = $id('selector');
     if (!selector) return;
     
+    const knobBody = selector.querySelector('.knob-body');
     let isDragging = false;
     let startY = 0;
     let startAngle = parseFloat(selector.dataset.angle) || -130;
     
-    function updateAngle(angle) {
-      // Clamp to valid range
+    function setAngle(angle) {
       angle = clamp(angle, CONFIG.selector.angles[0], CONFIG.selector.angles[CONFIG.selector.angles.length - 1]);
-      
-      // Store and apply
       selector.dataset.angle = angle;
-      selector.style.setProperty('--knob-angle', angle);
+      knobBody.style.transform = `rotate(${angle}deg)`;
       
       // Find nearest position
       let nearestIdx = 0;
       let nearestDist = Infinity;
       CONFIG.selector.angles.forEach((a, i) => {
         const dist = Math.abs(angle - a);
-        if (dist < nearestDist) {
-          nearestDist = dist;
-          nearestIdx = i;
-        }
+        if (dist < nearestDist) { nearestDist = dist; nearestIdx = i; }
       });
       
-      const position = CONFIG.selector.positions[nearestIdx];
-      selector.dataset.position = position;
-      setStatus(`SELECTOR: ${position}`);
+      selector.dataset.position = CONFIG.selector.positions[nearestIdx];
+      setStatus(`SELECTOR: ${CONFIG.selector.positions[nearestIdx]}`);
     }
     
-    function snapToPosition() {
+    function snapToNearest() {
       const currentAngle = parseFloat(selector.dataset.angle) || -130;
       let nearestAngle = CONFIG.selector.angles[0];
       let nearestDist = Infinity;
-      
       CONFIG.selector.angles.forEach(a => {
         const dist = Math.abs(currentAngle - a);
-        if (dist < nearestDist) {
-          nearestDist = dist;
-          nearestAngle = a;
-        }
+        if (dist < nearestDist) { nearestDist = dist; nearestAngle = a; }
       });
-      
-      // Animate snap
-      selector.style.setProperty('--knob-angle', nearestAngle);
-      selector.dataset.angle = nearestAngle;
+      setAngle(nearestAngle);
     }
     
     // Click to cycle
@@ -226,256 +152,201 @@
       const currentPos = selector.dataset.position || 'COM1';
       const currentIdx = CONFIG.selector.positions.indexOf(currentPos);
       const nextIdx = (currentIdx + 1) % CONFIG.selector.positions.length;
-      
-      selector.dataset.position = CONFIG.selector.positions[nextIdx];
-      selector.dataset.angle = CONFIG.selector.angles[nextIdx];
-      selector.style.setProperty('--knob-angle', CONFIG.selector.angles[nextIdx]);
-      
-      setStatus(`SELECTOR: ${CONFIG.selector.positions[nextIdx]}`);
+      setAngle(CONFIG.selector.angles[nextIdx]);
     });
     
-    // Drag start
-    const onDragStart = (clientY) => {
-      isDragging = false;
-      startY = clientY;
-      startAngle = parseFloat(selector.dataset.angle) || -130;
-    };
-    
-    // Drag move
-    const onDragMove = (clientY) => {
-      const deltaY = startY - clientY;
-      if (Math.abs(deltaY) > 10) {
-        isDragging = true;
-        const newAngle = startAngle + (deltaY * 0.5);
-        updateAngle(newAngle);
-      }
-    };
-    
-    // Drag end
-    const onDragEnd = () => {
-      if (isDragging) {
-        snapToPosition();
-      }
-      isDragging = false;
-    };
-    
-    // Mouse events
+    // Drag
     selector.addEventListener('mousedown', (e) => {
       e.preventDefault();
-      onDragStart(e.clientY);
+      isDragging = false;
+      startY = e.clientY;
+      startAngle = parseFloat(selector.dataset.angle) || -130;
       
-      const onMouseMove = (e) => onDragMove(e.clientY);
-      const onMouseUp = () => {
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-        onDragEnd();
+      const onMove = (e) => {
+        const deltaY = startY - e.clientY;
+        if (Math.abs(deltaY) > 10) {
+          isDragging = true;
+          setAngle(startAngle + deltaY * 0.5);
+        }
       };
       
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        if (isDragging) snapToNearest();
+        isDragging = false;
+      };
+      
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
     });
     
-    // Touch events
+    // Touch
     selector.addEventListener('touchstart', (e) => {
-      onDragStart(e.touches[0].clientY);
+      isDragging = false;
+      startY = e.touches[0].clientY;
+      startAngle = parseFloat(selector.dataset.angle) || -130;
     }, { passive: true });
     
     selector.addEventListener('touchmove', (e) => {
-      onDragMove(e.touches[0].clientY);
+      const deltaY = startY - e.touches[0].clientY;
+      if (Math.abs(deltaY) > 10) {
+        isDragging = true;
+        setAngle(startAngle + deltaY * 0.5);
+      }
     }, { passive: true });
     
-    selector.addEventListener('touchend', onDragEnd);
+    selector.addEventListener('touchend', () => {
+      if (isDragging) snapToNearest();
+      isDragging = false;
+    });
     
-    // Scroll wheel
+    // Wheel
     selector.addEventListener('wheel', (e) => {
       e.preventDefault();
-      const currentPos = selector.dataset.position || 'COM1';
-      const currentIdx = CONFIG.selector.positions.indexOf(currentPos);
-      const direction = e.deltaY < 0 ? 1 : -1;
-      const nextIdx = clamp(currentIdx + direction, 0, CONFIG.selector.positions.length - 1);
-      
-      selector.dataset.position = CONFIG.selector.positions[nextIdx];
-      selector.dataset.angle = CONFIG.selector.angles[nextIdx];
-      selector.style.setProperty('--knob-angle', CONFIG.selector.angles[nextIdx]);
-      
-      setStatus(`SELECTOR: ${CONFIG.selector.positions[nextIdx]}`);
+      const currentIdx = CONFIG.selector.positions.indexOf(selector.dataset.position || 'COM1');
+      const dir = e.deltaY < 0 ? 1 : -1;
+      const nextIdx = clamp(currentIdx + dir, 0, CONFIG.selector.positions.length - 1);
+      setAngle(CONFIG.selector.angles[nextIdx]);
     }, { passive: false });
     
     // Initialize
-    selector.style.setProperty('--knob-angle', selector.dataset.angle || -130);
+    knobBody.style.transform = `rotate(${selector.dataset.angle || -130}deg)`;
   }
 
   // ============================================
-  // VOLUME KNOB CONTROLLER
+  // VOLUME KNOBS
   // ============================================
   
   function initVolumeKnobs() {
-    const knobs = $$('.hotspot.knob.volume');
-    knobs.forEach(initVolumeKnob);
+    $$('.hotspot.knob.volume').forEach(initVolumeKnob);
   }
-
+  
   function initVolumeKnob(knob) {
     const { volume } = CONFIG;
     const label = knob.dataset.label || knob.id.toUpperCase();
+    const knobBody = knob.querySelector('.knob-body');
     
     let isDragging = false;
     let startY = 0;
     let startValue = parseFloat(knob.dataset.value) || 50;
     
-    function updateValue(value) {
+    function setValue(value) {
       value = clamp(Math.round(value), volume.min, volume.max);
       knob.dataset.value = value;
       
-      // Calculate angle from value
       const angle = mapRange(value, volume.min, volume.max, volume.angleMin, volume.angleMax);
       knob.dataset.angle = angle;
-      knob.style.setProperty('--knob-angle', angle);
+      knobBody.style.transform = `rotate(${angle}deg)`;
       
       setStatus(`${label}: ${value}%`);
     }
     
-    // Click to toggle between 0 and 50
+    // Click to toggle 0/50
     knob.addEventListener('click', (e) => {
       if (isDragging) return;
       e.preventDefault();
-      
-      const currentValue = parseFloat(knob.dataset.value) || 50;
-      updateValue(currentValue < 50 ? 50 : 0);
+      setValue(parseFloat(knob.dataset.value) < 50 ? 50 : 0);
     });
     
-    // Drag start
-    const onDragStart = (clientY) => {
-      isDragging = false;
-      startY = clientY;
-      startValue = parseFloat(knob.dataset.value) || 50;
-    };
-    
-    // Drag move (vertical delta)
-    const onDragMove = (clientY) => {
-      const deltaY = startY - clientY; // Up = positive
-      if (Math.abs(deltaY) > 5) {
-        isDragging = true;
-        const newValue = startValue + (deltaY * volume.sensitivity);
-        updateValue(newValue);
-      }
-    };
-    
-    // Drag end
-    const onDragEnd = () => {
-      isDragging = false;
-    };
-    
-    // Mouse events
+    // Drag
     knob.addEventListener('mousedown', (e) => {
       e.preventDefault();
-      onDragStart(e.clientY);
+      isDragging = false;
+      startY = e.clientY;
+      startValue = parseFloat(knob.dataset.value) || 50;
       
-      const onMouseMove = (e) => onDragMove(e.clientY);
-      const onMouseUp = () => {
-        document.removeEventListener('mousemove', onMouseMove);
-        document.removeEventListener('mouseup', onMouseUp);
-        onDragEnd();
+      const onMove = (e) => {
+        const deltaY = startY - e.clientY;
+        if (Math.abs(deltaY) > 5) {
+          isDragging = true;
+          setValue(startValue + deltaY * volume.sensitivity);
+        }
       };
       
-      document.addEventListener('mousemove', onMouseMove);
-      document.addEventListener('mouseup', onMouseUp);
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        isDragging = false;
+      };
+      
+      document.addEventListener('mousemove', onMove);
+      document.addEventListener('mouseup', onUp);
     });
     
-    // Touch events
+    // Touch
     knob.addEventListener('touchstart', (e) => {
-      onDragStart(e.touches[0].clientY);
+      isDragging = false;
+      startY = e.touches[0].clientY;
+      startValue = parseFloat(knob.dataset.value) || 50;
     }, { passive: true });
     
     knob.addEventListener('touchmove', (e) => {
-      onDragMove(e.touches[0].clientY);
+      const deltaY = startY - e.touches[0].clientY;
+      if (Math.abs(deltaY) > 5) {
+        isDragging = true;
+        setValue(startValue + deltaY * volume.sensitivity);
+      }
     }, { passive: true });
     
-    knob.addEventListener('touchend', onDragEnd);
+    knob.addEventListener('touchend', () => { isDragging = false; });
     
-    // Scroll wheel
+    // Wheel
     knob.addEventListener('wheel', (e) => {
       e.preventDefault();
-      const currentValue = parseFloat(knob.dataset.value) || 50;
-      const delta = e.deltaY < 0 ? 5 : -5;
-      updateValue(currentValue + delta);
+      setValue(parseFloat(knob.dataset.value) + (e.deltaY < 0 ? 5 : -5));
     }, { passive: false });
     
-    // Initialize angle from value
-    const initialValue = parseFloat(knob.dataset.value) || 50;
-    const initialAngle = mapRange(initialValue, volume.min, volume.max, volume.angleMin, volume.angleMax);
-    knob.dataset.angle = initialAngle;
-    knob.style.setProperty('--knob-angle', initialAngle);
+    // Initialize
+    const initialAngle = mapRange(parseFloat(knob.dataset.value) || 50, volume.min, volume.max, volume.angleMin, volume.angleMax);
+    knobBody.style.transform = `rotate(${initialAngle}deg)`;
   }
 
   // ============================================
-  // INDICATOR LIGHTS
+  // INDICATORS
   // ============================================
   
   function updateIndicators() {
-    // TX light: ON when any audio source toggle is active
     const audioToggles = ['com1', 'com2', 'fm1', 'fm2', 'aux'];
-    const anyActive = audioToggles.some(id => {
-      const el = $id(id);
-      return el && el.dataset.active === 'true';
-    });
+    const anyActive = audioToggles.some(id => $id(id)?.dataset.active === 'true');
     
     const txLight = $id('tx_light');
-    if (txLight) {
-      txLight.dataset.active = anyActive.toString();
-    }
+    if (txLight) txLight.dataset.active = anyActive.toString();
     
-    // PLT light: Could be tied to ICS MIC state
     const icsMic = $id('ics_mic');
     const pltLight = $id('plt_light');
-    if (pltLight && icsMic) {
-      pltLight.dataset.active = icsMic.dataset.active;
-    }
+    if (pltLight && icsMic) pltLight.dataset.active = icsMic.dataset.active;
   }
 
   // ============================================
-  // KEYBOARD SHORTCUTS (for testing)
+  // KEYBOARD
   // ============================================
   
   function initKeyboard() {
-    const keyMap = {
-      '1': 'com1', '2': 'com2', '3': 'fm1', '4': 'fm2', '5': 'aux',
-      's': 'selector', 'c': 'ics_call'
-    };
+    const keyMap = { '1': 'com1', '2': 'com2', '3': 'fm1', '4': 'fm2', '5': 'aux', 's': 'selector', 'c': 'ics_call' };
     
     document.addEventListener('keydown', (e) => {
-      const key = e.key.toLowerCase();
+      const el = $id(keyMap[e.key.toLowerCase()]);
+      if (!el) return;
       
-      if (keyMap[key]) {
-        const el = $id(keyMap[key]);
-        if (!el) return;
-        
-        if (key === 'c') {
-          // ICS CALL momentary
-          el.dataset.active = 'true';
-          setStatus('ICS CALL: PRESSED (key)');
-        } else if (key === 's') {
-          // Selector cycle
-          el.click();
-        } else {
-          // Toggle
-          el.click();
-        }
+      if (e.key.toLowerCase() === 'c') {
+        el.dataset.active = 'true';
+        setStatus('ICS CALL: PRESSED (key)');
+      } else {
+        el.click();
       }
     });
     
     document.addEventListener('keyup', (e) => {
       if (e.key.toLowerCase() === 'c') {
         const el = $id('ics_call');
-        if (el) {
-          el.dataset.active = 'false';
-          setStatus('ICS CALL: RELEASED (key)');
-        }
+        if (el) { el.dataset.active = 'false'; setStatus('ICS CALL: RELEASED (key)'); }
       }
     });
   }
 
   // ============================================
-  // INITIALIZATION
+  // INIT
   // ============================================
   
   function init() {
@@ -485,14 +356,10 @@
     initVolumeKnobs();
     updateIndicators();
     initKeyboard();
-    
     setStatus('AA95 Panel Ready - Click controls to interact');
-    
-    console.log('AA95 Audio Control Panel initialized (data-driven)');
-    console.log('State is stored in DOM data-* attributes');
+    console.log('AA95 Panel initialized with CSS animations');
   }
 
-  // Start when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
