@@ -113,19 +113,20 @@
     
     .lever {
       position: absolute;
-      bottom: 18px;
+      bottom: 16px;
       left: 50%;
-      width: 14px;
-      height: 38px;
-      background: linear-gradient(90deg, #b0b0b0 0%, #e8e8e8 30%, #ffffff 50%, #e8e8e8 70%, #b0b0b0 100%);
-      border-radius: 7px 7px 4px 4px;
-      transform-origin: bottom center;
-      margin-left: -7px;
-      transition: transform 0.18s var(--snap-curve), filter 0.2s;
-      z-index: 2;
-      box-shadow: 
-        inset 0 -2px 4px rgba(0,0,0,0.2),
-        0 2px 4px rgba(0,0,0,0.3);
+      width: 12px;
+      height: 44px;
+      margin-left: -6px;
+      background: linear-gradient(to right, #777, #eee 50%, #777);
+      border-radius: 6px 6px 3px 3px;
+      
+      /* Pivot on lower axis (the base of the lever) */
+      transform-origin: bottom center; 
+      
+      /* Mechanical 'snap' animation */
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+      z-index: 4;
     }
     
     /* Rounded cap on top of lever */
@@ -135,8 +136,8 @@
       top: -2px;
       left: 50%;
       transform: translateX(-50%);
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       background: radial-gradient(circle at 40% 40%, #ffffff 0%, #e0e0e0 50%, #c0c0c0 100%);
       border-radius: 50%;
       box-shadow: inset 0 -1px 2px rgba(0,0,0,0.15);
@@ -156,15 +157,15 @@
     }
     
     .assembly-toggle.small .lever {
-      width: 11px;
-      height: 28px;
-      margin-left: -5.5px;
-      bottom: 14px;
+      width: 10px;
+      height: 34px;
+      margin-left: -5px;
+      bottom: 12px;
     }
     
     .assembly-toggle.small .lever::before {
-      width: 9px;
-      height: 9px;
+      width: 8px;
+      height: 8px;
       top: -1px;
     }
     
@@ -174,8 +175,17 @@
       top: 2px;
     }
     
-    [data-active="true"] .lever { transform: rotateX(-5deg); filter: brightness(1.1); }
-    [data-active="false"] .lever { transform: rotateX(45deg); filter: brightness(0.9); }
+    /* ON Position: 0 degrees (Vertical Up) */
+    [data-active="true"] .lever {
+      transform: rotate(0deg);
+      filter: brightness(1.1);
+    }
+    
+    /* OFF Position: 180 degrees (Vertical Down) */
+    [data-active="false"] .lever {
+      transform: rotate(180deg) translateY(-4px);
+      filter: brightness(0.6);
+    }
 
     .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
     .toggle.orange .lever { background: linear-gradient(to right, #a62, #f94 50%, #841); }
