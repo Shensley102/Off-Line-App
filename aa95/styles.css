@@ -105,102 +105,166 @@ body {
    White bat-handle that flips up/down
    ============================================ */
 .hotspot.toggle {
-  width: 24px;
-  height: 50px;
+  width: 22px;
+  height: 55px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  perspective: 150px;
+  perspective-origin: center 100%;
 }
 
 /* Responsive sizing */
 @media (max-width: 600px) {
   .hotspot.toggle {
-    width: 18px;
-    height: 38px;
+    width: 16px;
+    height: 40px;
   }
 }
 
-/* Toggle base (dark circular mount) */
+/* Toggle base (dark metal ring/boot) */
 .toggle-base {
   position: absolute;
   bottom: 0;
-  width: 100%;
-  height: 40%;
-  background: radial-gradient(ellipse at center, #3a3a3a 0%, #1a1a1a 100%);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 35%;
+  background: radial-gradient(ellipse at center top, 
+    #4a4a4a 0%, 
+    #2a2a2a 40%,
+    #1a1a1a 100%
+  );
   border-radius: 50%;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+  box-shadow: 
+    inset 0 3px 6px rgba(0,0,0,0.6),
+    inset 0 -1px 2px rgba(255,255,255,0.1),
+    0 2px 4px rgba(0,0,0,0.5);
 }
 
-/* Toggle lever (white bat handle) - 3D flip animation */
+/* Toggle lever (white bat handle) - capsule shape with dome top */
 .toggle-lever {
   position: absolute;
-  bottom: 20%;
-  width: 35%;
-  height: 80%;
-  background: linear-gradient(180deg, 
-    var(--toggle-white) 0%, 
-    #ddd 40%,
-    #bbb 100%
-  );
-  border-radius: 4px 4px 3px 3px;
-  transform-origin: bottom center;
+  bottom: 18%;
+  left: 50%;
+  width: 32%;
+  height: 75%;
+  transform-origin: center bottom;
   transition: transform var(--transition-toggle);
+  transform-style: preserve-3d;
+}
+
+/* Lever shaft - cylindrical body */
+.toggle-lever::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 85%;
+  background: linear-gradient(90deg, 
+    #aaa 0%, 
+    var(--toggle-white) 25%, 
+    var(--toggle-white) 75%, 
+    #aaa 100%
+  );
+  border-radius: 3px;
   box-shadow: 
-    1px 0 2px rgba(0,0,0,0.3),
-    -1px 0 2px rgba(0,0,0,0.2);
+    inset -2px 0 3px rgba(0,0,0,0.15),
+    inset 2px 0 3px rgba(255,255,255,0.3);
 }
 
-/* Apply perspective to parent for 3D effect */
-.hotspot.toggle {
-  perspective: 100px;
+/* Lever dome top - rounded cap */
+.toggle-lever::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140%;
+  height: 30%;
+  background: radial-gradient(ellipse at 50% 60%, 
+    #fff 0%, 
+    var(--toggle-white) 40%, 
+    #ccc 100%
+  );
+  border-radius: 50%;
+  box-shadow: 
+    0 -1px 2px rgba(0,0,0,0.2),
+    inset 0 2px 4px rgba(255,255,255,0.5);
 }
 
-/* Toggle UP position - lever tilts away from viewer (toward top of panel) */
+/* Toggle UP position - lever points toward viewer, see the dome */
 .hotspot.toggle[data-active="true"] .toggle-lever {
-  transform: rotateX(35deg);
-  box-shadow: 
-    1px 0 2px rgba(0,0,0,0.3),
-    -1px 0 2px rgba(0,0,0,0.2),
-    0 4px 6px rgba(0,0,0,0.4);
+  transform: translateX(-50%) rotateX(-30deg);
 }
 
-/* Toggle DOWN position - lever tilts toward viewer */
-.hotspot.toggle[data-active="false"] .toggle-lever {
-  transform: rotateX(-35deg);
+.hotspot.toggle[data-active="true"] .toggle-lever::before {
   box-shadow: 
-    1px 0 2px rgba(0,0,0,0.3),
-    -1px 0 2px rgba(0,0,0,0.2),
-    0 -2px 4px rgba(0,0,0,0.3);
+    inset -2px 0 3px rgba(0,0,0,0.15),
+    inset 2px 0 3px rgba(255,255,255,0.3),
+    0 8px 8px -4px rgba(0,0,0,0.4);
+}
+
+/* Toggle DOWN position - lever tilts away, see the shaft */
+.hotspot.toggle[data-active="false"] .toggle-lever {
+  transform: translateX(-50%) rotateX(45deg);
+}
+
+.hotspot.toggle[data-active="false"] .toggle-lever::before {
+  box-shadow: 
+    inset -2px 0 3px rgba(0,0,0,0.15),
+    inset 2px 0 3px rgba(255,255,255,0.3),
+    0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Small toggle variant */
 .hotspot.toggle.small {
-  width: 18px;
-  height: 36px;
-  perspective: 80px;
+  width: 16px;
+  height: 32px;
+  perspective: 120px;
+  perspective-origin: center 100%;
 }
 
 .hotspot.toggle.small .toggle-lever {
-  width: 30%;
-  height: 75%;
+  width: 28%;
+  height: 70%;
 }
 
-/* ICS MIC Toggle (Orange) */
+.hotspot.toggle.small .toggle-lever::after {
+  width: 150%;
+  height: 28%;
+}
+
+/* ICS MIC Toggle (Orange lever) */
 .hotspot.toggle.mic {
-  width: 28px;
-  height: 48px;
-  perspective: 100px;
+  width: 26px;
+  height: 44px;
+  perspective: 150px;
+  perspective-origin: center 100%;
 }
 
 .hotspot.toggle.mic .toggle-lever {
-  background: linear-gradient(180deg,
-    #e8a56a 0%,
-    #d4915a 40%,
-    #b5723c 100%
+  width: 36%;
+}
+
+.hotspot.toggle.mic .toggle-lever::before {
+  background: linear-gradient(90deg, 
+    #a06030 0%, 
+    #d4915a 25%, 
+    #e8a56a 50%,
+    #d4915a 75%, 
+    #a06030 100%
   );
-  width: 40%;
-  border-radius: 3px;
+}
+
+.hotspot.toggle.mic .toggle-lever::after {
+  background: radial-gradient(ellipse at 50% 60%, 
+    #f0b878 0%, 
+    #d4915a 50%, 
+    #a06030 100%
+  );
 }
 
 /* ============================================
