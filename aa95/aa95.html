@@ -9,86 +9,64 @@
 <body>
   <div class="panel-wrapper">
     <div class="panel" id="panel">
-      <!-- Base panel image -->
+      <!-- Base panel photo - THIS IS THE ONLY VISIBLE ELEMENT -->
       <img src="assests/img_001.webp" alt="AA95 Panel" class="panel-base" draggable="false">
       
-      <!-- Toggle switches (COM1, COM2, FM1, FM2, AUX) -->
-      <div class="toggle" id="com1" data-state="up" style="left: 127px; top: 18px;">
-        <div class="toggle-lever"></div>
-      </div>
-      <div class="toggle" id="com2" data-state="up" style="left: 187px; top: 18px;">
-        <div class="toggle-lever"></div>
-      </div>
-      <div class="toggle" id="fm1" data-state="up" style="left: 247px; top: 18px;">
-        <div class="toggle-lever"></div>
-      </div>
-      <div class="toggle" id="fm2" data-state="up" style="left: 307px; top: 18px;">
-        <div class="toggle-lever"></div>
-      </div>
-      <div class="toggle" id="aux" data-state="up" style="left: 367px; top: 18px;">
-        <div class="toggle-lever"></div>
-      </div>
+      <!-- INVISIBLE HOTSPOTS - positioned exactly over photo elements -->
       
-      <!-- Main selector knob -->
-      <div class="knob selector-knob" id="selector" data-angle="-120" style="left: 398px; top: 118px;">
-        <div class="knob-pointer"></div>
-      </div>
+      <!-- Toggle switches (COM1, COM2, FM1, FM2, AUX) - top row white toggles -->
+      <div class="hotspot toggle" id="com1" data-label="COM1" data-state="up" style="left: 115px; top: 2px; width: 24px; height: 68px;"></div>
+      <div class="hotspot toggle" id="com2" data-label="COM2" data-state="up" style="left: 175px; top: 2px; width: 24px; height: 68px;"></div>
+      <div class="hotspot toggle" id="fm1" data-label="FM1" data-state="up" style="left: 238px; top: 2px; width: 24px; height: 68px;"></div>
+      <div class="hotspot toggle" id="fm2" data-label="FM2" data-state="up" style="left: 298px; top: 2px; width: 24px; height: 68px;"></div>
+      <div class="hotspot toggle" id="aux" data-label="AUX" data-state="up" style="left: 358px; top: 2px; width: 24px; height: 68px;"></div>
       
-      <!-- ADF button (blue) -->
-      <div class="button blue-btn" id="adf" data-state="off" style="left: 519px; top: 22px;"></div>
+      <!-- Main selector knob (large gray knob in center) -->
+      <div class="hotspot knob selector" id="selector" data-label="SELECTOR" style="left: 395px; top: 100px; width: 135px; height: 135px;"></div>
       
-      <!-- DPLR button (blue) -->
-      <div class="button blue-btn" id="dplr" data-state="off" style="left: 567px; top: 22px;"></div>
+      <!-- MUSIC section - ADF button (blue, left) -->
+      <div class="hotspot button" id="adf" data-label="ADF" data-state="off" style="left: 508px; top: 12px; width: 24px; height: 24px;"></div>
       
-      <!-- PAT toggle -->
-      <div class="small-toggle" id="pat" data-state="up" style="left: 638px; top: 12px;">
-        <div class="small-toggle-lever"></div>
-      </div>
+      <!-- MUSIC section - DPLR button (dark/black, right) -->
+      <div class="hotspot button" id="dplr" data-label="DPLR" data-state="off" style="left: 556px; top: 12px; width: 24px; height: 24px;"></div>
       
-      <!-- OFF/SO button (yellow) -->
-      <div class="button yellow-btn" id="so" data-state="off" style="left: 703px; top: 22px;"></div>
+      <!-- PAT ON toggle (small white toggle) -->
+      <div class="hotspot toggle small" id="pat" data-label="PAT" data-state="up" style="left: 630px; top: 5px; width: 20px; height: 45px;"></div>
       
-      <!-- RX VOL knob -->
-      <div class="knob vol-knob" id="rxvol" data-angle="0" style="left: 858px; top: 30px;">
-        <div class="vol-pointer"></div>
-      </div>
+      <!-- SO button (yellow/cream) -->
+      <div class="hotspot button" id="so" data-label="SO" data-state="off" style="left: 700px; top: 12px; width: 28px; height: 28px;"></div>
       
-      <!-- ISO/EMR button (pink) -->
-      <div class="button pink-btn" id="iso_emr" data-state="normal" style="left: 108px; top: 214px;"></div>
+      <!-- RX VOL knob (top right, black ribbed with white pointer) -->
+      <div class="hotspot knob" id="rxvol" data-label="RX VOL" style="left: 870px; top: 18px; width: 62px; height: 85px;"></div>
       
-      <!-- TX indicator light -->
-      <div class="indicator" id="tx_light" data-state="on" style="left: 207px; top: 204px;"></div>
+      <!-- ISO/EMR button (pink/salmon, bottom left) -->
+      <div class="hotspot button" id="iso_emr" data-label="ISO/EMR" data-state="normal" style="left: 95px; top: 205px; width: 34px; height: 34px;"></div>
       
-      <!-- VOX knob -->
-      <div class="knob vox-knob" id="vox" data-angle="0" style="left: 262px; top: 188px;">
-        <div class="vox-pointer"></div>
-      </div>
+      <!-- TX indicator light (green, next to VOX) -->
+      <div class="hotspot indicator" id="tx_light" data-label="TX" data-state="on" style="left: 195px; top: 195px; width: 26px; height: 26px;"></div>
       
-      <!-- ICS CALL button (white dome) -->
-      <div class="button dome-btn" id="ics_call" style="left: 560px; top: 200px;"></div>
+      <!-- VOX knob (black with white text) -->
+      <div class="hotspot knob" id="vox" data-label="VOX" style="left: 250px; top: 180px; width: 52px; height: 52px;"></div>
       
-      <!-- PLT indicator light -->
-      <div class="indicator" id="plt_light" data-state="on" style="left: 665px; top: 158px;"></div>
+      <!-- ICS CALL button (large white dome) -->
+      <div class="hotspot button momentary" id="ics_call" data-label="ICS CALL" style="left: 548px; top: 195px; width: 48px; height: 48px;"></div>
       
-      <!-- ICS MIC toggle (orange lever) -->
-      <div class="mic-toggle" id="ics_mic" data-state="up" style="left: 728px; top: 190px;">
-        <div class="mic-toggle-lever"></div>
-      </div>
+      <!-- PLT indicator light (green, right side) -->
+      <div class="hotspot indicator" id="plt_light" data-label="PLT" data-state="on" style="left: 658px; top: 155px; width: 26px; height: 26px;"></div>
       
-      <!-- KEY toggle -->
-      <div class="small-toggle vertical" id="key" data-state="up" style="left: 775px; top: 224px;">
-        <div class="small-toggle-lever"></div>
-      </div>
+      <!-- ICS MIC toggle (orange/tan lever) -->
+      <div class="hotspot toggle" id="ics_mic" data-label="ICS MIC" data-state="up" style="left: 718px; top: 185px; width: 28px; height: 50px;"></div>
       
-      <!-- ICS VOL knob -->
-      <div class="knob vol-knob" id="icsvol" data-angle="0" style="left: 858px; top: 182px;">
-        <div class="vol-pointer"></div>
-      </div>
+      <!-- KEY toggle (small, bottom right area) -->
+      <div class="hotspot toggle small" id="key" data-label="KEY" data-state="up" style="left: 768px; top: 228px; width: 18px; height: 40px;"></div>
       
-      <!-- Status display (optional, for training feedback) -->
-      <div class="status-bar" id="statusBar">
-        <span id="statusText">Ready</span>
-      </div>
+      <!-- ICS VOL knob (bottom right, black ribbed with white pointer) -->
+      <div class="hotspot knob" id="icsvol" data-label="ICS VOL" style="left: 870px; top: 175px; width: 62px; height: 85px;"></div>
+    </div>
+    
+    <!-- Status display for training feedback -->
+    <div class="status-bar" id="statusBar">
+      <span id="statusText">AA95 Panel Ready - Click controls to interact</span>
     </div>
   </div>
   
