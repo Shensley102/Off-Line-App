@@ -53,7 +53,76 @@
       border: 1px solid var(--boundary-line);
       pointer-events: none;
     }
-    .box-comms { width: 340px; height: 110px; left: 80px; top: 30px; }
+    .box-comms { display: none; }
+    
+    /* RX-ON Header Line */
+    .rx-on-header {
+      position: absolute;
+      left: 85px;
+      top: 22px;
+      width: 310px;
+      height: 30px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      pointer-events: none;
+    }
+    
+    .rx-on-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--boundary-line);
+    }
+    
+    /* Gap for RX-ON text */
+    .rx-on-line::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 1px;
+      background: linear-gradient(180deg, #222 0%, #151515 20%, #111 100%);
+    }
+    
+    .rx-on-text {
+      position: relative;
+      top: -7px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: var(--label-white);
+      background: linear-gradient(180deg, #222 0%, #151515 20%, #111 100%);
+      padding: 0 6px;
+      z-index: 2;
+    }
+    
+    /* Vertical drop lines to each toggle */
+    .rx-on-drops {
+      position: absolute;
+      left: 85px;
+      top: 22px;
+      width: 310px;
+      height: 25px;
+      pointer-events: none;
+    }
+    
+    .rx-drop-line {
+      position: absolute;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: var(--boundary-line);
+    }
+    
+    .rx-drop-line:nth-child(1) { left: 15px; }
+    .rx-drop-line:nth-child(2) { left: 75px; }
+    .rx-drop-line:nth-child(3) { left: 135px; }
+    .rx-drop-line:nth-child(4) { left: 195px; }
+    .rx-drop-line:nth-child(5) { left: 255px; }
     .box-music { width: 200px; height: 110px; left: 450px; top: 30px; }
     .box-ics { width: 320px; height: 110px; right: 40px; bottom: 30px; }
 
@@ -359,6 +428,19 @@
   <div class="boundary-box box-comms"></div>
   <div class="boundary-box box-music"></div>
   <div class="boundary-box box-ics"></div>
+  
+  <!-- RX-ON HEADER -->
+  <div class="rx-on-header">
+    <div class="rx-on-line"></div>
+    <span class="rx-on-text">RX-ON</span>
+  </div>
+  <div class="rx-on-drops">
+    <div class="rx-drop-line"></div>
+    <div class="rx-drop-line"></div>
+    <div class="rx-drop-line"></div>
+    <div class="rx-drop-line"></div>
+    <div class="rx-drop-line"></div>
+  </div>
 
   <!-- TOP ROW: COM/FM/AUX TOGGLES -->
   <div class="component toggle" id="com1" data-active="true" style="left:100px; top:45px;">
