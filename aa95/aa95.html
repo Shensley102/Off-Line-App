@@ -58,9 +58,9 @@
     /* RX-ON Header Line */
     .rx-on-header {
       position: absolute;
-      left: 85px;
+      left: 108px;
       top: 22px;
-      width: 310px;
+      width: 248px;
       height: 30px;
       display: flex;
       align-items: flex-start;
@@ -103,10 +103,10 @@
     /* Vertical drop lines to each toggle */
     .rx-on-drops {
       position: absolute;
-      left: 85px;
+      left: 108px;
       top: 22px;
-      width: 310px;
-      height: 25px;
+      width: 248px;
+      height: 23px;
       pointer-events: none;
     }
     
@@ -118,11 +118,16 @@
       background: var(--boundary-line);
     }
     
-    .rx-drop-line:nth-child(1) { left: 15px; }
-    .rx-drop-line:nth-child(2) { left: 75px; }
-    .rx-drop-line:nth-child(3) { left: 135px; }
-    .rx-drop-line:nth-child(4) { left: 195px; }
-    .rx-drop-line:nth-child(5) { left: 255px; }
+    /* COM1 - between O and M */
+    .rx-drop-line:nth-child(1) { left: 0px; }
+    /* COM2 - between O and M */
+    .rx-drop-line:nth-child(2) { left: 60px; }
+    /* FM1 - above M */
+    .rx-drop-line:nth-child(3) { left: 124px; }
+    /* FM2 - above M */
+    .rx-drop-line:nth-child(4) { left: 184px; }
+    /* AUX - above U/X */
+    .rx-drop-line:nth-child(5) { left: 248px; }
     .box-music { width: 200px; height: 110px; left: 450px; top: 30px; }
     .box-ics { width: 320px; height: 110px; right: 40px; bottom: 30px; }
 
