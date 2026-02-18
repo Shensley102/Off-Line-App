@@ -141,13 +141,11 @@
     /* ON POSITION: Slightly tilted toward the viewer (15deg) so the top is visible */
     [data-active="true"] .lever { 
       transform: rotateX(15deg) translateZ(5px); 
-      filter: brightness(1.1);
     }
     
     /* OFF POSITION: Flipped down 75% (not full 180) */
     [data-active="false"] .lever { 
       transform: rotateX(-120deg) translateZ(5px); 
-      filter: brightness(0.7) contrast(1.2);
     }
 
     .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
