@@ -58,9 +58,9 @@
     /* RX-ON Header Line */
     .rx-on-header {
       position: absolute;
-      left: 153px;
+      left: 131px;
       top: 18px;
-      width: 273px;
+      width: 292px;
       height: 33px;
       display: flex;
       align-items: flex-start;
@@ -91,7 +91,7 @@
     .rx-on-text {
       position: relative;
       top: -8px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
       letter-spacing: 1px;
       color: var(--label-white);
@@ -103,9 +103,9 @@
     /* Vertical drop lines to each toggle */
     .rx-on-drops {
       position: absolute;
-      left: 153px;
+      left: 131px;
       top: 18px;
-      width: 273px;
+      width: 292px;
       height: 28px;
       pointer-events: none;
     }
@@ -121,13 +121,13 @@
     /* COM1 - between O and M */
     .rx-drop-line:nth-child(1) { left: 0px; }
     /* COM2 - between O and M */
-    .rx-drop-line:nth-child(2) { left: 66px; }
+    .rx-drop-line:nth-child(2) { left: 73px; }
     /* FM1 - above M */
-    .rx-drop-line:nth-child(3) { left: 132px; }
+    .rx-drop-line:nth-child(3) { left: 146px; }
     /* FM2 - above M */
-    .rx-drop-line:nth-child(4) { left: 198px; }
+    .rx-drop-line:nth-child(4) { left: 219px; }
     /* AUX - above U/X */
-    .rx-drop-line:nth-child(5) { left: 270px; }
+    .rx-drop-line:nth-child(5) { left: 292px; }
     .box-music { width: 200px; height: 110px; left: 590px; top: 30px; }
     .box-ics { width: 320px; height: 110px; right: 40px; bottom: 30px; }
 
@@ -141,7 +141,7 @@
     }
 
     .label {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
       letter-spacing: 1px;
       margin-bottom: 5px;
@@ -157,8 +157,8 @@
     /* 1. Establish the 3D Stage */
     .assembly-toggle {
       position: relative;
-      width: 26px;
-      height: 66px;
+      width: 29px;
+      height: 73px;
       perspective: 1000px; 
       transform-style: preserve-3d;
     }
@@ -171,11 +171,11 @@
     /* 2. The Nut (Mounting Hardware) */
     .nut {
       position: absolute;
-      bottom: 17px;
+      bottom: 19px;
       left: 50%;
       transform: translateX(-50%) translateZ(1px);
-      width: 24px;
-      height: 11px;
+      width: 26px;
+      height: 12px;
       background: #333;
       border-radius: 2px;
       z-index: 1;
@@ -190,14 +190,14 @@
     /* 3. The Lever Logic */
     .lever {
       position: absolute;
-      bottom: 20px;
+      bottom: 22px;
       left: 50%;
-      width: 15px;
-      height: 32px;
+      width: 17px;
+      height: 35px;
       background: linear-gradient(90deg, #b0b0b0 0%, #ffffff 50%, #b0b0b0 100%);
-      border-radius: 8px 8px 4px 4px;
+      border-radius: 9px 9px 4px 4px;
       transform-origin: bottom center;
-      margin-left: -7.5px;
+      margin-left: -8.5px;
       
       /* Use translateZ to keep the lever 'floating' in front of the panel */
       transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -501,19 +501,19 @@
   </div>
 
   <!-- TOP ROW: COM/FM/AUX TOGGLES -->
-  <div class="component toggle" id="com1" data-active="true" style="left:145px; top:46px;">
+  <div class="component toggle" id="com1" data-active="true" style="left:123px; top:46px;">
     <span class="label">COM1</span>
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
   </div>
-  <div class="component toggle" id="com2" data-active="true" style="left:211px; top:46px;">
+  <div class="component toggle" id="com2" data-active="true" style="left:196px; top:46px;">
     <span class="label">COM2</span>
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
   </div>
-  <div class="component toggle" id="fm1" data-active="true" style="left:277px; top:46px;">
+  <div class="component toggle" id="fm1" data-active="true" style="left:269px; top:46px;">
     <span class="label">FM1</span>
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
   </div>
-  <div class="component toggle" id="fm2" data-active="true" style="left:343px; top:46px;">
+  <div class="component toggle" id="fm2" data-active="true" style="left:342px; top:46px;">
     <span class="label">FM2</span>
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
   </div>
