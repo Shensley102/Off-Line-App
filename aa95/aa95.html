@@ -59,13 +59,14 @@
     .rx-on-header {
       position: absolute;
       left: 151px;
-      top: 18px;
+      top: 55px;
       width: 292px;
-      height: 33px;
+      height: 20px;
       display: flex;
       align-items: flex-start;
       justify-content: center;
       pointer-events: none;
+      z-index: 3;
     }
     
     .rx-on-line {
@@ -100,13 +101,13 @@
       z-index: 2;
     }
     
-    /* Vertical drop lines to each toggle */
+    /* Vertical drop lines from top down to the RX-ON line */
     .rx-on-drops {
       position: absolute;
       left: 151px;
       top: 18px;
       width: 292px;
-      height: 42px;
+      height: 37px;
       pointer-events: none;
     }
     
@@ -502,23 +503,23 @@
   </div>
 
   <!-- TOP ROW: COM/FM/AUX TOGGLES -->
-  <div class="component toggle" id="com1" data-active="true" style="left:143px; top:60px;">
+  <div class="component toggle" id="com1" data-active="true" style="left:143px; top:28px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
     <span class="label label-bottom">COM1</span>
   </div>
-  <div class="component toggle" id="com2" data-active="true" style="left:216px; top:60px;">
+  <div class="component toggle" id="com2" data-active="true" style="left:216px; top:28px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
     <span class="label label-bottom">COM2</span>
   </div>
-  <div class="component toggle" id="fm1" data-active="true" style="left:289px; top:60px;">
+  <div class="component toggle" id="fm1" data-active="true" style="left:289px; top:28px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
     <span class="label label-bottom">FM1</span>
   </div>
-  <div class="component toggle" id="fm2" data-active="true" style="left:362px; top:60px;">
+  <div class="component toggle" id="fm2" data-active="true" style="left:362px; top:28px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
     <span class="label label-bottom">FM2</span>
   </div>
-  <div class="component toggle" id="aux" data-active="true" style="left:435px; top:60px;">
+  <div class="component toggle" id="aux" data-active="true" style="left:435px; top:28px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
     <span class="label label-bottom">AUX</span>
   </div>
