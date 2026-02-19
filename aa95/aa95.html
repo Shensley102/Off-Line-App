@@ -278,20 +278,20 @@
       touch-action: none;
     }
 
-    /* The raised diamond-shaped grabbable section - slightly lighter grey */
+    /* The raised diamond-shaped grabbable section - fills the base */
     .knob-body {
       position: relative;
-      width: 60px;
-      height: 88px;
+      width: 100px;
+      height: 100px;
       background: linear-gradient(135deg, #8a8a8a 0%, #7a7a7a 30%, #6a6a6a 70%, #5a5a5a 100%);
-      /* Diamond with flat tips */
+      /* Diamond with flat edges on the SIDES (left/right) */
       clip-path: polygon(
         50% 0%,      /* Top point */
-        92% 28%,     /* Upper right */
-        92% 72%,     /* Lower right */
+        100% 25%,    /* Upper right flat start */
+        100% 75%,    /* Lower right flat end */
         50% 100%,    /* Bottom point */
-        8% 72%,      /* Lower left */
-        8% 28%       /* Upper left */
+        0% 75%,      /* Lower left flat end */
+        0% 25%       /* Upper left flat start */
       );
       transform-origin: 50% 50%;
       transition: transform 0.15s var(--snap-curve);
