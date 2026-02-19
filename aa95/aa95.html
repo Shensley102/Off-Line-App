@@ -317,15 +317,16 @@
       clip-path: inherit;
     }
 
-    /* White stripe indicator with black outline - reaches to middle */
+    /* White stripe indicator with black outline - extends to edge */
     .knob-stripe {
       position: absolute;
-      top: 5%;
+      top: -2px;
       width: 12px;
-      height: 45%;
+      height: 52%;
       background: #ffffff;
       border: 2px solid #111;
-      border-radius: 2px;
+      border-top: none;
+      border-radius: 0 0 2px 2px;
     }
 
     /* Edge shading for 3D effect */
