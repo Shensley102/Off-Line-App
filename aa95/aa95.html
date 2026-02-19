@@ -55,16 +55,18 @@
     }
     .box-comms { display: none; }
     
-    /* BACKGROUND RX-ON LAYER (Sits behind levers) */
+    /* =============================================
+       BACKGROUND RX-ON LAYER (z-index: 1 - behind levers)
+       ============================================= */
     .rx-on-header {
       position: absolute;
       left: 143px;
-      top: 62px;
+      top: 62px;              /* Requirement #2: RX-ON line at top: 62px */
       width: 292px;
       height: 20px;
       display: flex;
       justify-content: center;
-      z-index: 1;
+      z-index: 1;             /* Requirement #1: Lower layer */
       pointer-events: none;
     }
     
@@ -98,13 +100,14 @@
       top: -2px;
     }
     
+    /* Requirement #3: Vertical drop lines from RX-ON line */
     .rx-on-drops {
       position: absolute;
       left: 143px;
-      top: 70px;
+      top: 70px;              /* Starts just below RX-ON line */
       width: 292px;
       height: 65px;
-      z-index: 1;
+      z-index: 1;             /* Requirement #1: Lower layer */
       pointer-events: none;
     }
     
@@ -116,12 +119,21 @@
       background: var(--boundary-line);
     }
     
-    /* EXACT CENTERS: (Start 22px + 73px spacing) */
-    .rx-drop-line:nth-child(1) { left: 22px; }
-    .rx-drop-line:nth-child(2) { left: 95px; }
-    .rx-drop-line:nth-child(3) { left: 168px; }
-    .rx-drop-line:nth-child(4) { left: 241px; }
-    .rx-drop-line:nth-child(5) { left: 314px; }
+    /* Requirement #3: Drop lines aligned to horizontal center of each toggle's mounting nut.
+       Toggle positions: 157, 230, 303, 376, 449 (left edge of component)
+       Component width ~44px, so center offset = 22px from left edge
+       Centers relative to rx-on-drops left (143px): 
+         COM1: 157 + 22 - 143 = 36px
+         COM2: 230 + 22 - 143 = 109px
+         FM1:  303 + 22 - 143 = 182px
+         FM2:  376 + 22 - 143 = 255px
+         AUX:  449 + 22 - 143 = 328px
+    */
+    .rx-drop-line:nth-child(1) { left: 36px; }
+    .rx-drop-line:nth-child(2) { left: 109px; }
+    .rx-drop-line:nth-child(3) { left: 182px; }
+    .rx-drop-line:nth-child(4) { left: 255px; }
+    .rx-drop-line:nth-child(5) { left: 328px; }
     
     /* SVG LEADER LINES */
     .panel-svg {
@@ -156,6 +168,14 @@
     .label-bottom {
       margin-bottom: 0;
       margin-top: 2px;
+    }
+
+    /* Requirement #4: Radio toggle labels sit directly under the nut */
+    .radio-toggle-label {
+      margin-bottom: 0;
+      margin-top: -22px;       /* Negative margin pulls label up flush against nut bottom */
+      position: relative;
+      z-index: 10;             /* Keep label above background lines */
     }
 
     /* 1. Establish the 3D Stage */
@@ -204,7 +224,6 @@
       transform-origin: bottom center;
       margin-left: -13px;
       
-      /* Use translateZ to keep the lever 'floating' in front of the panel */
       transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 5;
       backface-visibility: visible; 
@@ -229,6 +248,11 @@
 
     .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
     .toggle.orange .lever { background: linear-gradient(to right, #a62, #f94 50%, #841); }
+
+    /* Requirement #1: Toggle switch components at z-index: 10 (above RX-ON lines) */
+    .component.radio-toggle {
+      z-index: 10;
+    }
 
     /* VOLUME KNOBS - RIBBED TEXTURE */
     .knob-vol {
@@ -267,7 +291,6 @@
     }
 
     /* SELECTOR KNOB - THE CHICKEN HEAD */
-    /* The circular grey base */
     .knob-selector-base {
       width: 120px;
       height: 120px;
@@ -283,22 +306,20 @@
       touch-action: none;
     }
 
-    /* The raised diamond-shaped grabbable section - fills the base */
     .knob-body {
       position: relative;
       width: 60px;
       height: 120px;
       background: linear-gradient(135deg, #8a8a8a 0%, #7a7a7a 30%, #6a6a6a 70%, #5a5a5a 100%);
-      /* Shape matching red line template - gentler angles */
       clip-path: polygon(
-        20% 0%,      /* Top left of flat tip */
-        80% 0%,      /* Top right of flat tip */
-        100% 35%,    /* Upper right - moved down for gentler slope */
-        100% 65%,    /* Lower right - moved up for gentler slope */
-        80% 100%,    /* Bottom right of flat tip */
-        20% 100%,    /* Bottom left of flat tip */
-        0% 65%,      /* Lower left - moved up */
-        0% 35%       /* Upper left - moved down */
+        20% 0%,
+        80% 0%,
+        100% 35%,
+        100% 65%,
+        80% 100%,
+        20% 100%,
+        0% 65%,
+        0% 35%
       );
       transform-origin: 50% 50%;
       transition: transform 0.15s var(--snap-curve);
@@ -310,7 +331,6 @@
       transition: none;
     }
 
-    /* Lighting overlay on raised section */
     .knob-face {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -322,7 +342,6 @@
       clip-path: inherit;
     }
 
-    /* White stripe indicator with black outline - extends to edge */
     .knob-stripe {
       position: absolute;
       top: -2px;
@@ -334,7 +353,6 @@
       border-radius: 0 0 2px 2px;
     }
 
-    /* Edge shading for 3D effect */
     .knob-body::before {
       content: '';
       position: absolute;
@@ -492,11 +510,12 @@
   <div class="boundary-box box-music"></div>
   <div class="boundary-box box-ics"></div>
   
-  <!-- RX-ON HEADER -->
+  <!-- RX-ON HEADER (z-index: 1 - behind toggle switches) -->
   <div class="rx-on-header">
     <div class="rx-on-line"></div>
     <span class="rx-on-text">RX-ON</span>
   </div>
+  <!-- Vertical drop lines (z-index: 1 - behind toggle switches) -->
   <div class="rx-on-drops">
     <div class="rx-drop-line"></div>
     <div class="rx-drop-line"></div>
@@ -509,26 +528,28 @@
   <svg class="panel-svg">
   </svg>
 
-  <!-- TOP ROW: COM/FM/AUX TOGGLES -->
-  <div class="component toggle" id="com1" data-active="true" style="left:157px; top:75px;">
+  <!-- TOP ROW: COM/FM/AUX TOGGLES (z-index: 10, top: 35px) -->
+  <!-- Requirement #5: top: 35px so lever (55px height) crosses RX-ON line path -->
+  <!-- Requirement #1: class "radio-toggle" sets z-index: 10 -->
+  <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:157px; top:35px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label label-bottom">COM1</span>
+    <span class="label radio-toggle-label">COM1</span>
   </div>
-  <div class="component toggle" id="com2" data-active="true" style="left:230px; top:75px;">
+  <div class="component toggle radio-toggle" id="com2" data-active="true" style="left:230px; top:35px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label label-bottom">COM2</span>
+    <span class="label radio-toggle-label">COM2</span>
   </div>
-  <div class="component toggle" id="fm1" data-active="true" style="left:303px; top:75px;">
+  <div class="component toggle radio-toggle" id="fm1" data-active="true" style="left:303px; top:35px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label label-bottom">FM1</span>
+    <span class="label radio-toggle-label">FM1</span>
   </div>
-  <div class="component toggle" id="fm2" data-active="true" style="left:376px; top:75px;">
+  <div class="component toggle radio-toggle" id="fm2" data-active="true" style="left:376px; top:35px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label label-bottom">FM2</span>
+    <span class="label radio-toggle-label">FM2</span>
   </div>
-  <div class="component toggle" id="aux" data-active="true" style="left:449px; top:75px;">
+  <div class="component toggle radio-toggle" id="aux" data-active="true" style="left:449px; top:35px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label label-bottom">AUX</span>
+    <span class="label radio-toggle-label">AUX</span>
   </div>
 
   <!-- MUSIC SECTION -->
@@ -808,7 +829,6 @@
         index: nearestIdx 
       };
       
-      // Rotation applied to the knob-body
       const ptr = $('sel_ptr');
       ptr.style.transform = `rotate(${finalAngle}deg)`;
       
