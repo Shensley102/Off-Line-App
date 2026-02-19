@@ -262,14 +262,14 @@
     }
 
     /* SELECTOR KNOB - THE CHICKEN HEAD */
-    /* The mounting base behind the knob */
+    /* The circular grey base */
     .knob-selector-base {
-      width: 130px;
-      height: 130px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
-      background: radial-gradient(circle at 50% 50%, #2a2a2a 0%, #0a0a0a 80%);
-      border: 3px solid #000;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8);
+      background: radial-gradient(circle at 40% 40%, #5a5a5a 0%, #4a4a4a 50%, #3a3a3a 100%);
+      border: 3px solid #222;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.08);
       position: relative;
       display: flex;
       align-items: center;
@@ -278,15 +278,22 @@
       touch-action: none;
     }
 
-    /* The rotating poultry-head shape - Light Gray Plastic */
+    /* The raised diamond-shaped grabbable section - slightly lighter grey */
     .knob-body {
       position: relative;
-      width: 58px;
-      height: 90px;
-      background: linear-gradient(135deg, #b0b0b0 0%, #909090 30%, #787878 60%, #686868 100%);
-      /* Precise 7-Point Chicken Head Silhouette */
-      clip-path: polygon(50% 0%, 88% 22%, 100% 82%, 78% 100%, 22% 100%, 0% 82%, 12% 22%);
-      transform-origin: 50% 68%;
+      width: 60px;
+      height: 88px;
+      background: linear-gradient(135deg, #8a8a8a 0%, #7a7a7a 30%, #6a6a6a 70%, #5a5a5a 100%);
+      /* Diamond with flat tips */
+      clip-path: polygon(
+        50% 0%,      /* Top point */
+        92% 28%,     /* Upper right */
+        92% 72%,     /* Lower right */
+        50% 100%,    /* Bottom point */
+        8% 72%,      /* Lower left */
+        8% 28%       /* Upper left */
+      );
+      transform-origin: 50% 50%;
       transition: transform 0.15s var(--snap-curve);
       display: flex;
       justify-content: center;
@@ -296,53 +303,39 @@
       transition: none;
     }
 
-    /* High-detail lighting overlay */
+    /* Lighting overlay on raised section */
     .knob-face {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
       background: linear-gradient(145deg, 
-        rgba(255,255,255,0.3) 0%, 
-        rgba(255,255,255,0.1) 25%,
-        transparent 50%, 
-        rgba(0,0,0,0.2) 100%);
+        rgba(255,255,255,0.12) 0%, 
+        transparent 40%, 
+        rgba(0,0,0,0.15) 100%);
       pointer-events: none;
       clip-path: inherit;
     }
 
-    /* White stripe indicator with black border */
+    /* White stripe indicator with black outline - reaches to middle */
     .knob-stripe {
       position: absolute;
       top: 5%;
-      width: 10px;
-      height: 38%;
+      width: 12px;
+      height: 45%;
       background: #ffffff;
-      border: 2px solid #333;
+      border: 2px solid #111;
       border-radius: 2px;
-      box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
     }
 
-    /* Mounting Screw Axis Detail */
-    .knob-body::after {
-      content: '';
-      position: absolute;
-      bottom: 18%;
-      width: 12px;
-      height: 12px;
-      background: radial-gradient(circle, #555 0%, #333 100%);
-      border-radius: 50%;
-      border: 1px solid #222;
-    }
-    
     /* Edge shading for 3D effect */
     .knob-body::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
       background: linear-gradient(90deg, 
-        rgba(0,0,0,0.15) 0%, 
-        transparent 20%, 
-        transparent 80%, 
-        rgba(0,0,0,0.1) 100%);
+        rgba(0,0,0,0.12) 0%, 
+        transparent 15%, 
+        transparent 85%, 
+        rgba(0,0,0,0.08) 100%);
       clip-path: inherit;
       pointer-events: none;
     }
