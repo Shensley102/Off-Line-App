@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AA95 Audio Control Panel - Corrected Alignment</title>
+  <meta name="theme-color" content="#050505">
+  <title>AA95 Audio Control Panel - Final Alignment</title>
   <style>
     :root {
       --panel-black: #121212;
@@ -25,6 +26,7 @@
       justify-content: center;
       min-height: 100vh;
       padding: 20px;
+      overflow-x: hidden;
     }
 
     .panel {
@@ -34,15 +36,15 @@
       background: linear-gradient(180deg, #222 0%, #151515 20%, #111 100%);
       border: 3px solid #000;
       border-radius: 10px;
-      box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+      box-shadow: 0 50px 100px rgba(0,0,0,0.9), inset 0 0 40px #000;
       user-select: none;
     }
 
-    /* RX-ON BACKGROUND LAYER (Sits behind levers) */
+    /* BACKGROUND RX-ON LAYER (Sits behind levers) */
     .rx-on-header {
       position: absolute;
       left: 143px;
-      top: 62px; /* Positioned to be covered by lever body */
+      top: 62px; /* Positioned to be obscured by lever in UP position */
       width: 292px;
       height: 20px;
       display: flex;
@@ -65,7 +67,7 @@
       font-size: 11px;
       font-weight: 900;
       color: var(--label-white);
-      background: #181818;
+      background: #181818; /* Masks line behind text */
       padding: 0 6px;
       top: -2px;
     }
@@ -75,7 +77,7 @@
       left: 143px;
       top: 70px;
       width: 292px;
-      height: 60px;
+      height: 65px;
       z-index: 1;
       pointer-events: none;
     }
@@ -87,7 +89,7 @@
       height: 100%;
       background: var(--boundary-line);
     }
-    /* Aligned to center of toggles (143 + 73px increments) */
+    /* EXACT CENTERS: (Start 22px + 73px spacing) */
     .rx-drop-line:nth-child(1) { left: 22px; }
     .rx-drop-line:nth-child(2) { left: 95px; }
     .rx-drop-line:nth-child(3) { left: 168px; }
@@ -103,142 +105,7 @@
     }
     .leader-line { stroke: rgba(232, 232, 232, 0.3); stroke-width: 1.2; fill: none; }
 
-    /* TOGGLE COMPONENTS */
+    /* COMPONENT STYLING */
     .component {
       position: absolute;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      cursor: pointer;
-      z-index: 10; /* Keeps hardware in front of RX lines */
-    }
-
-    .assembly-toggle {
-      position: relative;
-      width: 44px;
-      height: 110px;
-      perspective: 1000px;
-    }
-
-    .nut {
-      position: absolute;
-      bottom: 25px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 38px;
-      height: 18px;
-      background: radial-gradient(circle, #444, #222);
-      border-radius: 4px;
-      z-index: 2;
-    }
-
-    .lever {
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      width: 24px;
-      height: 55px;
-      background: linear-gradient(90deg, #a0a0a0, #fff 50%, #a0a0a0);
-      border-radius: 12px 12px 6px 6px;
-      transform-origin: bottom center;
-      margin-left: -12px;
-      transition: transform 0.2s var(--snap-curve);
-      z-index: 5;
-    }
-
-    [data-active="true"] .lever { transform: rotateX(20deg); }
-    [data-active="false"] .lever { transform: rotateX(-110deg); }
-
-    /* LABELS TIGHT UNDER BASE */
-    .label-under-base {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--label-white);
-      margin-top: -20px; /* Pulls label directly under the nut */
-      z-index: 11;
-    }
-
-    /* SELECTOR & KNOBS */
-    .knob-selector-base {
-      width: 110px; height: 110px; border-radius: 50%;
-      background: #444; border: 3px solid #222;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .knob-body {
-      width: 50px; height: 100px; background: #777;
-      clip-path: polygon(20% 0%, 80% 0%, 100% 35%, 100% 65%, 80% 100%, 20% 100%, 0% 65%, 0% 35%);
-    }
-    .knob-stripe { position: absolute; top: 0; width: 8px; height: 50%; background: #fff; border: 2px solid #111; }
-
-    .knob-vol { width: 45px; height: 45px; border-radius: 50%; background: #222; position: relative; }
-    .vol-pointer { position: absolute; width: 2px; height: 12px; background: #fff; top: 5px; left: 50%; transform-origin: bottom center; }
-
-    .status-bar { margin-top: 20px; color: var(--accent-green); font-family: monospace; }
-  </style>
-</head>
-<body>
-
-<div class="panel">
-  <div class="rx-on-header">
-    <div class="rx-on-line"></div>
-    <span class="rx-on-text">RX-ON</span>
-  </div>
-  <div class="rx-on-drops">
-    <div class="rx-drop-line"></div>
-    <div class="rx-drop-line"></div>
-    <div class="rx-drop-line"></div>
-    <div class="rx-drop-line"></div>
-    <div class="rx-drop-line"></div>
-  </div>
-
-  <svg class="panel-svg">
-    <path class="leader-line" d="M 165 145 L 430 220" /> <path class="leader-line" d="M 238 145 L 435 210" /> <path class="leader-line" d="M 311 145 L 445 195" /> <path class="leader-line" d="M 384 145 L 460 185" /> </svg>
-
-  <div class="component toggle" id="com1" data-active="true" style="left:143px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label-under-base">COM1</span>
-  </div>
-  <div class="component toggle" id="com2" data-active="true" style="left:216px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label-under-base">COM2</span>
-  </div>
-  <div class="component toggle" id="fm1" data-active="true" style="left:289px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label-under-base">FM1</span>
-  </div>
-  <div class="component toggle" id="fm2" data-active="true" style="left:362px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label-under-base">FM2</span>
-  </div>
-  <div class="component toggle" id="aux" data-active="true" style="left:435px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
-    <span class="label-under-base">AUX</span>
-  </div>
-
-  <div class="component" style="left:415px; top:175px;">
-    <div class="knob-selector-base" id="selector">
-      <div class="knob-body" id="sel_ptr"><div class="knob-stripe"></div></div>
-    </div>
-  </div>
-
-  <div class="component" style="left:270px; bottom:40px;">
-    <div class="knob-vol" id="vox"><div class="vol-pointer"></div></div>
-    <span style="font-size: 10px; margin-top: 5px;">VOX</span>
-  </div>
-</div>
-
-<div class="status-bar" id="stat">SYSTEMS NOMINAL</div>
-
-<script>
-  // Simplified Logic for demonstration
-  document.querySelectorAll('.toggle').forEach(el => {
-    el.onclick = () => {
-      const active = el.getAttribute('data-active') === 'true';
-      el.setAttribute('data-active', !active);
-      document.getElementById('stat').innerText = el.id.toUpperCase() + (active ? ' OFF' : ' ON');
-    };
-  });
-</script>
-
-</body>
-</html>
