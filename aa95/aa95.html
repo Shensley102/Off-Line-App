@@ -282,11 +282,12 @@
     .knob-body {
       position: relative;
       width: 60px;
-      height: 100px;
+      height: 108px;
       background: linear-gradient(135deg, #8a8a8a 0%, #7a7a7a 30%, #6a6a6a 70%, #5a5a5a 100%);
-      /* Diamond with flat edges on the SIDES (left/right) */
+      /* Diamond with flat top tip and flat sides */
       clip-path: polygon(
-        50% 0%,      /* Top point */
+        35% 0%,      /* Top left of flat tip */
+        65% 0%,      /* Top right of flat tip */
         100% 25%,    /* Upper right flat start */
         100% 75%,    /* Lower right flat end */
         50% 100%,    /* Bottom point */
