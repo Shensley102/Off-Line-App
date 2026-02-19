@@ -264,11 +264,13 @@
     /* SELECTOR KNOB - THE CHICKEN HEAD */
     /* The mounting base behind the knob */
     .knob-selector-base {
-      width: 110px;
-      height: 110px;
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
-      background: radial-gradient(circle, #222 0%, #050505 80%);
-      border: 4px solid #000;
+      background: radial-gradient(circle at 50% 50%, #2a2a2a 0%, #0a0a0a 80%);
+      border: 3px solid #000;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,0,0,0.8);
+      position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -276,17 +278,16 @@
       touch-action: none;
     }
 
-    /* The rotating poultry-head shape - Matte Phenolic Black */
+    /* The rotating poultry-head shape - Light Gray Plastic */
     .knob-body {
       position: relative;
-      width: 48px;
-      height: 82px; /* Correct 1.8:1 Aspect Ratio */
-      background: #1a1a1a;
+      width: 58px;
+      height: 90px;
+      background: linear-gradient(135deg, #b0b0b0 0%, #909090 30%, #787878 60%, #686868 100%);
       /* Precise 7-Point Chicken Head Silhouette */
-      clip-path: polygon(50% 0%, 90% 25%, 100% 85%, 75% 100%, 25% 100%, 0% 85%, 10% 25%);
-      transform-origin: 50% 75%; /* Pivots on the mounting screw */
+      clip-path: polygon(50% 0%, 88% 22%, 100% 82%, 78% 100%, 22% 100%, 0% 82%, 12% 22%);
+      transform-origin: 50% 68%;
       transition: transform 0.15s var(--snap-curve);
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
       display: flex;
       justify-content: center;
     }
@@ -295,27 +296,55 @@
       transition: none;
     }
 
-    /* Recessed Paint-Filled Indicator */
+    /* High-detail lighting overlay */
+    .knob-face {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(145deg, 
+        rgba(255,255,255,0.3) 0%, 
+        rgba(255,255,255,0.1) 25%,
+        transparent 50%, 
+        rgba(0,0,0,0.2) 100%);
+      pointer-events: none;
+      clip-path: inherit;
+    }
+
+    /* White stripe indicator with black border */
     .knob-stripe {
       position: absolute;
-      top: 8%;
-      width: 8px;
-      height: 35%;
-      background: #eee;
-      border-radius: 1px;
-      box-shadow: inset 1px 1px 2px rgba(0,0,0,0.5);
+      top: 5%;
+      width: 10px;
+      height: 38%;
+      background: #ffffff;
+      border: 2px solid #333;
+      border-radius: 2px;
+      box-shadow: inset 0 0 2px rgba(0,0,0,0.3);
     }
 
     /* Mounting Screw Axis Detail */
     .knob-body::after {
       content: '';
       position: absolute;
-      bottom: 20%;
-      width: 10px;
-      height: 10px;
-      background: #333;
+      bottom: 18%;
+      width: 12px;
+      height: 12px;
+      background: radial-gradient(circle, #555 0%, #333 100%);
       border-radius: 50%;
-      border: 1px solid #111;
+      border: 1px solid #222;
+    }
+    
+    /* Edge shading for 3D effect */
+    .knob-body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, 
+        rgba(0,0,0,0.15) 0%, 
+        transparent 20%, 
+        transparent 80%, 
+        rgba(0,0,0,0.1) 100%);
+      clip-path: inherit;
+      pointer-events: none;
     }
 
     /* PUSH BUTTONS */
