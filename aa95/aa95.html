@@ -62,7 +62,7 @@
       position: absolute;
       left: 143px;
       top: 62px;              /* Requirement #2: RX-ON line at top: 62px */
-      width: 292px;
+      width: 330px;           /* Wide enough to span COM1 drop (36px) to AUX drop (328px) */
       height: 20px;
       display: flex;
       justify-content: center;
@@ -73,8 +73,8 @@
     .rx-on-line {
       position: absolute;
       top: 8px;
-      left: 0;
-      right: 0;
+      left: 36px;             /* Starts exactly at COM1 drop line */
+      right: 2px;             /* Ends exactly at AUX drop line (330 - 328 = 2px) */
       height: 1px;
       background: var(--boundary-line);
     }
@@ -105,7 +105,7 @@
       position: absolute;
       left: 143px;
       top: 70px;              /* Starts just below RX-ON line */
-      width: 292px;
+      width: 330px;
       height: 65px;
       z-index: 1;             /* Requirement #1: Lower layer */
       pointer-events: none;
