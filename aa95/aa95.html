@@ -57,24 +57,27 @@
     
     /* =============================================
        BACKGROUND RX-ON LAYER (z-index: 1 - behind levers)
+       25% scaled toggles, anchored at AUX center (471px)
+       New centers: COM1=106, COM2=197, FM1=289, FM2=380, AUX=471
+       Container starts at left: 79px (COM1 left edge)
        ============================================= */
     .rx-on-header {
       position: absolute;
-      left: 143px;
-      top: 62px;              /* Requirement #2: RX-ON line at top: 62px */
-      width: 330px;           /* Wide enough to span COM1 drop (36px) to AUX drop (328px) */
+      left: 79px;
+      top: 62px;
+      width: 420px;           /* Spans from COM1 (79px) past AUX center (471px): 471-79+27=~420 */
       height: 20px;
       display: flex;
       justify-content: center;
-      z-index: 1;             /* Requirement #1: Lower layer */
+      z-index: 1;
       pointer-events: none;
     }
     
     .rx-on-line {
       position: absolute;
       top: 8px;
-      left: 36px;             /* Starts exactly at COM1 drop line */
-      right: 2px;             /* Ends exactly at AUX drop line (330 - 328 = 2px) */
+      left: 27px;             /* COM1 center relative to container: 106 - 79 = 27px */
+      width: 365px;           /* AUX center - COM1 center: 471 - 106 = 365px */
       height: 1px;
       background: var(--boundary-line);
     }
@@ -100,14 +103,14 @@
       top: -2px;
     }
     
-    /* Requirement #3: Vertical drop lines from RX-ON line */
+    /* Vertical drop lines from RX-ON line */
     .rx-on-drops {
       position: absolute;
-      left: 143px;
-      top: 70px;              /* Starts just below RX-ON line */
-      width: 330px;
-      height: 65px;
-      z-index: 1;             /* Requirement #1: Lower layer */
+      left: 79px;
+      top: 70px;
+      width: 420px;
+      height: 75px;           /* Slightly taller for 25% bigger toggles */
+      z-index: 1;
       pointer-events: none;
     }
     
@@ -119,21 +122,20 @@
       background: var(--boundary-line);
     }
     
-    /* Requirement #3: Drop lines aligned to horizontal center of each toggle's mounting nut.
-       Toggle positions: 157, 230, 303, 376, 449 (left edge of component)
-       Component width ~44px, so center offset = 22px from left edge
-       Centers relative to rx-on-drops left (143px): 
-         COM1: 157 + 22 - 143 = 36px
-         COM2: 230 + 22 - 143 = 109px
-         FM1:  303 + 22 - 143 = 182px
-         FM2:  376 + 22 - 143 = 255px
-         AUX:  449 + 22 - 143 = 328px
+    /* Drop lines aligned to center of each 25%-scaled toggle
+       Toggle centers (absolute): COM1=106, COM2=197, FM1=289, FM2=380, AUX=471
+       Relative to container left (79px):
+         COM1: 106 - 79 = 27px
+         COM2: 197 - 79 = 118px
+         FM1:  289 - 79 = 210px
+         FM2:  380 - 79 = 301px
+         AUX:  471 - 79 = 392px
     */
-    .rx-drop-line:nth-child(1) { left: 36px; }
-    .rx-drop-line:nth-child(2) { left: 109px; }
-    .rx-drop-line:nth-child(3) { left: 182px; }
-    .rx-drop-line:nth-child(4) { left: 255px; }
-    .rx-drop-line:nth-child(5) { left: 328px; }
+    .rx-drop-line:nth-child(1) { left: 27px; }
+    .rx-drop-line:nth-child(2) { left: 118px; }
+    .rx-drop-line:nth-child(3) { left: 210px; }
+    .rx-drop-line:nth-child(4) { left: 301px; }
+    .rx-drop-line:nth-child(5) { left: 392px; }
     
     /* SVG LEADER LINES */
     .panel-svg {
@@ -170,12 +172,12 @@
       margin-top: 2px;
     }
 
-    /* Requirement #4: Radio toggle labels sit directly under the nut */
+    /* Radio toggle labels sit directly under the nut (scaled 25%) */
     .radio-toggle-label {
       margin-bottom: 0;
-      margin-top: -22px;       /* Negative margin pulls label up flush against nut bottom */
+      margin-top: -28px;       /* Adjusted for 25% larger toggle assembly */
       position: relative;
-      z-index: 10;             /* Keep label above background lines */
+      z-index: 10;
     }
 
     /* 1. Establish the 3D Stage */
@@ -185,6 +187,12 @@
       height: 110px;
       perspective: 1000px; 
       transform-style: preserve-3d;
+    }
+    
+    /* 25% larger radio toggle assembly */
+    .assembly-toggle.radio {
+      width: 55px;
+      height: 138px;
     }
     
     .assembly-toggle.small {
@@ -204,6 +212,14 @@
       border-radius: 4px;
       z-index: 1;
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
+    }
+    
+    /* 25% larger nut for radio toggles */
+    .assembly-toggle.radio .nut {
+      width: 50px;
+      height: 23px;
+      bottom: 35px;
+      border-radius: 5px;
     }
     
     .assembly-toggle.small .nut {
@@ -227,6 +243,15 @@
       transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 5;
       backface-visibility: visible; 
+    }
+    
+    /* 25% larger lever for radio toggles */
+    .assembly-toggle.radio .lever {
+      width: 33px;
+      height: 69px;
+      margin-left: -16.5px;
+      bottom: 43px;
+      border-radius: 16px 16px 8px 8px;
     }
     
     .assembly-toggle.small .lever {
@@ -528,27 +553,28 @@
   <svg class="panel-svg">
   </svg>
 
-  <!-- TOP ROW: COM/FM/AUX TOGGLES (z-index: 10, top: 35px) -->
-  <!-- Requirement #5: top: 35px so lever (55px height) crosses RX-ON line path -->
-  <!-- Requirement #1: class "radio-toggle" sets z-index: 10 -->
-  <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:157px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
+  <!-- TOP ROW: COM/FM/AUX TOGGLES (25% scaled, anchored at AUX center=471px)
+       New centers: COM1=106, COM2=197, FM1=289, FM2=380, AUX=471
+       Component left = center - 27.5px (half of 55px width)
+       COM1=79, COM2=170, FM1=262, FM2=353, AUX=444 -->
+  <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:79px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div><div class="lever"></div></div>
     <span class="label radio-toggle-label">COM1</span>
   </div>
-  <div class="component toggle radio-toggle" id="com2" data-active="true" style="left:230px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
+  <div class="component toggle radio-toggle" id="com2" data-active="true" style="left:170px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div><div class="lever"></div></div>
     <span class="label radio-toggle-label">COM2</span>
   </div>
-  <div class="component toggle radio-toggle" id="fm1" data-active="true" style="left:303px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
+  <div class="component toggle radio-toggle" id="fm1" data-active="true" style="left:262px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div><div class="lever"></div></div>
     <span class="label radio-toggle-label">FM1</span>
   </div>
-  <div class="component toggle radio-toggle" id="fm2" data-active="true" style="left:376px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
+  <div class="component toggle radio-toggle" id="fm2" data-active="true" style="left:353px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div><div class="lever"></div></div>
     <span class="label radio-toggle-label">FM2</span>
   </div>
-  <div class="component toggle radio-toggle" id="aux" data-active="true" style="left:449px; top:35px;">
-    <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
+  <div class="component toggle radio-toggle" id="aux" data-active="true" style="left:444px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div><div class="lever"></div></div>
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
