@@ -144,7 +144,7 @@
       pointer-events: none;
       z-index: 2;
     }
-    .leader-line { stroke: rgba(232, 232, 232, 0.3); stroke-width: 1.2; fill: none; }
+    .leader-line { stroke: rgba(255, 255, 255, 0.3); stroke-width: 2.25; fill: none; stroke-linecap: round; stroke-linejoin: round; }
     
     .box-music { width: 200px; height: 110px; left: 590px; top: 30px; }
     .box-ics { width: 320px; height: 110px; right: 40px; bottom: 30px; }
@@ -549,8 +549,23 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- SVG Connector Lines -->
+  <!-- SVG Connector Lines: Selector-to-Toggle Leader Lines -->
   <svg class="panel-svg">
+    <!-- COM1: From selector top area, angled up-left to COM1 center (106px) 
+         Vertical segment down from toggle, then angled line to knob area -->
+    <polyline class="leader-line" points="106,155 106,142 440,172" />
+    
+    <!-- COM2: From selector top area to COM2 center (197px) -->
+    <polyline class="leader-line" points="197,155 197,142 450,172" />
+    
+    <!-- FM1: From selector top area to FM1 center (289px) -->
+    <polyline class="leader-line" points="289,155 289,142 460,172" />
+    
+    <!-- FM2: From selector top area to FM2 center (380px) -->
+    <polyline class="leader-line" points="380,155 380,142 470,172" />
+    
+    <!-- AUX: Nearly vertical from selector top to AUX center (471px) -->
+    <polyline class="leader-line" points="471,155 471,142 475,172" />
   </svg>
 
   <!-- TOP ROW: COM/FM/AUX TOGGLES (25% scaled, anchored at AUX center=471px)
