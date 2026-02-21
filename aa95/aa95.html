@@ -564,10 +564,9 @@
     <!-- COM2: Vertical drop from label mid-height to elbow point -->
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
     
-    <!-- FM1: Tick at label mid-height, vertical down, ~30° angled to knob
-         Label "FM1" right edge ~308px, mid-height y:142
-         Elbow at x:308, y:200, then angled to knob ~458,183 -->
-    <polyline class="leader-line" points="308,142 308,200 458,183" />
+    <!-- FM1: Vertical drop from label mid-height (20px, same as COM2), then angled to knob at same slope as COM2 -->
+    <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
+    <line class="leader-line" x1="308" y1="162" x2="415" y2="205" />
     
     <!-- FM2: Tick at label mid-height, vertical down, ~30° angled to knob
          Label "FM2" right edge ~400px, mid-height y:142
