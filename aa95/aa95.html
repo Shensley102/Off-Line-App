@@ -584,7 +584,19 @@
          Flat horizontal left 20px (= COM2 downward line length) to (395, 230)
          Then angles up-left to bottom of COM2 downward line (225, 162) -->
     <polyline class="leader-line" points="415,230 395,230 225,162" />
+    
+    <!-- COM1: From knob lower-left, angled down-left, vertical drop to just above COM1 label
+         Starts at knob lower-left (430, 265)
+         Angles down-left to elbow (355, 295)
+         Vertical drop 20px to (355, 315) just above label -->
+    <line class="leader-line" x1="430" y1="265" x2="355" y2="295" />
+    <line class="leader-line" x1="355" y1="295" x2="355" y2="315" />
   </svg>
+
+  <!-- COM1 Selector Position Label (lower-left of selector knob) -->
+  <div class="component" style="left:330px; top:315px; pointer-events:none;">
+    <span class="label" style="margin:0; color:#999;">COM1</span>
+  </div>
 
   <!-- TOP ROW: COM/FM/AUX TOGGLES (25% scaled, anchored at AUX center=471px)
        New centers: COM1=106, COM2=197, FM1=289, FM2=380, AUX=471
