@@ -266,9 +266,9 @@
       transform: rotateX(15deg) translateZ(5px); 
     }
     
-    /* OFF POSITION: Flipped down 75% (not full 180) */
+    /* OFF POSITION: Perpendicular to panel surface (90deg) */
     [data-active="false"] .lever { 
-      transform: rotateX(-120deg) translateZ(5px); 
+      transform: rotateX(-90deg) translateZ(5px); 
     }
 
     .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
@@ -549,17 +549,7 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- SVG Connector Lines: Selector-to-Toggle Leader Lines
-       Selector knob: left:415, top:170, 120px wide → top-center ~475x, top edge ~170y
-       Toggle label mid-heights: top:25 + 138(assembly) - 28(margin) + 7(half label) ≈ 142y
-       
-       Line pattern for COM2/FM1/FM2:
-         1. Horizontal tick from right edge of label text leftward (at label mid-height y:142)
-         2. Vertical segment dropping down to elbow point
-         3. Angled segment (~30°) going right to selector knob top area
-       
-       AUX: Vertical from knob top → short horizontal pedestal below AUX label
-  -->
+  <!-- SVG Connector Lines: Selector-to-Toggle Leader Lines -->
   <svg class="panel-svg">
     <!-- COM2: Vertical drop from label mid-height to elbow point -->
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
@@ -568,40 +558,28 @@
     <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
     <line class="leader-line" x1="308" y1="162" x2="415" y2="205" />
     
-    <!-- FM2: Vertical drop from label mid-height (20px, same as COM2/FM1), then angled to knob at same slope
-         Same slope as FM1 (0.4), from (400,162) → terminates at knob upper-left -->
+    <!-- FM2: Vertical drop from label mid-height (20px, same as COM2/FM1), then angled to knob at same slope -->
     <line class="leader-line" x1="400" y1="142" x2="400" y2="162" />
     <line class="leader-line" x1="400" y1="162" x2="443" y2="179" />
     
-    <!-- AUX: Vertical from knob top up to pedestal below "AUX" label
-         AUX center: 471px, pedestal at y:152 (just below label)
-         Pedestal: short horizontal bar centered on AUX -->
+    <!-- AUX: Vertical from knob top up to pedestal below "AUX" label -->
     <polyline class="leader-line" points="461,152 481,152" />
     <line class="leader-line" x1="471" y1="152" x2="471" y2="175" />
     
-    <!-- Selector knob left-center to COM2 downward line:
-         Starts at left-center of knob (415, 230)
-         Flat horizontal left 20px (= COM2 downward line length) to (395, 230)
-         Then angles up-left to bottom of COM2 downward line (225, 162) -->
+    <!-- Selector knob left-center to COM2 downward line -->
     <polyline class="leader-line" points="415,230 395,230 225,162" />
     
-    <!-- COM1: From knob lower-left, angled down-left, vertical drop to just above COM1 label
-         Starts at knob lower-left (430, 265)
-         Angles down-left to elbow (355, 275)
-         Vertical drop 20px to (355, 295) just above label -->
+    <!-- COM1: From knob lower-left, angled down-left, vertical drop to just above COM1 label -->
     <line class="leader-line" x1="430" y1="265" x2="355" y2="275" />
     <line class="leader-line" x1="355" y1="275" x2="355" y2="295" />
   </svg>
 
-  <!-- COM1 Selector Position Label (lower-left of selector knob, same plane as SELECTOR) -->
+  <!-- COM1 Selector Position Label -->
   <div class="component" style="left:330px; top:295px; pointer-events:none;">
     <span class="label" style="margin:0; color:#999;">COM1</span>
   </div>
 
-  <!-- TOP ROW: COM/FM/AUX TOGGLES (25% scaled, anchored at AUX center=471px)
-       New centers: COM1=106, COM2=197, FM1=289, FM2=380, AUX=471
-       Component left = center - 27.5px (half of 55px width)
-       COM1=79, COM2=170, FM1=262, FM2=353, AUX=444 -->
+  <!-- TOP ROW: COM/FM/AUX TOGGLES -->
   <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:79px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div><div class="lever"></div></div>
     <span class="label radio-toggle-label">COM1</span>
