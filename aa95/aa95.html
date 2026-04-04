@@ -181,7 +181,13 @@
       height: 45px;
     }
 
-    /* NUT */
+    /* =============================================
+       NUT
+       ::before = the cylindrical end-cap circle.
+       It fades in after the lever finishes flipping
+       (0.2s delay) and fades out instantly on UP.
+       Sized to match each lever variant's width.
+       ============================================= */
     .nut {
       position: absolute;
       bottom: 28px;
@@ -191,8 +197,9 @@
       height: 18px;
       background: radial-gradient(circle at 50% 40%, #444 0%, #222 100%);
       border-radius: 4px;
-      z-index: 1;
+      z-index: 2;
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
+      overflow: visible;
     }
 
     .assembly-toggle.radio .nut {
@@ -208,6 +215,64 @@
       bottom: 12px;
     }
 
+    /* Cap — base state: hidden */
+    .nut::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%,
+        #ffffff 0%,
+        #e2e2e2 35%,
+        #b8b8b8 65%,
+        #888888 100%);
+      pointer-events: none;
+      z-index: 10;
+      opacity: 0;
+      /* Default: instant disappear when going ON */
+      transition: opacity 0s;
+    }
+
+    /* Cap — visible in OFF state, fades in after lever lands */
+    [data-active="false"] .nut::before {
+      opacity: 1;
+      transition: opacity 0.15s ease 0.35s; /* delay matches lever travel */
+    }
+
+    /* Radio cap — matches 33px lever width */
+    .assembly-toggle.radio .nut::before {
+      width: 33px;
+      height: 33px;
+    }
+
+    /* Small cap — matches 11px lever width */
+    .assembly-toggle.small .nut::before {
+      width: 11px;
+      height: 11px;
+    }
+
+    /* Red cap (ISO/EMR) */
+    .toggle.red .nut::before {
+      background: radial-gradient(circle at 40% 35%,
+        #ff7777 0%,
+        #dd2222 40%,
+        #991111 70%,
+        #550000 100%);
+    }
+
+    /* Orange cap (ICS MIC) */
+    .toggle.orange .nut::before {
+      background: radial-gradient(circle at 40% 35%,
+        #ffbb77 0%,
+        #dd8833 40%,
+        #995522 70%,
+        #662200 100%);
+    }
+
     /* LEVER */
     .lever {
       position: absolute;
@@ -219,10 +284,10 @@
       border-radius: 13px 13px 6px 6px;
       transform-origin: bottom center;
       margin-left: -13px;
-      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      /* Smooth slow mechanical transition — no bounce */
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       z-index: 5;
       backface-visibility: visible;
-      transform-style: preserve-3d;
     }
 
     .assembly-toggle.radio .lever {
@@ -245,74 +310,9 @@
       transform: rotateX(15deg) translateZ(5px);
     }
 
-    /* OFF POSITION: perpendicular to panel (90deg) */
+    /* OFF POSITION: perpendicular to panel */
     [data-active="false"] .lever {
       transform: rotateX(-90deg) translateZ(5px);
-    }
-
-    /* =============================================
-       LEVER END CAP — cylindrical face
-       
-       Anchored at BOTTOM of lever (the fulcrum/pivot).
-       Combined rotation math:
-         OFF → lever rotateX(-90) + cap rotateX(90) = 0°   → faces viewer ✓
-         ON  → lever rotateX(15)  + cap rotateX(90) = 105°  → backface hidden ✓
-       
-       backface-visibility: hidden kills the cap the
-       moment it passes 90° from viewer — invisible on UP.
-       bottom: 0 + transform-origin: center bottom places
-       the circle right at the fulcrum where the lever
-       meets the panel surface.
-       ============================================= */
-
-    /* Standard cap — matches 26px lever width */
-    .lever::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 40% 35%,
-        #ffffff 0%,
-        #e2e2e2 35%,
-        #b8b8b8 65%,
-        #888888 100%);
-      transform: rotateX(90deg);
-      transform-origin: center bottom;
-      pointer-events: none;
-      backface-visibility: hidden;
-    }
-
-    /* Radio toggle cap — matches 33px lever width */
-    .assembly-toggle.radio .lever::after {
-      width: 33px;
-      height: 33px;
-    }
-
-    /* Small toggle cap — matches 11px lever width */
-    .assembly-toggle.small .lever::after {
-      width: 11px;
-      height: 11px;
-    }
-
-    /* Red lever cap (ISO/EMR) */
-    .toggle.red .lever::after {
-      background: radial-gradient(circle at 40% 35%,
-        #ff7777 0%,
-        #dd2222 40%,
-        #991111 70%,
-        #550000 100%);
-    }
-
-    /* Orange lever cap (ICS MIC) */
-    .toggle.orange .lever::after {
-      background: radial-gradient(circle at 40% 35%,
-        #ffbb77 0%,
-        #dd8833 40%,
-        #995522 70%,
-        #662200 100%);
     }
 
     .toggle.red .lever    { background: linear-gradient(to right, #a22, #f44 50%, #811); }
