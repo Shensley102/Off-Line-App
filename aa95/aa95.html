@@ -47,42 +47,35 @@
       -webkit-user-select: none;
     }
 
-    /* BOUNDARY LINES - EXACT REPLICATION */
+    /* BOUNDARY LINES */
     .boundary-box {
       position: absolute;
       border: 1px solid var(--boundary-line);
       pointer-events: none;
     }
     .box-comms { display: none; }
-    
-    /* =============================================
-       BACKGROUND RX-ON LAYER (z-index: 1 - behind levers)
-       25% scaled toggles, anchored at AUX center (471px)
-       New centers: COM1=106, COM2=197, FM1=289, FM2=380, AUX=471
-       Container starts at left: 79px (COM1 left edge)
-       ============================================= */
+
     .rx-on-header {
       position: absolute;
       left: 79px;
       top: 62px;
-      width: 420px;           /* Spans from COM1 (79px) past AUX center (471px): 471-79+27=~420 */
+      width: 420px;
       height: 20px;
       display: flex;
       justify-content: center;
       z-index: 1;
       pointer-events: none;
     }
-    
+
     .rx-on-line {
       position: absolute;
       top: 8px;
-      left: 27px;             /* COM1 center relative to container: 106 - 79 = 27px */
-      width: 365px;           /* AUX center - COM1 center: 471 - 106 = 365px */
+      left: 27px;
+      width: 365px;
       height: 1px;
       background: var(--boundary-line);
     }
-    
-    /* Gap for RX-ON text */
+
     .rx-on-line::before {
       content: '';
       position: absolute;
@@ -92,7 +85,7 @@
       height: 1px;
       background: #181818;
     }
-    
+
     .rx-on-text {
       position: relative;
       font-size: 11px;
@@ -102,18 +95,17 @@
       padding: 0 6px;
       top: -2px;
     }
-    
-    /* Vertical drop lines from RX-ON line */
+
     .rx-on-drops {
       position: absolute;
       left: 79px;
       top: 70px;
       width: 420px;
-      height: 75px;           /* Slightly taller for 25% bigger toggles */
+      height: 75px;
       z-index: 1;
       pointer-events: none;
     }
-    
+
     .rx-drop-line {
       position: absolute;
       top: 0;
@@ -121,22 +113,13 @@
       height: 100%;
       background: var(--boundary-line);
     }
-    
-    /* Drop lines aligned to center of each 25%-scaled toggle
-       Toggle centers (absolute): COM1=106, COM2=197, FM1=289, FM2=380, AUX=471
-       Relative to container left (79px):
-         COM1: 106 - 79 = 27px
-         COM2: 197 - 79 = 118px
-         FM1:  289 - 79 = 210px
-         FM2:  380 - 79 = 301px
-         AUX:  471 - 79 = 392px
-    */
+
     .rx-drop-line:nth-child(1) { left: 27px; }
     .rx-drop-line:nth-child(2) { left: 118px; }
     .rx-drop-line:nth-child(3) { left: 210px; }
     .rx-drop-line:nth-child(4) { left: 301px; }
     .rx-drop-line:nth-child(5) { left: 392px; }
-    
+
     /* SVG LEADER LINES */
     .panel-svg {
       position: absolute;
@@ -144,12 +127,12 @@
       pointer-events: none;
       z-index: 2;
     }
-    .leader-line { stroke: rgba(255, 255, 255, 0.9); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-    
-    .box-music { width: 200px; height: 110px; left: 590px; top: 30px; }
-    .box-ics { width: 320px; height: 110px; right: 40px; bottom: 30px; }
+    .leader-line { stroke: rgba(255,255,255,0.9); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* COMPONENT SPACING GRID */
+    .box-music { width: 200px; height: 110px; left: 590px; top: 30px; }
+    .box-ics   { width: 320px; height: 110px; right: 40px; bottom: 30px; }
+
+    /* COMPONENT GRID */
     .component {
       position: absolute;
       display: flex;
@@ -172,35 +155,33 @@
       margin-top: 2px;
     }
 
-    /* Radio toggle labels sit directly under the nut (scaled 25%) */
     .radio-toggle-label {
       margin-bottom: 0;
-      margin-top: -28px;       /* Adjusted for 25% larger toggle assembly */
+      margin-top: -28px;
       position: relative;
       z-index: 10;
     }
 
-    /* 1. Establish the 3D Stage */
+    /* 3D STAGE */
     .assembly-toggle {
       position: relative;
       width: 44px;
       height: 110px;
-      perspective: 1000px; 
+      perspective: 1000px;
       transform-style: preserve-3d;
     }
-    
-    /* 25% larger radio toggle assembly */
+
     .assembly-toggle.radio {
       width: 55px;
       height: 138px;
     }
-    
+
     .assembly-toggle.small {
       width: 18px;
       height: 45px;
     }
-    
-    /* 2. The Nut (Mounting Hardware) */
+
+    /* NUT */
     .nut {
       position: absolute;
       bottom: 28px;
@@ -213,22 +194,21 @@
       z-index: 1;
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
-    
-    /* 25% larger nut for radio toggles */
+
     .assembly-toggle.radio .nut {
       width: 50px;
       height: 23px;
       bottom: 35px;
       border-radius: 5px;
     }
-    
+
     .assembly-toggle.small .nut {
       width: 16px;
       height: 8px;
       bottom: 12px;
     }
-    
-    /* 3. The Lever Logic */
+
+    /* LEVER */
     .lever {
       position: absolute;
       bottom: 34px;
@@ -239,13 +219,12 @@
       border-radius: 13px 13px 6px 6px;
       transform-origin: bottom center;
       margin-left: -13px;
-      
       transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 5;
-      backface-visibility: visible; 
+      backface-visibility: visible;
+      transform-style: preserve-3d;   /* required for ::after to live in 3D */
     }
-    
-    /* 25% larger lever for radio toggles */
+
     .assembly-toggle.radio .lever {
       width: 33px;
       height: 69px;
@@ -253,33 +232,87 @@
       bottom: 43px;
       border-radius: 16px 16px 8px 8px;
     }
-    
+
     .assembly-toggle.small .lever {
       width: 11px;
       height: 21px;
       margin-left: -5.5px;
       bottom: 14px;
     }
-    
-    /* ON POSITION: Slightly tilted toward the viewer (15deg) so the top is visible */
-    [data-active="true"] .lever { 
-      transform: rotateX(15deg) translateZ(5px); 
-    }
-    
-    /* OFF POSITION: Perpendicular to panel surface (90deg) */
-    [data-active="false"] .lever { 
-      transform: rotateX(-90deg) translateZ(5px); 
+
+    /* ON POSITION */
+    [data-active="true"] .lever {
+      transform: rotateX(15deg) translateZ(5px);
     }
 
-    .toggle.red .lever { background: linear-gradient(to right, #a22, #f44 50%, #811); }
+    /* OFF POSITION: perpendicular to panel (90deg) */
+    [data-active="false"] .lever {
+      transform: rotateX(-90deg) translateZ(5px);
+    }
+
+    /* =============================================
+       LEVER END CAP — cylindrical face
+       Combined rotation math:
+         OFF  → lever rotateX(-90) + cap rotateX(90) = 0°  → faces viewer ✓
+         ON   → lever rotateX(15)  + cap rotateX(90) = 105° → faces away  ✓
+       ============================================= */
+
+    /* Standard cap — matches 26px lever width */
+    .lever::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%,
+        #ffffff 0%,
+        #e2e2e2 35%,
+        #b8b8b8 65%,
+        #888888 100%);
+      transform: rotateX(90deg);
+      transform-origin: center top;
+      pointer-events: none;
+      backface-visibility: visible;
+    }
+
+    /* Radio toggle cap — matches 33px lever width */
+    .assembly-toggle.radio .lever::after {
+      width: 33px;
+      height: 33px;
+    }
+
+    /* Small toggle cap — matches 11px lever width */
+    .assembly-toggle.small .lever::after {
+      width: 11px;
+      height: 11px;
+    }
+
+    /* Red lever cap (ISO/EMR) */
+    .toggle.red .lever::after {
+      background: radial-gradient(circle at 40% 35%,
+        #ff7777 0%,
+        #dd2222 40%,
+        #991111 70%,
+        #550000 100%);
+    }
+
+    /* Orange lever cap (ICS MIC) */
+    .toggle.orange .lever::after {
+      background: radial-gradient(circle at 40% 35%,
+        #ffbb77 0%,
+        #dd8833 40%,
+        #995522 70%,
+        #662200 100%);
+    }
+
+    .toggle.red .lever    { background: linear-gradient(to right, #a22, #f44 50%, #811); }
     .toggle.orange .lever { background: linear-gradient(to right, #a62, #f94 50%, #841); }
 
-    /* Requirement #1: Toggle switch components at z-index: 10 (above RX-ON lines) */
-    .component.radio-toggle {
-      z-index: 10;
-    }
+    .component.radio-toggle { z-index: 10; }
 
-    /* VOLUME KNOBS - RIBBED TEXTURE */
+    /* VOLUME KNOBS */
     .knob-vol {
       width: 50px;
       height: 50px;
@@ -304,18 +337,11 @@
       z-index: 3; transform-origin: center 17px;
       transition: transform 0.1s ease-out;
     }
-    
-    .knob-vol.small {
-      width: 40px;
-      height: 40px;
-    }
-    .knob-vol.small .vol-pointer {
-      height: 12px;
-      top: 6px;
-      transform-origin: center 14px;
-    }
 
-    /* SELECTOR KNOB - THE CHICKEN HEAD */
+    .knob-vol.small { width: 40px; height: 40px; }
+    .knob-vol.small .vol-pointer { height: 12px; top: 6px; transform-origin: center 14px; }
+
+    /* SELECTOR KNOB */
     .knob-selector-base {
       width: 120px;
       height: 120px;
@@ -336,36 +362,14 @@
       width: 60px;
       height: 120px;
       background: linear-gradient(135deg, #8a8a8a 0%, #7a7a7a 30%, #6a6a6a 70%, #5a5a5a 100%);
-      clip-path: polygon(
-        20% 0%,
-        80% 0%,
-        100% 35%,
-        100% 65%,
-        80% 100%,
-        20% 100%,
-        0% 65%,
-        0% 35%
-      );
+      clip-path: polygon(20% 0%, 80% 0%, 100% 35%, 100% 65%, 80% 100%, 20% 100%, 0% 65%, 0% 35%);
       transform-origin: 50% 50%;
       transition: transform 0.15s var(--snap-curve);
       display: flex;
       justify-content: center;
     }
 
-    .knob-selector-base.dragging .knob-body {
-      transition: none;
-    }
-
-    .knob-face {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(145deg, 
-        rgba(255,255,255,0.12) 0%, 
-        transparent 40%, 
-        rgba(0,0,0,0.15) 100%);
-      pointer-events: none;
-      clip-path: inherit;
-    }
+    .knob-selector-base.dragging .knob-body { transition: none; }
 
     .knob-stripe {
       position: absolute;
@@ -382,84 +386,77 @@
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(90deg, 
-        rgba(0,0,0,0.12) 0%, 
-        transparent 15%, 
-        transparent 85%, 
-        rgba(0,0,0,0.08) 100%);
+      background: linear-gradient(90deg, rgba(0,0,0,0.12) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.08) 100%);
       clip-path: inherit;
       pointer-events: none;
     }
 
     /* PUSH BUTTONS */
     .btn-round {
-      width: 28px;
-      height: 28px;
+      width: 28px; height: 28px;
       border-radius: 50%;
       cursor: pointer;
       transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
       border: none;
     }
-    
+
     .btn-round.blue {
       background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.3) 0%, transparent 50%),
                   linear-gradient(180deg, #5588cc 0%, #3366aa 50%, #224488 100%);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
     }
-    
+
     .btn-round.black {
       background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.15) 0%, transparent 50%),
                   linear-gradient(180deg, #4a4a4a 0%, #333333 50%, #1a1a1a 100%);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.15);
     }
-    
+
     .btn-round.yellow {
       background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.4) 0%, transparent 50%),
                   linear-gradient(180deg, #ffdd44 0%, #ddbb22 50%, #aa8800 100%);
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.4);
     }
-    
+
     .btn-round[data-active="true"] {
       transform: scale(0.95);
       filter: brightness(0.85);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    /* ICS CALL - WHITE DOME */
+    /* ICS CALL */
     .btn-ics-call {
-      width: 45px;
-      height: 45px;
+      width: 45px; height: 45px;
       border-radius: 50%;
       background: radial-gradient(ellipse 80% 50% at 50% 20%, rgba(255,255,255,0.9) 0%, transparent 60%),
                   radial-gradient(circle at 50% 50%, #ffffff 0%, #e8e8e8 40%, #cccccc 80%, #aaaaaa 100%);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3);
       cursor: pointer;
       transition: transform 0.06s ease, box-shadow 0.06s ease;
       border: none;
     }
-    
+
     .btn-ics-call[data-active="true"] {
       transform: scale(0.94) translateY(2px);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), inset 0 2px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* LED INDICATORS */
+    /* LEDs */
     .led {
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       border-radius: 50%;
       transition: background 0.15s ease, box-shadow 0.2s ease;
     }
-    
+
     .led[data-active="false"] {
       background: radial-gradient(circle at 35% 35%, #2a4a2a 0%, #1a2a1a 70%, #0a150a 100%);
-      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
     }
-    
+
     .led[data-active="true"] {
       background: radial-gradient(circle at 35% 35%, #aaffaa 0%, #66ff66 20%, #00ff44 50%, #00cc22 100%);
-      box-shadow: 0 0 4px #00ff44, 0 0 8px #00ff44, 0 0 16px rgba(0, 255, 68, 0.6),
-                  inset 0 1px 3px rgba(255, 255, 255, 0.4);
+      box-shadow: 0 0 4px #00ff44, 0 0 8px #00ff44, 0 0 16px rgba(0,255,68,0.6),
+                  inset 0 1px 3px rgba(255,255,255,0.4);
     }
 
     /* STATUS BAR */
@@ -481,66 +478,50 @@
       padding: 10px 20px;
       background: linear-gradient(180deg, #3a5a4a 0%, #2a4a3a 100%);
       color: var(--accent-green);
-      border: 1px solid rgba(0, 255, 68, 0.3);
+      border: 1px solid rgba(0,255,68,0.3);
       border-radius: 5px;
       font-family: 'Courier New', monospace;
       cursor: pointer;
       transition: all 0.15s ease;
     }
-    
+
     .master-btn:hover {
       background: linear-gradient(180deg, #4a6a5a 0%, #3a5a4a 100%);
-      box-shadow: 0 0 12px rgba(0, 255, 68, 0.3);
+      box-shadow: 0 0 12px rgba(0,255,68,0.3);
     }
 
-    .tip {
-      margin-top: 10px;
-      color: #555;
-      font-size: 12px;
-    }
+    .tip { margin-top: 10px; color: #555; font-size: 12px; }
 
     /* RESPONSIVE */
     @media (max-width: 980px) {
       .panel {
-        width: 95vw;
-        height: auto;
+        width: 95vw; height: auto;
         aspect-ratio: 940 / 314;
         transform: scale(0.9);
         transform-origin: top center;
       }
     }
-    
     @media (max-width: 768px) {
-      .panel {
-        transform: scale(0.7);
-      }
-      .status-bar {
-        min-width: 300px;
-        font-size: 12px;
-      }
+      .panel { transform: scale(0.7); }
+      .status-bar { min-width: 300px; font-size: 12px; }
     }
-    
     @media (max-width: 500px) {
-      .panel {
-        transform: scale(0.5);
-      }
+      .panel { transform: scale(0.5); }
     }
   </style>
 </head>
 <body>
 
 <div class="panel" id="panel">
-  <!-- BOUNDARY BOXES -->
   <div class="boundary-box box-comms"></div>
   <div class="boundary-box box-music"></div>
   <div class="boundary-box box-ics"></div>
-  
-  <!-- RX-ON HEADER (z-index: 1 - behind toggle switches) -->
+
+  <!-- RX-ON HEADER -->
   <div class="rx-on-header">
     <div class="rx-on-line"></div>
     <span class="rx-on-text">RX-ON</span>
   </div>
-  <!-- Vertical drop lines (z-index: 1 - behind toggle switches) -->
   <div class="rx-on-drops">
     <div class="rx-drop-line"></div>
     <div class="rx-drop-line"></div>
@@ -549,37 +530,26 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- SVG Connector Lines: Selector-to-Toggle Leader Lines -->
+  <!-- SVG LEADER LINES -->
   <svg class="panel-svg">
-    <!-- COM2: Vertical drop from label mid-height to elbow point -->
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
-    
-    <!-- FM1: Vertical drop from label mid-height (20px, same as COM2), then angled to knob at same slope as COM2 -->
     <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
     <line class="leader-line" x1="308" y1="162" x2="415" y2="205" />
-    
-    <!-- FM2: Vertical drop from label mid-height (20px, same as COM2/FM1), then angled to knob at same slope -->
     <line class="leader-line" x1="400" y1="142" x2="400" y2="162" />
     <line class="leader-line" x1="400" y1="162" x2="443" y2="179" />
-    
-    <!-- AUX: Vertical from knob top up to pedestal below "AUX" label -->
     <polyline class="leader-line" points="461,152 481,152" />
     <line class="leader-line" x1="471" y1="152" x2="471" y2="175" />
-    
-    <!-- Selector knob left-center to COM2 downward line -->
     <polyline class="leader-line" points="415,230 395,230 225,162" />
-    
-    <!-- COM1: From knob lower-left, angled down-left, vertical drop to just above COM1 label -->
     <line class="leader-line" x1="430" y1="265" x2="355" y2="275" />
     <line class="leader-line" x1="355" y1="275" x2="355" y2="295" />
   </svg>
 
-  <!-- COM1 Selector Position Label -->
+  <!-- COM1 SELECTOR LABEL -->
   <div class="component" style="left:330px; top:295px; pointer-events:none;">
     <span class="label" style="margin:0; color:#999;">COM1</span>
   </div>
 
-  <!-- TOP ROW: COM/FM/AUX TOGGLES -->
+  <!-- TOP ROW: RADIO TOGGLES -->
   <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:79px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div><div class="lever"></div></div>
     <span class="label radio-toggle-label">COM1</span>
@@ -636,49 +606,41 @@
   </div>
 
   <!-- BOTTOM ROW -->
-  <!-- ISO/EMR -->
   <div class="component toggle red" id="iso_emr" data-active="false" style="left:80px; bottom:50px;">
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
     <span class="label label-bottom">ISO/EMR</span>
   </div>
 
-  <!-- TX LED -->
   <div class="component" style="left:170px; bottom:55px;">
     <div class="led" id="tx_light" data-active="true"></div>
     <span class="label label-bottom">TX</span>
   </div>
 
-  <!-- VOX KNOB -->
   <div class="component" id="vox_wrap" style="left:270px; bottom:45px;">
     <span class="label">VOX</span>
     <div class="knob-vol small" id="vox" data-value="50"><div class="vol-pointer" id="ptr_vox"></div></div>
   </div>
 
-  <!-- ICS CALL -->
   <div class="component" id="ics_call" data-active="false" style="right:280px; bottom:45px;">
     <span class="label">ICS CALL</span>
     <div class="btn-ics-call"></div>
   </div>
 
-  <!-- PLT LED -->
   <div class="component" style="right:220px; bottom:55px;">
     <div class="led" id="plt_light" data-active="true"></div>
     <span class="label label-bottom">PLT</span>
   </div>
 
-  <!-- ICS MIC -->
   <div class="component toggle orange" id="ics_mic" data-active="true" style="right:140px; bottom:45px;">
     <span class="label">ICS MIC</span>
     <div class="assembly-toggle"><div class="nut"></div><div class="lever"></div></div>
   </div>
 
-  <!-- KEY Toggle -->
   <div class="component toggle" id="key" data-active="true" style="right:85px; bottom:50px;">
     <span class="label">KEY</span>
     <div class="assembly-toggle small"><div class="nut"></div><div class="lever"></div></div>
   </div>
 
-  <!-- ICS VOL -->
   <div class="component" id="icsvol_wrap" style="right:20px; bottom:45px;">
     <span class="label">ICS VOL</span>
     <div class="knob-vol" id="icsvol" data-value="50"><div class="vol-pointer" id="ptr_ics"></div></div>
@@ -693,36 +655,13 @@
 (function() {
   'use strict';
 
-  // ============================================
-  // PANEL STATE - All 14 Components
-  // ============================================
   const panelState = {
-    // Toggles (9)
-    com1: true,
-    com2: true,
-    fm1: true,
-    fm2: true,
-    aux: true,
-    pat: true,
-    iso_emr: false,
-    ics_mic: true,
-    key: true,
-    
-    // Buttons (4)
-    adf: false,
-    dplr: false,
-    so: false,
-    ics_call: false,
-    
-    // Knobs (4)
+    com1: true, com2: true, fm1: true, fm2: true, aux: true,
+    pat: true, iso_emr: false, ics_mic: true, key: true,
+    adf: false, dplr: false, so: false, ics_call: false,
     selector: { position: 'COM1', angle: -130, index: 0 },
-    rxvol: 50,
-    vox: 50,
-    icsvol: 50,
-    
-    // Indicators (2)
-    tx_light: true,
-    plt_light: true
+    rxvol: 50, vox: 50, icsvol: 50,
+    tx_light: true, plt_light: true
   };
 
   const CONFIG = {
@@ -735,43 +674,26 @@
 
   const $ = id => document.getElementById(id);
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
-  const mapRange = (v, inMin, inMax, outMin, outMax) => 
+  const mapRange = (v, inMin, inMax, outMin, outMax) =>
     ((v - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
 
-  function setStatus(text) {
-    $('stat').innerText = text;
-  }
+  function setStatus(text) { $('stat').innerText = text; }
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-  function sleep(ms) {
-    return new Promise(r => setTimeout(r, ms));
-  }
-
-  // ============================================
-  // SYNC STATE TO DOM
-  // ============================================
   function syncState() {
-    // Toggles
     ['com1','com2','fm1','fm2','aux','pat','iso_emr','ics_mic','key'].forEach(id => {
       const el = $(id);
       if (el) el.setAttribute('data-active', panelState[id]);
     });
-    
-    // Buttons
     ['adf','dplr','so','ics_call'].forEach(id => {
       const el = $(id);
       if (el) el.setAttribute('data-active', panelState[id]);
     });
-    
-    // LEDs
     $('tx_light').setAttribute('data-active', panelState.tx_light);
     $('plt_light').setAttribute('data-active', panelState.plt_light);
-    
-    // Selector
     $('sel_ptr').style.transform = `rotate(${panelState.selector.angle}deg)`;
-    
-    // Volume knobs
     ['rxvol','vox','icsvol'].forEach(id => {
-      const angle = mapRange(panelState[id], CONFIG.volume.min, CONFIG.volume.max, 
+      const angle = mapRange(panelState[id], CONFIG.volume.min, CONFIG.volume.max,
                              CONFIG.volume.angleMin, CONFIG.volume.angleMax);
       const ptr = $('ptr_' + (id === 'rxvol' ? 'rx' : id === 'icsvol' ? 'ics' : 'vox'));
       if (ptr) ptr.style.transform = `translateX(-50%) rotate(${angle}deg)`;
@@ -784,40 +706,28 @@
     syncState();
   }
 
-  // ============================================
-  // MASTER CHECK
-  // ============================================
   async function masterCheck() {
     const toggles = ['com1','com2','fm1','fm2','aux'];
-    
     setStatus("MASTER CHECK: INITIATING...");
     toggles.forEach(id => { panelState[id] = false; });
     updateIndicators();
-    
     await sleep(400);
     setStatus("MASTER CHECK: RESETTING SWITCHES...");
     await sleep(300);
-    
     for (let id of toggles) {
       await sleep(150);
       panelState[id] = true;
       updateIndicators();
       setStatus(id.toUpperCase() + " POSITION: UP [OK]");
     }
-    
     await sleep(200);
     setStatus("✓ MASTER CHECK COMPLETE - ALL SYSTEMS NOMINAL");
-    
-    // Flash TX
     for (let i = 0; i < 2; i++) {
       panelState.tx_light = false; syncState(); await sleep(100);
-      panelState.tx_light = true; syncState(); await sleep(100);
+      panelState.tx_light = true;  syncState(); await sleep(100);
     }
   }
 
-  // ============================================
-  // TOGGLE SWITCHES
-  // ============================================
   ['com1','com2','fm1','fm2','aux','pat','iso_emr','ics_mic','key'].forEach(id => {
     const el = $(id);
     if (!el) return;
@@ -828,9 +738,6 @@
     };
   });
 
-  // ============================================
-  // BUTTONS
-  // ============================================
   ['adf','dplr','so'].forEach(id => {
     const el = $(id);
     if (!el) return;
@@ -841,62 +748,48 @@
     };
   });
 
-  // ICS CALL (momentary)
   const icsCall = $('ics_call');
   if (icsCall) {
-    const press = () => { panelState.ics_call = true; syncState(); setStatus('ICS CALL: PRESSED'); };
+    const press   = () => { panelState.ics_call = true;  syncState(); setStatus('ICS CALL: PRESSED'); };
     const release = () => { panelState.ics_call = false; syncState(); setStatus('ICS CALL: RELEASED'); };
-    icsCall.onmousedown = press;
-    icsCall.onmouseup = release;
+    icsCall.onmousedown  = press;
+    icsCall.onmouseup    = release;
     icsCall.onmouseleave = release;
     icsCall.ontouchstart = e => { e.preventDefault(); press(); };
-    icsCall.ontouchend = e => { e.preventDefault(); release(); };
+    icsCall.ontouchend   = e => { e.preventDefault(); release(); };
   }
 
-  // ============================================
-  // SELECTOR KNOB
-  // ============================================
   const selector = $('selector');
   if (selector) {
     let dragging = false, startY, startAngle;
-    
+
     function setSelAngle(angle, snap = false) {
       const min = CONFIG.selector.angles[0];
       const max = CONFIG.selector.angles[CONFIG.selector.angles.length - 1];
       angle = clamp(angle, min, max);
-      
       let nearestIdx = 0, nearestDist = Infinity;
       CONFIG.selector.angles.forEach((a, i) => {
         const d = Math.abs(angle - a);
         if (d < nearestDist) { nearestDist = d; nearestIdx = i; }
       });
-      
       const finalAngle = snap ? CONFIG.selector.angles[nearestIdx] : angle;
-      panelState.selector = { 
-        position: CONFIG.selector.positions[nearestIdx], 
-        angle: finalAngle, 
-        index: nearestIdx 
-      };
-      
-      const ptr = $('sel_ptr');
-      ptr.style.transform = `rotate(${finalAngle}deg)`;
-      
+      panelState.selector = { position: CONFIG.selector.positions[nearestIdx], angle: finalAngle, index: nearestIdx };
+      $('sel_ptr').style.transform = `rotate(${finalAngle}deg)`;
       setStatus('SELECTOR: ' + CONFIG.selector.positions[nearestIdx]);
     }
-    
+
     selector.onclick = e => {
       if (dragging) return;
       const next = (panelState.selector.index + 1) % CONFIG.selector.positions.length;
       setSelAngle(CONFIG.selector.angles[next], true);
     };
-    
+
     selector.onmousedown = e => {
       e.preventDefault();
       dragging = false;
       startY = e.clientY;
       startAngle = panelState.selector.angle;
       selector.classList.add('dragging');
-      
       const move = e => {
         const dy = startY - e.clientY;
         if (Math.abs(dy) > 8) { dragging = true; setSelAngle(startAngle + dy * 0.8); }
@@ -911,7 +804,7 @@
       document.addEventListener('mousemove', move);
       document.addEventListener('mouseup', up);
     };
-    
+
     selector.onwheel = e => {
       e.preventDefault();
       const dir = e.deltaY < 0 ? 1 : -1;
@@ -920,17 +813,13 @@
     };
   }
 
-  // ============================================
-  // VOLUME KNOBS
-  // ============================================
   [['rxvol','ptr_rx'], ['vox','ptr_vox'], ['icsvol','ptr_ics']].forEach(([id, ptrId]) => {
     const knob = $(id);
-    const ptr = $(ptrId);
+    const ptr  = $(ptrId);
     if (!knob || !ptr) return;
-    
     let dragging = false, startY, startVal;
     const label = id.toUpperCase().replace('VOL',' VOL');
-    
+
     function setVol(val) {
       val = clamp(Math.round(val), 0, 100);
       panelState[id] = val;
@@ -938,18 +827,14 @@
       ptr.style.transform = `translateX(-50%) rotate(${angle}deg)`;
       setStatus(label + ': ' + val + '%');
     }
-    
-    knob.onclick = e => {
-      if (dragging) return;
-      setVol(panelState[id] < 50 ? 50 : 0);
-    };
-    
+
+    knob.onclick = e => { if (dragging) return; setVol(panelState[id] < 50 ? 50 : 0); };
+
     knob.onmousedown = e => {
       e.preventDefault();
       dragging = false;
       startY = e.clientY;
       startVal = panelState[id];
-      
       const move = e => {
         const dy = startY - e.clientY;
         if (Math.abs(dy) > 5) { dragging = true; setVol(startVal + dy * 0.5); }
@@ -962,16 +847,13 @@
       document.addEventListener('mousemove', move);
       document.addEventListener('mouseup', up);
     };
-    
+
     knob.onwheel = e => {
       e.preventDefault();
       setVol(panelState[id] + (e.deltaY < 0 ? 5 : -5));
     };
   });
 
-  // ============================================
-  // KEYBOARD
-  // ============================================
   document.onkeydown = e => {
     const k = e.key.toLowerCase();
     if (k === 'm') masterCheck();
@@ -982,16 +864,11 @@
     if (e.key.toLowerCase() === 'c') { panelState.ics_call = false; syncState(); setStatus('ICS CALL: RELEASED'); }
   };
 
-  // ============================================
-  // INIT
-  // ============================================
   $('masterBtn').onclick = masterCheck;
   syncState();
   updateIndicators();
-  
+
   console.log('AA95 Panel Initialized');
-  console.log('panelState:', panelState);
-  
   window.AA95 = { panelState, masterCheck, updateIndicators, syncState };
 })();
 </script>
