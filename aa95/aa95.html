@@ -182,11 +182,11 @@
     }
 
     /* =============================================
-       NUT
-       ::before = the cylindrical end-cap circle.
-       It fades in after the lever finishes flipping
-       (0.2s delay) and fades out instantly on UP.
-       Sized to match each lever variant's width.
+       NUT — mounting hardware
+       ::before is the end-cap circle, rendered as a
+       2D child of the nut so it always paints on top.
+       Fades IN after lever finishes flipping DOWN (0.35s delay).
+       Disappears instantly when lever goes UP (no delay).
        ============================================= */
     .nut {
       position: absolute;
@@ -197,11 +197,44 @@
       height: 18px;
       background: radial-gradient(circle at 50% 40%, #444 0%, #222 100%);
       border-radius: 4px;
-      z-index: 2;
+      z-index: 3;
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
-      overflow: visible;
     }
 
+    /* Standard end-cap (26px — matches standard lever width) */
+    .nut::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%,
+        #ffffff 0%,
+        #e8e8e8 25%,
+        #c0c0c0 55%,
+        #909090 80%,
+        #606060 100%);
+      box-shadow:
+        0 0 6px rgba(255,255,255,0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.3),
+        inset 0 2px 4px rgba(255,255,255,0.5);
+      opacity: 0;
+      /* OFF: fade in after lever finishes (0.45s flip + short gap) */
+      transition: opacity 0.15s ease 0s;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* Show cap when toggle is OFF */
+    [data-active="false"] .nut::before {
+      opacity: 1;
+      transition: opacity 0.15s ease 0.40s;  /* delay = lever flip duration */
+    }
+
+    /* Radio nut */
     .assembly-toggle.radio .nut {
       width: 50px;
       height: 23px;
@@ -209,71 +242,59 @@
       border-radius: 5px;
     }
 
+    /* Radio end-cap (33px — matches radio lever width) */
+    .assembly-toggle.radio .nut::before {
+      width: 33px;
+      height: 33px;
+    }
+
+    /* Small nut */
     .assembly-toggle.small .nut {
       width: 16px;
       height: 8px;
       bottom: 12px;
     }
 
-    /* Cap — base state: hidden */
-    .nut::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 40% 35%,
-        #ffffff 0%,
-        #e2e2e2 35%,
-        #b8b8b8 65%,
-        #888888 100%);
-      pointer-events: none;
-      z-index: 10;
-      opacity: 0;
-      /* Default: instant disappear when going ON */
-      transition: opacity 0s;
-    }
-
-    /* Cap — visible in OFF state, fades in after lever lands */
-    [data-active="false"] .nut::before {
-      opacity: 1;
-      transition: opacity 0.15s ease 0.35s; /* delay matches lever travel */
-    }
-
-    /* Radio cap — matches 33px lever width */
-    .assembly-toggle.radio .nut::before {
-      width: 33px;
-      height: 33px;
-    }
-
-    /* Small cap — matches 11px lever width */
+    /* Small end-cap (11px — matches small lever width) */
     .assembly-toggle.small .nut::before {
       width: 11px;
       height: 11px;
     }
 
-    /* Red cap (ISO/EMR) */
+    /* Red end-cap (ISO/EMR) */
     .toggle.red .nut::before {
-      background: radial-gradient(circle at 40% 35%,
-        #ff7777 0%,
-        #dd2222 40%,
-        #991111 70%,
-        #550000 100%);
+      background: radial-gradient(circle at 38% 32%,
+        #ff9999 0%,
+        #ee4444 25%,
+        #cc1111 55%,
+        #880000 80%,
+        #440000 100%);
+      box-shadow:
+        0 0 8px rgba(255, 60, 60, 0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,150,150,0.4);
     }
 
-    /* Orange cap (ICS MIC) */
+    /* Orange end-cap (ICS MIC) */
     .toggle.orange .nut::before {
-      background: radial-gradient(circle at 40% 35%,
-        #ffbb77 0%,
-        #dd8833 40%,
-        #995522 70%,
-        #662200 100%);
+      background: radial-gradient(circle at 38% 32%,
+        #ffcc88 0%,
+        #ee9933 25%,
+        #cc6600 55%,
+        #884400 80%,
+        #442200 100%);
+      box-shadow:
+        0 0 8px rgba(255, 160, 40, 0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,200,100,0.4);
     }
 
-    /* LEVER */
+    /* =============================================
+       LEVER — smooth slow mechanical flip
+       No transform-style: preserve-3d needed (no ::after)
+       transition slowed to 0.45s ease-in-out for
+       deliberate mechanical feel.
+       ============================================= */
     .lever {
       position: absolute;
       bottom: 34px;
@@ -284,8 +305,7 @@
       border-radius: 13px 13px 6px 6px;
       transform-origin: bottom center;
       margin-left: -13px;
-      /* Smooth slow mechanical transition — no bounce */
-      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.45s ease-in-out;
       z-index: 5;
       backface-visibility: visible;
     }
