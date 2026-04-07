@@ -162,12 +162,18 @@
       z-index: 10;
     }
 
-    /* 3D STAGE */
+    /* =============================================
+       3D STAGE
+       perspective increased to 1400px — reduces
+       aggressive foreshortening during the arc so
+       the lever reads more like a real object at
+       moderate viewing distance.
+       ============================================= */
     .assembly-toggle {
       position: relative;
       width: 44px;
       height: 110px;
-      perspective: 1000px;
+      perspective: 1400px;
       transform-style: preserve-3d;
     }
 
@@ -277,12 +283,12 @@
 
     /* =============================================
        LEVER
-       transform-style: preserve-3d so ::before edge
-       face lives in the same 3D space as the lever.
-       backface-visibility: hidden eliminates the
-       back-face flash at the 90deg crossover.
-       transition refined to standard ease for smooth
-       mechanical deceleration into the detent.
+       transform-style: preserve-3d keeps ::before
+       and ::after in the same 3D rendering context.
+       backface-visibility: hidden kills back-face
+       flash at the 90deg crossover.
+       Transition refined: slow start, authority
+       through the arc, firm seat at the detent.
        ============================================= */
     .lever {
       position: absolute;
@@ -294,7 +300,7 @@
       border-radius: 13px 13px 6px 6px;
       transform-origin: center 90%;
       margin-left: -13px;
-      transition: transform 0.38s cubic-bezier(0.25, 0.1, 0.25, 1.0);
+      transition: transform 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
       z-index: 5;
       backface-visibility: hidden;
       transform-style: preserve-3d;
@@ -318,59 +324,6 @@
       transform-origin: center 90%;
     }
 
-    /* =============================================
-       LEVER TOP-EDGE THICKNESS FACE
-       Sits at top: 0 of the lever, rotated 90deg
-       around its top edge so it faces the viewer
-       exactly when the lever is at -90deg DOWN.
-
-       Combined rotation math:
-         OFF  → lever rotateX(-90) + face rotateX(90) = 0deg  → faces viewer ✓
-         ON   → lever rotateX(20)  + face rotateX(90) = 110deg → backface hidden ✓
-
-       backface-visibility: visible so it shows
-       when facing forward at the 90deg endpoint.
-       Width and border-radius match lever front face.
-       Height is 4px — the physical thickness of the bat.
-       ============================================= */
-    .lever::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 26px;
-      height: 4px;
-      background: linear-gradient(90deg, #888 0%, #e0e0e0 50%, #888 100%);
-      border-radius: 13px 13px 0 0;
-      transform: rotateX(90deg);
-      transform-origin: center top;
-      backface-visibility: visible;
-      pointer-events: none;
-    }
-
-    /* Radio lever edge — matches 33px width */
-    .assembly-toggle.radio .lever::before {
-      width: 33px;
-      border-radius: 16px 16px 0 0;
-    }
-
-    /* Small lever edge — matches 11px width */
-    .assembly-toggle.small .lever::before {
-      width: 11px;
-      height: 3px;
-      border-radius: 5px 5px 0 0;
-    }
-
-    /* Red lever edge (ISO/EMR) */
-    .toggle.red .lever::before {
-      background: linear-gradient(90deg, #700 0%, #c33 50%, #700 100%);
-    }
-
-    /* Orange lever edge (ICS MIC) */
-    .toggle.orange .lever::before {
-      background: linear-gradient(90deg, #742 0%, #c73 50%, #742 100%);
-    }
-
     /* ON: clearly reads as UP */
     [data-active="true"] .lever {
       transform: rotateX(20deg) translateZ(2px);
@@ -379,6 +332,121 @@
     /* OFF: true 90-degree down — real hardware endpoint */
     [data-active="false"] .lever {
       transform: rotateX(-90deg) translateZ(2px);
+    }
+
+    /* =============================================
+       LEVER TOP-EDGE FACE (::before)
+       Faces the viewer when lever is at -90deg DOWN.
+       Combined rotation: -90 + 90 = 0deg → visible.
+       Height increased to 6px for more physical mass.
+       Background has a brighter center stripe to
+       simulate the rounded top catching light.
+       ============================================= */
+    .lever::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 26px;
+      height: 6px;
+      background: linear-gradient(90deg,
+        #777 0%,
+        #cccccc 30%,
+        #f0f0f0 50%,
+        #cccccc 70%,
+        #777 100%);
+      border-radius: 13px 13px 0 0;
+      transform: rotateX(90deg);
+      transform-origin: center top;
+      backface-visibility: visible;
+      pointer-events: none;
+    }
+
+    .assembly-toggle.radio .lever::before {
+      width: 33px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    .assembly-toggle.small .lever::before {
+      width: 11px;
+      height: 4px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    .toggle.red .lever::before {
+      background: linear-gradient(90deg,
+        #600 0%,
+        #aa2222 30%,
+        #dd3333 50%,
+        #aa2222 70%,
+        #600 100%);
+    }
+
+    .toggle.orange .lever::before {
+      background: linear-gradient(90deg,
+        #532 0%,
+        #994422 30%,
+        #cc6633 50%,
+        #994422 70%,
+        #532 100%);
+    }
+
+    /* =============================================
+       LEVER RIGHT-SIDE EDGE FACE (::after)
+       Thin vertical strip on the right edge of the
+       lever, rotated -90deg around the right edge.
+       Adds side thickness during the arc so the
+       lever never reads as a flat card.
+       backface-visibility: visible so it stays
+       readable through the full transition.
+       transform-origin: right center pivots it
+       flush with the lever's right edge.
+       ============================================= */
+    .lever::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5px;
+      height: 55px;
+      background: linear-gradient(180deg,
+        #888 0%,
+        #666 40%,
+        #555 70%,
+        #444 100%);
+      border-radius: 0 13px 6px 0;
+      transform: rotateY(-90deg);
+      transform-origin: right center;
+      backface-visibility: visible;
+      pointer-events: none;
+    }
+
+    .assembly-toggle.radio .lever::after {
+      width: 6px;
+      height: 69px;
+      border-radius: 0 16px 8px 0;
+    }
+
+    .assembly-toggle.small .lever::after {
+      width: 3px;
+      height: 21px;
+      border-radius: 0 5px 3px 0;
+    }
+
+    .toggle.red .lever::after {
+      background: linear-gradient(180deg,
+        #722 0%,
+        #511 40%,
+        #400 70%,
+        #300 100%);
+    }
+
+    .toggle.orange .lever::after {
+      background: linear-gradient(180deg,
+        #742 0%,
+        #531 40%,
+        #421 70%,
+        #310 100%);
     }
 
     .toggle.red .lever    { background: linear-gradient(to right, #a22, #f44 50%, #811); }
