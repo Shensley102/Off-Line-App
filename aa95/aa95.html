@@ -132,13 +132,30 @@
     .box-music { width: 200px; height: 110px; left: 590px; top: 30px; }
     .box-ics   { width: 320px; height: 110px; right: 40px; bottom: 30px; }
 
-    /* COMPONENT GRID */
+    /* =============================================
+       COMPONENT GRID
+       filter + transition applied here — NOT on
+       .assembly-toggle — to avoid flattening the
+       3D rendering context (CSS compositing rule:
+       filter on a preserve-3d element collapses it).
+       Drop shadow simulates ambient occlusion:
+       lever UP casts a deeper shadow below it;
+       lever DOWN has a shallower shadow as the
+       lever body retracts toward the panel surface.
+       ============================================= */
     .component {
       position: absolute;
       display: flex;
       flex-direction: column;
       align-items: center;
       cursor: pointer;
+      filter: drop-shadow(0px 12px 6px rgba(0, 0, 0, 0.7));
+      transition: filter 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
+    }
+
+    /* Lever DOWN: shallower shadow as it retracts */
+    [data-active="false"].component.toggle {
+      filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.9));
     }
 
     .label {
@@ -162,13 +179,7 @@
       z-index: 10;
     }
 
-    /* =============================================
-       3D STAGE
-       perspective increased to 1400px — reduces
-       aggressive foreshortening during the arc so
-       the lever reads more like a real object at
-       moderate viewing distance.
-       ============================================= */
+    /* 3D STAGE — no filter here, preserves 3D context */
     .assembly-toggle {
       position: relative;
       width: 44px;
@@ -201,35 +212,13 @@
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
 
-    /* Standard end-cap (26px) */
+    /* =============================================
+       NUT END-CAP
+       Suppressed — lever no longer goes edge-on at
+       ±35deg so the cap is never needed or visible.
+       ============================================= */
     .nut::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 38% 32%,
-        #ffffff 0%,
-        #e8e8e8 25%,
-        #c0c0c0 55%,
-        #909090 80%,
-        #606060 100%);
-      box-shadow:
-        0 0 6px rgba(255,255,255,0.4),
-        inset 0 -2px 4px rgba(0,0,0,0.3),
-        inset 0 2px 4px rgba(255,255,255,0.5);
-      opacity: 0;
-      transition: opacity 0.15s ease 0s;
-      pointer-events: none;
-      z-index: 4;
-    }
-
-    [data-active="false"] .nut::before {
-      opacity: 1;
-      transition: opacity 0.15s ease 0.38s;
+      display: none;
     }
 
     .assembly-toggle.radio .nut {
@@ -239,56 +228,18 @@
       border-radius: 5px;
     }
 
-    .assembly-toggle.radio .nut::before {
-      width: 33px;
-      height: 33px;
-    }
-
     .assembly-toggle.small .nut {
       width: 16px;
       height: 8px;
       bottom: 12px;
     }
 
-    .assembly-toggle.small .nut::before {
-      width: 11px;
-      height: 11px;
-    }
-
-    .toggle.red .nut::before {
-      background: radial-gradient(circle at 38% 32%,
-        #ff9999 0%,
-        #ee4444 25%,
-        #cc1111 55%,
-        #880000 80%,
-        #440000 100%);
-      box-shadow:
-        0 0 8px rgba(255, 60, 60, 0.5),
-        inset 0 -2px 4px rgba(0,0,0,0.4),
-        inset 0 2px 4px rgba(255,150,150,0.4);
-    }
-
-    .toggle.orange .nut::before {
-      background: radial-gradient(circle at 38% 32%,
-        #ffcc88 0%,
-        #ee9933 25%,
-        #cc6600 55%,
-        #884400 80%,
-        #442200 100%);
-      box-shadow:
-        0 0 8px rgba(255, 160, 40, 0.4),
-        inset 0 -2px 4px rgba(0,0,0,0.4),
-        inset 0 2px 4px rgba(255,200,100,0.4);
-    }
-
     /* =============================================
        LEVER
-       transform-style: preserve-3d keeps ::before
-       and ::after in the same 3D rendering context.
-       backface-visibility: hidden kills back-face
-       flash at the 90deg crossover.
-       Transition refined: slow start, authority
-       through the arc, firm seat at the detent.
+       transform-origin moved to center 82% — hinge
+       sits deeper inside the nut body rather than
+       floating on its surface.
+       Transition: authority through arc, firm seat.
        ============================================= */
     .lever {
       position: absolute;
@@ -298,7 +249,7 @@
       height: 55px;
       background: linear-gradient(90deg, #a0a0a0 0%, #ffffff 50%, #a0a0a0 100%);
       border-radius: 13px 13px 6px 6px;
-      transform-origin: center 90%;
+      transform-origin: center 82%;
       margin-left: -13px;
       transition: transform 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
       z-index: 5;
@@ -313,7 +264,7 @@
       margin-left: -16.5px;
       bottom: 43px;
       border-radius: 16px 16px 8px 8px;
-      transform-origin: center 90%;
+      transform-origin: center 82%;
     }
 
     .assembly-toggle.small .lever {
@@ -321,26 +272,23 @@
       height: 21px;
       margin-left: -5.5px;
       bottom: 14px;
-      transform-origin: center 90%;
+      transform-origin: center 82%;
     }
 
-    /* ON: clearly reads as UP */
+    /* ON: +35deg — lever tilted toward viewer */
     [data-active="true"] .lever {
-      transform: rotateX(20deg) translateZ(2px);
+      transform: rotateX(35deg) translateZ(2px);
     }
 
-    /* OFF: true 90-degree down — real hardware endpoint */
+    /* OFF: -35deg — lever tilted away, hardware endpoint */
     [data-active="false"] .lever {
-      transform: rotateX(-90deg) translateZ(2px);
+      transform: rotateX(-35deg) translateZ(2px);
     }
 
     /* =============================================
        LEVER TOP-EDGE FACE (::before)
-       Faces the viewer when lever is at -90deg DOWN.
-       Combined rotation: -90 + 90 = 0deg → visible.
-       Height increased to 6px for more physical mass.
-       Background has a brighter center stripe to
-       simulate the rounded top catching light.
+       Retained but only subtly visible at ±35deg —
+       provides a hint of physical top-edge rounding.
        ============================================= */
     .lever::before {
       content: '';
@@ -393,14 +341,13 @@
 
     /* =============================================
        LEVER RIGHT-SIDE EDGE FACE (::after)
-       Thin vertical strip on the right edge of the
-       lever, rotated -90deg around the right edge.
-       Adds side thickness during the arc so the
-       lever never reads as a flat card.
-       backface-visibility: visible so it stays
-       readable through the full transition.
-       transform-origin: right center pivots it
-       flush with the lever's right edge.
+       Dynamic lighting: opacity transitions with
+       the lever state to simulate a metallic
+       cylinder catching overhead ambient light.
+       ON  (tilted toward viewer) → full brightness
+       OFF (tilted away)         → 0.6 opacity,
+           simulating the side face turning away
+           from the overhead light source.
        ============================================= */
     .lever::after {
       content: '';
@@ -419,6 +366,13 @@
       transform-origin: right center;
       backface-visibility: visible;
       pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.38s ease;
+    }
+
+    /* Darken side edge when lever tilts away from light */
+    [data-active="false"] .lever::after {
+      opacity: 0.6;
     }
 
     .assembly-toggle.radio .lever::after {
@@ -458,6 +412,12 @@
     @media (prefers-reduced-motion: reduce) {
       .lever {
         transition: transform 0.01s linear;
+      }
+      .lever::after {
+        transition: opacity 0.01s linear;
+      }
+      .component {
+        transition: filter 0.01s linear;
       }
     }
 
