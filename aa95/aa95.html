@@ -222,7 +222,6 @@
         inset 0 -2px 4px rgba(0,0,0,0.3),
         inset 0 2px 4px rgba(255,255,255,0.5);
       opacity: 0;
-      /* OFF: fade in after lever finishes (0.45s flip + short gap) */
       transition: opacity 0.15s ease 0s;
       pointer-events: none;
       z-index: 4;
@@ -231,7 +230,7 @@
     /* Show cap when toggle is OFF */
     [data-active="false"] .nut::before {
       opacity: 1;
-      transition: opacity 0.15s ease 0.40s;  /* delay = lever flip duration */
+      transition: opacity 0.15s ease 0.38s;  /* delay matches new lever flip duration */
     }
 
     /* Radio nut */
@@ -290,10 +289,10 @@
     }
 
     /* =============================================
-       LEVER — smooth slow mechanical flip
-       No transform-style: preserve-3d needed (no ::after)
-       transition slowed to 0.45s ease-in-out for
-       deliberate mechanical feel.
+       LEVER — real bat-handle toggle motion
+       pivot at 90% down the lever body (inside the nut),
+       deceleration curve for mechanical detent feel,
+       no bounce, no spring.
        ============================================= */
     .lever {
       position: absolute;
@@ -303,11 +302,12 @@
       height: 55px;
       background: linear-gradient(90deg, #a0a0a0 0%, #ffffff 50%, #a0a0a0 100%);
       border-radius: 13px 13px 6px 6px;
-      transform-origin: bottom center;
+      transform-origin: center 90%;
       margin-left: -13px;
-      transition: transform 0.45s ease-in-out;
+      transition: transform 0.38s cubic-bezier(0.4, 0.0, 0.2, 1);
       z-index: 5;
       backface-visibility: visible;
+      will-change: transform;
     }
 
     .assembly-toggle.radio .lever {
@@ -316,6 +316,7 @@
       margin-left: -16.5px;
       bottom: 43px;
       border-radius: 16px 16px 8px 8px;
+      transform-origin: center 90%;
     }
 
     .assembly-toggle.small .lever {
@@ -323,22 +324,30 @@
       height: 21px;
       margin-left: -5.5px;
       bottom: 14px;
+      transform-origin: center 90%;
     }
 
-    /* ON POSITION */
+    /* ON: clearly reads as UP */
     [data-active="true"] .lever {
-      transform: rotateX(15deg) translateZ(5px);
+      transform: rotateX(20deg);
     }
 
-    /* OFF POSITION: perpendicular to panel */
+    /* OFF: seats just before perpendicular — real detent behavior */
     [data-active="false"] .lever {
-      transform: rotateX(-90deg) translateZ(5px);
+      transform: rotateX(-85deg);
     }
 
     .toggle.red .lever    { background: linear-gradient(to right, #a22, #f44 50%, #811); }
     .toggle.orange .lever { background: linear-gradient(to right, #a62, #f94 50%, #841); }
 
     .component.radio-toggle { z-index: 10; }
+
+    /* Reduced motion — instant transition for accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .lever {
+        transition: transform 0.01s linear;
+      }
+    }
 
     /* VOLUME KNOBS */
     .knob-vol {
