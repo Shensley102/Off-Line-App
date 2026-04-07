@@ -134,14 +134,13 @@
 
     /* =============================================
        COMPONENT GRID
-       filter + transition applied here — NOT on
-       .assembly-toggle — to avoid flattening the
-       3D rendering context (CSS compositing rule:
-       filter on a preserve-3d element collapses it).
-       Drop shadow simulates ambient occlusion:
-       lever UP casts a deeper shadow below it;
-       lever DOWN has a shallower shadow as the
-       lever body retracts toward the panel surface.
+       filter + transition on .component.toggle ONLY
+       (not on .assembly-toggle) to avoid flattening
+       the 3D rendering context. Generic .component
+       gets no filter so knobs/buttons are unaffected.
+
+       Lever UP  → deep shadow cast downward
+       Lever DOWN → tight shadow, lever flush to panel
        ============================================= */
     .component {
       position: absolute;
@@ -149,13 +148,15 @@
       flex-direction: column;
       align-items: center;
       cursor: pointer;
-      filter: drop-shadow(0px 12px 6px rgba(0, 0, 0, 0.7));
+    }
+
+    .component.toggle {
+      filter: drop-shadow(0px 8px 5px rgba(0, 0, 0, 0.8));
       transition: filter 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
     }
 
-    /* Lever DOWN: shallower shadow as it retracts */
     [data-active="false"].component.toggle {
-      filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.9));
+      filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.95));
     }
 
     .label {
@@ -179,7 +180,11 @@
       z-index: 10;
     }
 
-    /* 3D STAGE — no filter here, preserves 3D context */
+    /* =============================================
+       3D STAGE
+       No filter here — preserves the 3D context.
+       filter on a preserve-3d element collapses it.
+       ============================================= */
     .assembly-toggle {
       position: relative;
       width: 44px;
@@ -198,7 +203,13 @@
       height: 45px;
     }
 
-    /* NUT */
+    /* =============================================
+       NUT
+       ::before end-cap restored — lever reaches
+       -90deg again so the cap is needed to show
+       the cylindrical face when fully down.
+       Fades in after lever finishes its sweep.
+       ============================================= */
     .nut {
       position: absolute;
       bottom: 28px;
@@ -212,13 +223,35 @@
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
 
-    /* =============================================
-       NUT END-CAP
-       Suppressed — lever no longer goes edge-on at
-       ±35deg so the cap is never needed or visible.
-       ============================================= */
     .nut::before {
-      display: none;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%,
+        #ffffff 0%,
+        #e8e8e8 25%,
+        #c0c0c0 55%,
+        #909090 80%,
+        #606060 100%);
+      box-shadow:
+        0 0 6px rgba(255,255,255,0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.3),
+        inset 0 2px 4px rgba(255,255,255,0.5);
+      opacity: 0;
+      /* Disappears instantly on UP, fades in after lever settles DOWN */
+      transition: opacity 0.15s ease 0s;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    [data-active="false"] .nut::before {
+      opacity: 1;
+      transition: opacity 0.15s ease 0.38s;
     }
 
     .assembly-toggle.radio .nut {
@@ -228,18 +261,53 @@
       border-radius: 5px;
     }
 
+    .assembly-toggle.radio .nut::before {
+      width: 33px;
+      height: 33px;
+    }
+
     .assembly-toggle.small .nut {
       width: 16px;
       height: 8px;
       bottom: 12px;
     }
 
+    .assembly-toggle.small .nut::before {
+      width: 11px;
+      height: 11px;
+    }
+
+    .toggle.red .nut::before {
+      background: radial-gradient(circle at 38% 32%,
+        #ff9999 0%,
+        #ee4444 25%,
+        #cc1111 55%,
+        #880000 80%,
+        #440000 100%);
+      box-shadow:
+        0 0 8px rgba(255, 60, 60, 0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,150,150,0.4);
+    }
+
+    .toggle.orange .nut::before {
+      background: radial-gradient(circle at 38% 32%,
+        #ffcc88 0%,
+        #ee9933 25%,
+        #cc6600 55%,
+        #884400 80%,
+        #442200 100%);
+      box-shadow:
+        0 0 8px rgba(255, 160, 40, 0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,200,100,0.4);
+    }
+
     /* =============================================
        LEVER
-       transform-origin moved to center 82% — hinge
-       sits deeper inside the nut body rather than
-       floating on its surface.
-       Transition: authority through arc, firm seat.
+       transform-origin: center 85% — hinge sits
+       deep inside the nut, critical at extreme angles.
+       Transition: authority through arc, firm detent.
        ============================================= */
     .lever {
       position: absolute;
@@ -249,7 +317,7 @@
       height: 55px;
       background: linear-gradient(90deg, #a0a0a0 0%, #ffffff 50%, #a0a0a0 100%);
       border-radius: 13px 13px 6px 6px;
-      transform-origin: center 82%;
+      transform-origin: center 85%;
       margin-left: -13px;
       transition: transform 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
       z-index: 5;
@@ -264,7 +332,7 @@
       margin-left: -16.5px;
       bottom: 43px;
       border-radius: 16px 16px 8px 8px;
-      transform-origin: center 82%;
+      transform-origin: center 85%;
     }
 
     .assembly-toggle.small .lever {
@@ -272,23 +340,23 @@
       height: 21px;
       margin-left: -5.5px;
       bottom: 14px;
-      transform-origin: center 82%;
+      transform-origin: center 85%;
     }
 
-    /* ON: +35deg — lever tilted toward viewer */
+    /* ON: massive throw toward viewer — 75deg */
     [data-active="true"] .lever {
-      transform: rotateX(35deg) translateZ(2px);
+      transform: rotateX(75deg) translateZ(2px);
     }
 
-    /* OFF: -35deg — lever tilted away, hardware endpoint */
+    /* OFF: full perpendicular — real hardware endpoint */
     [data-active="false"] .lever {
-      transform: rotateX(-35deg) translateZ(2px);
+      transform: rotateX(-90deg) translateZ(2px);
     }
 
     /* =============================================
        LEVER TOP-EDGE FACE (::before)
-       Retained but only subtly visible at ±35deg —
-       provides a hint of physical top-edge rounding.
+       Faces viewer when lever is at -90deg DOWN.
+       Combined: lever -90 + face +90 = 0deg → visible.
        ============================================= */
     .lever::before {
       content: '';
@@ -341,13 +409,15 @@
 
     /* =============================================
        LEVER RIGHT-SIDE EDGE FACE (::after)
-       Dynamic lighting: opacity transitions with
-       the lever state to simulate a metallic
-       cylinder catching overhead ambient light.
-       ON  (tilted toward viewer) → full brightness
-       OFF (tilted away)         → 0.6 opacity,
-           simulating the side face turning away
-           from the overhead light source.
+       Dynamic lighting simulates a metallic cylinder
+       catching overhead ambient light as it swings.
+
+       ON  (+75deg, swung toward viewer/overhead):
+           opacity: 0.9 — side face catches more light
+       OFF (-90deg, swung down/away):
+           opacity: 0.4 — side face turns away, shadowed
+
+       Transition curve matches lever motion exactly.
        ============================================= */
     .lever::after {
       content: '';
@@ -367,12 +437,17 @@
       backface-visibility: visible;
       pointer-events: none;
       opacity: 1;
-      transition: opacity 0.38s ease;
+      transition: opacity 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
     }
 
-    /* Darken side edge when lever tilts away from light */
+    /* Bright side edge when lever swings up toward light */
+    [data-active="true"] .lever::after {
+      opacity: 0.9;
+    }
+
+    /* Shadowed side edge when lever swings down away from light */
     [data-active="false"] .lever::after {
-      opacity: 0.6;
+      opacity: 0.4;
     }
 
     .assembly-toggle.radio .lever::after {
@@ -416,7 +491,7 @@
       .lever::after {
         transition: opacity 0.01s linear;
       }
-      .component {
+      .component.toggle {
         transition: filter 0.01s linear;
       }
     }
