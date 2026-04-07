@@ -181,13 +181,7 @@
       height: 45px;
     }
 
-    /* =============================================
-       NUT — mounting hardware
-       ::before is the end-cap circle, rendered as a
-       2D child of the nut so it always paints on top.
-       Fades IN after lever finishes flipping DOWN (0.35s delay).
-       Disappears instantly when lever goes UP (no delay).
-       ============================================= */
+    /* NUT */
     .nut {
       position: absolute;
       bottom: 28px;
@@ -230,7 +224,7 @@
     /* Show cap when toggle is OFF */
     [data-active="false"] .nut::before {
       opacity: 1;
-      transition: opacity 0.15s ease 0.38s;  /* delay matches new lever flip duration */
+      transition: opacity 0.15s ease 0.38s;
     }
 
     /* Radio nut */
@@ -241,7 +235,7 @@
       border-radius: 5px;
     }
 
-    /* Radio end-cap (33px — matches radio lever width) */
+    /* Radio end-cap (33px) */
     .assembly-toggle.radio .nut::before {
       width: 33px;
       height: 33px;
@@ -254,7 +248,7 @@
       bottom: 12px;
     }
 
-    /* Small end-cap (11px — matches small lever width) */
+    /* Small end-cap (11px) */
     .assembly-toggle.small .nut::before {
       width: 11px;
       height: 11px;
@@ -289,10 +283,12 @@
     }
 
     /* =============================================
-       LEVER — real bat-handle toggle motion
-       pivot at 90% down the lever body (inside the nut),
-       deceleration curve for mechanical detent feel,
-       no bounce, no spring.
+       LEVER
+       backface-visibility: hidden — eliminates the
+       back-face flash/shutter at the 90° crossover.
+       translateZ(2px) on both states — keeps lever
+       above nut plane throughout full sweep,
+       preventing z-fighting flicker.
        ============================================= */
     .lever {
       position: absolute;
@@ -306,7 +302,7 @@
       margin-left: -13px;
       transition: transform 0.38s cubic-bezier(0.4, 0.0, 0.2, 1);
       z-index: 5;
-      backface-visibility: visible;
+      backface-visibility: hidden;
       will-change: transform;
     }
 
@@ -327,14 +323,14 @@
       transform-origin: center 90%;
     }
 
-    /* ON: clearly reads as UP */
+    /* ON: clearly reads as UP, lifted above nut plane */
     [data-active="true"] .lever {
-      transform: rotateX(20deg);
+      transform: rotateX(20deg) translateZ(2px);
     }
 
-    /* OFF: seats just before perpendicular — real detent behavior */
+    /* OFF: seats just before perpendicular, lifted above nut plane */
     [data-active="false"] .lever {
-      transform: rotateX(-85deg);
+      transform: rotateX(-85deg) translateZ(2px);
     }
 
     .toggle.red .lever    { background: linear-gradient(to right, #a22, #f44 50%, #811); }
@@ -342,7 +338,7 @@
 
     .component.radio-toggle { z-index: 10; }
 
-    /* Reduced motion — instant transition for accessibility */
+    /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
       .lever {
         transition: transform 0.01s linear;
