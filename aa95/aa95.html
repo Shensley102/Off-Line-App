@@ -195,7 +195,7 @@
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
 
-    /* Standard end-cap (26px — matches standard lever width) */
+    /* Standard end-cap (26px) */
     .nut::before {
       content: '';
       position: absolute;
@@ -221,13 +221,11 @@
       z-index: 4;
     }
 
-    /* Show cap when toggle is OFF */
     [data-active="false"] .nut::before {
       opacity: 1;
       transition: opacity 0.15s ease 0.38s;
     }
 
-    /* Radio nut */
     .assembly-toggle.radio .nut {
       width: 50px;
       height: 23px;
@@ -235,26 +233,22 @@
       border-radius: 5px;
     }
 
-    /* Radio end-cap (33px) */
     .assembly-toggle.radio .nut::before {
       width: 33px;
       height: 33px;
     }
 
-    /* Small nut */
     .assembly-toggle.small .nut {
       width: 16px;
       height: 8px;
       bottom: 12px;
     }
 
-    /* Small end-cap (11px) */
     .assembly-toggle.small .nut::before {
       width: 11px;
       height: 11px;
     }
 
-    /* Red end-cap (ISO/EMR) */
     .toggle.red .nut::before {
       background: radial-gradient(circle at 38% 32%,
         #ff9999 0%,
@@ -268,7 +262,6 @@
         inset 0 2px 4px rgba(255,150,150,0.4);
     }
 
-    /* Orange end-cap (ICS MIC) */
     .toggle.orange .nut::before {
       background: radial-gradient(circle at 38% 32%,
         #ffcc88 0%,
@@ -284,11 +277,12 @@
 
     /* =============================================
        LEVER
-       backface-visibility: hidden — eliminates the
-       back-face flash/shutter at the 90° crossover.
-       translateZ(2px) on both states — keeps lever
-       above nut plane throughout full sweep,
-       preventing z-fighting flicker.
+       transform-style: preserve-3d so ::before edge
+       face lives in the same 3D space as the lever.
+       backface-visibility: hidden eliminates the
+       back-face flash at the 90deg crossover.
+       transition refined to standard ease for smooth
+       mechanical deceleration into the detent.
        ============================================= */
     .lever {
       position: absolute;
@@ -300,9 +294,10 @@
       border-radius: 13px 13px 6px 6px;
       transform-origin: center 90%;
       margin-left: -13px;
-      transition: transform 0.38s cubic-bezier(0.4, 0.0, 0.2, 1);
+      transition: transform 0.38s cubic-bezier(0.25, 0.1, 0.25, 1.0);
       z-index: 5;
       backface-visibility: hidden;
+      transform-style: preserve-3d;
       will-change: transform;
     }
 
@@ -323,14 +318,67 @@
       transform-origin: center 90%;
     }
 
-    /* ON: clearly reads as UP, lifted above nut plane */
+    /* =============================================
+       LEVER TOP-EDGE THICKNESS FACE
+       Sits at top: 0 of the lever, rotated 90deg
+       around its top edge so it faces the viewer
+       exactly when the lever is at -90deg DOWN.
+
+       Combined rotation math:
+         OFF  → lever rotateX(-90) + face rotateX(90) = 0deg  → faces viewer ✓
+         ON   → lever rotateX(20)  + face rotateX(90) = 110deg → backface hidden ✓
+
+       backface-visibility: visible so it shows
+       when facing forward at the 90deg endpoint.
+       Width and border-radius match lever front face.
+       Height is 4px — the physical thickness of the bat.
+       ============================================= */
+    .lever::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 26px;
+      height: 4px;
+      background: linear-gradient(90deg, #888 0%, #e0e0e0 50%, #888 100%);
+      border-radius: 13px 13px 0 0;
+      transform: rotateX(90deg);
+      transform-origin: center top;
+      backface-visibility: visible;
+      pointer-events: none;
+    }
+
+    /* Radio lever edge — matches 33px width */
+    .assembly-toggle.radio .lever::before {
+      width: 33px;
+      border-radius: 16px 16px 0 0;
+    }
+
+    /* Small lever edge — matches 11px width */
+    .assembly-toggle.small .lever::before {
+      width: 11px;
+      height: 3px;
+      border-radius: 5px 5px 0 0;
+    }
+
+    /* Red lever edge (ISO/EMR) */
+    .toggle.red .lever::before {
+      background: linear-gradient(90deg, #700 0%, #c33 50%, #700 100%);
+    }
+
+    /* Orange lever edge (ICS MIC) */
+    .toggle.orange .lever::before {
+      background: linear-gradient(90deg, #742 0%, #c73 50%, #742 100%);
+    }
+
+    /* ON: clearly reads as UP */
     [data-active="true"] .lever {
       transform: rotateX(20deg) translateZ(2px);
     }
 
-    /* OFF: seats just before perpendicular, lifted above nut plane */
+    /* OFF: true 90-degree down — real hardware endpoint */
     [data-active="false"] .lever {
-      transform: rotateX(-85deg) translateZ(2px);
+      transform: rotateX(-90deg) translateZ(2px);
     }
 
     .toggle.red .lever    { background: linear-gradient(to right, #a22, #f44 50%, #811); }
