@@ -144,10 +144,10 @@
       cursor: pointer;
     }
 
-    /* CHANGED: duration 0.38s → 0.32s, easing → ease-out */
+    /* duration: 320ms → 480ms */
     .component.toggle {
       filter: drop-shadow(0px 6px 4px rgba(0, 0, 0, 0.75));
-      transition: filter 0.32s ease-out;
+      transition: filter 0.48s ease-out;
     }
 
     [data-active="false"].component.toggle {
@@ -216,8 +216,8 @@
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
 
-    /* Standard end-cap: 26px matches standard lever width */
-    /* CHANGED: opacity transition 0.15s → 0.12s (clears before snap fires) */
+    /* Standard end-cap: 26px matches standard lever width.
+       ON→OFF: fade duration scaled 0.12s → 0.18s */
     .nut::before {
       content: '';
       position: absolute;
@@ -238,17 +238,16 @@
         inset 0 -2px 4px rgba(0,0,0,0.3),
         inset 0 2px 4px rgba(255,255,255,0.5);
       opacity: 0;
-      /* ON→OFF: fade in after lever finishes rotating */
-      /* CHANGED: 0.15s → 0.12s */
-      transition: opacity 0.12s ease 0s;
+      /* ON→OFF: scaled 0.12s → 0.18s */
+      transition: opacity 0.18s ease 0s;
       pointer-events: none;
       z-index: 4;
     }
 
-    /* CHANGED: fade duration 0.18s → 0.16s, delay 0.32s → 0.30s */
+    /* OFF state: fade duration 0.16s → 0.24s, delay 0.30s → 0.45s */
     [data-active="false"] .nut::before {
       opacity: 1;
-      transition: opacity 0.16s ease 0.30s;
+      transition: opacity 0.24s ease 0.45s;
     }
 
     .assembly-toggle.radio .nut {
@@ -316,10 +315,14 @@
                giving correct end-on cylinder view.
 
        Spring physics (MS25306-series over-center snap):
-         Phase 1 (0–30%):  Resistance — spring loading against detent
-         Phase 2 (30–58%): Snap — explosive acceleration past dead-center
-         Phase 3 (58–65%): Overshoot — +5% past target from momentum
-         Phase 4 (65–100%): Settle — damped return to exact position
+         Phase 1 (0–32%):  Resistance — spring loading against detent
+         Phase 2 (32–61%): Snap — smooth acceleration past dead-center
+         Phase 3 (61–68%): Overshoot — +5% past target from momentum
+         Phase 4 (68–100%): Settle — damped return to exact position
+
+       Duration scaled ×1.5: 320ms → 480ms
+       Curve re-tuned: shallower snap entry ramp for smooth feel
+       at 480ms. Overshoot magnitude preserved at +5%.
        ============================================= */
     .lever {
       position: absolute;
@@ -331,24 +334,25 @@
       border-radius: 13px 13px 6px 6px;
       transform-origin: center 85%;
       margin-left: -13px;
-      /* CHANGED: spring-physics easing via linear(), 380ms → 320ms */
+      /* Re-tuned spring for 480ms: shallower snap ramp,
+         same overshoot character, full-duration settle */
       --spring: linear(
-        0 0%,
-        0.01 8%,
-        0.04 20%,
-        0.08 30%,
-        0.22 36%,
-        0.55 43%,
-        0.90 51%,
-        1.04 58%,
-        1.05 65%,
-        1.03 73%,
-        1.01 82%,
+        0    0%,
+        0.02 10%,
+        0.06 22%,
+        0.12 32%,
+        0.28 38%,
+        0.60 46%,
+        0.88 54%,
+        1.04 61%,
+        1.05 68%,
+        1.03 76%,
+        1.01 86%,
         1.00 100%
       );
       transition:
-        transform 0.32s var(--spring),
-        opacity   0.32s var(--spring);
+        transform 0.48s var(--spring),
+        opacity   0.48s var(--spring);
       z-index: 5;
       backface-visibility: hidden;
       transform-style: preserve-3d;
@@ -424,8 +428,8 @@
     }
 
     /* LEVER RIGHT-SIDE EDGE FACE (::after)
-       Inherits opacity from .lever — fades with shaft. */
-    /* CHANGED: transition duration 0.38s → 0.32s, easing → var(--spring) */
+       Inherits opacity from .lever — fades with shaft.
+       Duration scaled 320ms → 480ms. */
     .lever::after {
       content: '';
       position: absolute;
@@ -441,7 +445,7 @@
       backface-visibility: visible;
       pointer-events: none;
       opacity: 1;
-      transition: opacity 0.32s var(--spring);
+      transition: opacity 0.48s var(--spring);
     }
 
     [data-active="true"] .lever::after  { opacity: 0.85; }
