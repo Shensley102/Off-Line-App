@@ -144,7 +144,6 @@
       cursor: pointer;
     }
 
-    /* duration: 320ms → 480ms */
     .component.toggle {
       filter: drop-shadow(0px 6px 4px rgba(0, 0, 0, 0.75));
       transition: filter 0.48s ease-out;
@@ -196,12 +195,8 @@
 
     /* =============================================
        NUT
-       ::before end-cap restored.
-       At rotateX(0deg) the lever is face-on so the
-       shaft fades out and the circle is all that
-       remains — physically correct cylinder end-on.
-       Fades in after lever completes its rotation.
-       Disappears instantly on transition to ON.
+       End-cap circle suppressed — lever stays
+       visible in both states, no opacity swap.
        ============================================= */
     .nut {
       position: absolute;
@@ -216,38 +211,10 @@
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
 
-    /* Standard end-cap: 26px matches standard lever width.
-       ON→OFF: fade duration scaled 0.12s → 0.18s */
+    /* End-cap permanently suppressed — lever is visible in both states */
     .nut::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 26px;
-      height: 26px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 38% 32%,
-        #ffffff 0%,
-        #e8e8e8 25%,
-        #c0c0c0 55%,
-        #909090 80%,
-        #606060 100%);
-      box-shadow:
-        0 0 6px rgba(255,255,255,0.4),
-        inset 0 -2px 4px rgba(0,0,0,0.3),
-        inset 0 2px 4px rgba(255,255,255,0.5);
-      opacity: 0;
-      /* ON→OFF: scaled 0.12s → 0.18s */
-      transition: opacity 0.18s ease 0s;
-      pointer-events: none;
-      z-index: 4;
-    }
-
-    /* OFF state: fade duration 0.16s → 0.24s, delay 0.30s → 0.45s */
-    [data-active="false"] .nut::before {
-      opacity: 1;
-      transition: opacity 0.24s ease 0.45s;
+      opacity: 0 !important;
+      transition: none !important;
     }
 
     .assembly-toggle.radio .nut {
@@ -257,7 +224,6 @@
       border-radius: 5px;
     }
 
-    /* Radio end-cap: 33px matches radio lever width */
     .assembly-toggle.radio .nut::before {
       width: 33px;
       height: 33px;
@@ -269,94 +235,48 @@
       bottom: 12px;
     }
 
-    /* Small end-cap: 11px matches small lever width */
     .assembly-toggle.small .nut::before {
       width: 11px;
       height: 11px;
     }
 
-    .toggle.red .nut::before {
-      background: radial-gradient(circle at 38% 32%,
-        #ff9999 0%,
-        #ee4444 25%,
-        #cc1111 55%,
-        #880000 80%,
-        #440000 100%);
-      box-shadow:
-        0 0 8px rgba(255, 60, 60, 0.5),
-        inset 0 -2px 4px rgba(0,0,0,0.4),
-        inset 0 2px 4px rgba(255,150,150,0.4);
-    }
-
-    .toggle.orange .nut::before {
-      background: radial-gradient(circle at 38% 32%,
-        #ffcc88 0%,
-        #ee9933 25%,
-        #cc6600 55%,
-        #884400 80%,
-        #442200 100%);
-      box-shadow:
-        0 0 8px rgba(255, 160, 40, 0.4),
-        inset 0 -2px 4px rgba(0,0,0,0.4),
-        inset 0 2px 4px rgba(255,200,100,0.4);
-    }
-
     /* =============================================
-       LEVER
-       Protractor-confirmed geometry:
-         ON  = 60° from faceplate → rotateX(-30deg)
-         OFF = 90° from faceplate → rotateX(0deg)
-         Throw = 30° arc ✓
-
-       opacity transitions with transform:
-         ON  → opacity: 1, shaft fully visible
-         OFF → opacity: 0, shaft invisible — only
-               the nut::before circle remains,
-               giving correct end-on cylinder view.
-
-       Spring physics (MS25306-series over-center snap):
-         Phase 1 (0–32%):  Resistance — spring loading against detent
-         Phase 2 (32–61%): Snap — smooth acceleration past dead-center
-         Phase 3 (61–68%): Overshoot — +5% past target from momentum
-         Phase 4 (68–100%): Settle — damped return to exact position
-
-       Duration scaled ×1.5: 320ms → 480ms
-       Curve re-tuned: shallower snap entry ramp for smooth feel
-       at 480ms. Overshoot magnitude preserved at +5%.
+       TOGGLE MOVEMENT FIX
+       Keep lever visible in both states.
+       Pivot lower on the shaft for believable hinge.
+       Use angle + shading, not disappearance.
        ============================================= */
+
     .lever {
       position: absolute;
       bottom: 34px;
       left: 50%;
       width: 26px;
       height: 55px;
-      background: linear-gradient(90deg, #a0a0a0 0%, #ffffff 50%, #a0a0a0 100%);
-      border-radius: 13px 13px 6px 6px;
-      transform-origin: center 85%;
       margin-left: -13px;
-      /* Re-tuned spring for 480ms: shallower snap ramp,
-         same overshoot character, full-duration settle */
+      background: linear-gradient(90deg, #8f8f8f 0%, #f4f4f4 45%, #cfcfcf 55%, #8a8a8a 100%);
+      border-radius: 13px 13px 6px 6px;
+
+      /* lower pivot = more believable hinge motion */
+      transform-origin: 50% 96%;
+
       --spring: linear(
         0    0%,
-        0.02 10%,
-        0.06 22%,
-        0.12 32%,
-        0.28 38%,
-        0.60 46%,
-        0.88 54%,
-        1.04 61%,
-        1.05 68%,
-        1.03 76%,
-        1.01 86%,
+        0.03 12%,
+        0.10 24%,
+        0.22 36%,
+        0.55 48%,
+        0.92 60%,
+        1.04 70%,
+        1.02 82%,
         1.00 100%
       );
-      transition:
-        transform 0.48s var(--spring),
-        opacity   0.48s var(--spring);
+
+      transition: transform 0.34s var(--spring);
       z-index: 5;
       backface-visibility: hidden;
       transform-style: preserve-3d;
-      will-change: transform, opacity;
+      will-change: transform;
     }
 
     .assembly-toggle.radio .lever {
@@ -365,7 +285,7 @@
       margin-left: -16.5px;
       bottom: 43px;
       border-radius: 16px 16px 8px 8px;
-      transform-origin: center 85%;
+      transform-origin: 50% 96%;
     }
 
     .assembly-toggle.small .lever {
@@ -373,20 +293,18 @@
       height: 21px;
       margin-left: -5.5px;
       bottom: 14px;
-      transform-origin: center 85%;
+      transform-origin: 50% 96%;
     }
 
-    /* ON: 60° from faceplate — shaft visible, tilted back */
+    /* Lever visible in both states — angle only, no opacity change */
     [data-active="true"] .lever {
-      transform: rotateX(-30deg) translateZ(2px);
+      transform: rotateX(-24deg) translateZ(2px);
       opacity: 1;
     }
 
-    /* OFF: 90° from faceplate — shaft fades out as lever
-       rotates face-on. Circle from nut::before takes over. */
     [data-active="false"] .lever {
-      transform: rotateX(0deg) translateZ(2px);
-      opacity: 0;
+      transform: rotateX(18deg) translateZ(2px);
+      opacity: 1;
     }
 
     /* LEVER TOP-EDGE FACE (::before) */
@@ -428,8 +346,7 @@
     }
 
     /* LEVER RIGHT-SIDE EDGE FACE (::after)
-       Inherits opacity from .lever — fades with shaft.
-       Duration scaled 320ms → 480ms. */
+       Dimmer in OFF to suggest angle difference, not geometry change. */
     .lever::after {
       content: '';
       position: absolute;
@@ -445,11 +362,11 @@
       backface-visibility: visible;
       pointer-events: none;
       opacity: 1;
-      transition: opacity 0.48s var(--spring);
+      transition: opacity 0.34s var(--spring);
     }
 
-    [data-active="true"] .lever::after  { opacity: 0.85; }
-    [data-active="false"] .lever::after { opacity: 0.70; }
+    [data-active="true"] .lever::after  { opacity: 0.82; }
+    [data-active="false"] .lever::after { opacity: 0.58; }
 
     .assembly-toggle.radio .lever::after {
       width: 6px;
@@ -478,10 +395,10 @@
 
     .component.radio-toggle { z-index: 10; }
 
-    /* Reduced motion — overrides all spring/duration values above */
+    /* Reduced motion — no opacity on lever, just transform */
     @media (prefers-reduced-motion: reduce) {
-      .lever { transition: transform 0.01s linear, opacity 0.01s linear; }
-      .lever::after { transition: opacity 0.01s linear; }
+      .lever { transition: transform 0.01s linear; }
+      .lever::after { transition: none; }
       .component.toggle { transition: filter 0.01s linear; }
     }
 
