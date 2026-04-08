@@ -134,10 +134,7 @@
 
     /* =============================================
        COMPONENT GRID
-       filter on .component.toggle only — NOT on
-       .assembly-toggle — preserves 3D context.
-       OFF shadow very tight: lever is face-on,
-       minimal depth above panel surface.
+       filter on .component.toggle only.
        ============================================= */
     .component {
       position: absolute;
@@ -198,8 +195,12 @@
 
     /* =============================================
        NUT
-       Lever never goes edge-on at these angles
-       so end-cap remains suppressed.
+       ::before end-cap restored.
+       At rotateX(0deg) the lever is face-on so the
+       shaft fades out and the circle is all that
+       remains — physically correct cylinder end-on.
+       Fades in after lever completes its rotation.
+       Disappears instantly on transition to ON.
        ============================================= */
     .nut {
       position: absolute;
@@ -214,8 +215,37 @@
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
 
+    /* Standard end-cap: 26px matches standard lever width */
     .nut::before {
-      display: none;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 32%,
+        #ffffff 0%,
+        #e8e8e8 25%,
+        #c0c0c0 55%,
+        #909090 80%,
+        #606060 100%);
+      box-shadow:
+        0 0 6px rgba(255,255,255,0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.3),
+        inset 0 2px 4px rgba(255,255,255,0.5);
+      opacity: 0;
+      /* ON→OFF: fade in after lever finishes rotating */
+      transition: opacity 0.15s ease 0s;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    [data-active="false"] .nut::before {
+      opacity: 1;
+      /* Delay matches lever transform + opacity transition */
+      transition: opacity 0.18s ease 0.32s;
     }
 
     .assembly-toggle.radio .nut {
@@ -225,10 +255,48 @@
       border-radius: 5px;
     }
 
+    /* Radio end-cap: 33px matches radio lever width */
+    .assembly-toggle.radio .nut::before {
+      width: 33px;
+      height: 33px;
+    }
+
     .assembly-toggle.small .nut {
       width: 16px;
       height: 8px;
       bottom: 12px;
+    }
+
+    /* Small end-cap: 11px matches small lever width */
+    .assembly-toggle.small .nut::before {
+      width: 11px;
+      height: 11px;
+    }
+
+    .toggle.red .nut::before {
+      background: radial-gradient(circle at 38% 32%,
+        #ff9999 0%,
+        #ee4444 25%,
+        #cc1111 55%,
+        #880000 80%,
+        #440000 100%);
+      box-shadow:
+        0 0 8px rgba(255, 60, 60, 0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,150,150,0.4);
+    }
+
+    .toggle.orange .nut::before {
+      background: radial-gradient(circle at 38% 32%,
+        #ffcc88 0%,
+        #ee9933 25%,
+        #cc6600 55%,
+        #884400 80%,
+        #442200 100%);
+      box-shadow:
+        0 0 8px rgba(255, 160, 40, 0.4),
+        inset 0 -2px 4px rgba(0,0,0,0.4),
+        inset 0 2px 4px rgba(255,200,100,0.4);
     }
 
     /* =============================================
@@ -236,12 +304,13 @@
        Protractor-confirmed geometry:
          ON  = 60° from faceplate → rotateX(-30deg)
          OFF = 90° from faceplate → rotateX(0deg)
-               lever points straight out at viewer,
-               perpendicular to faceplate surface.
          Throw = 30° arc ✓
 
-       transform-origin: center 85% — pivot deep
-       in bushing, confirmed by schematic.
+       opacity transitions with transform:
+         ON  → opacity: 1, shaft fully visible
+         OFF → opacity: 0, shaft invisible — only
+               the nut::before circle remains,
+               giving correct end-on cylinder view.
        ============================================= */
     .lever {
       position: absolute;
@@ -253,11 +322,13 @@
       border-radius: 13px 13px 6px 6px;
       transform-origin: center 85%;
       margin-left: -13px;
-      transition: transform 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
+      transition:
+        transform 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0),
+        opacity  0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
       z-index: 5;
       backface-visibility: hidden;
       transform-style: preserve-3d;
-      will-change: transform;
+      will-change: transform, opacity;
     }
 
     .assembly-toggle.radio .lever {
@@ -277,19 +348,17 @@
       transform-origin: center 85%;
     }
 
-    /* ON: 60° from faceplate — lever tilted up and back */
+    /* ON: 60° from faceplate — shaft visible, tilted back */
     [data-active="true"] .lever {
       transform: rotateX(-30deg) translateZ(2px);
+      opacity: 1;
     }
 
-    /* =============================================
-       OFF: 90° from faceplate — lever perpendicular,
-       pointing straight out at the viewer.
-       rotateX(0deg) = no tilt = face-on to camera.
-       Matches protractor 90° dashed line exactly.
-       ============================================= */
+    /* OFF: 90° from faceplate — shaft fades out as lever
+       rotates face-on. Circle from nut::before takes over. */
     [data-active="false"] .lever {
       transform: rotateX(0deg) translateZ(2px);
+      opacity: 0;
     }
 
     /* LEVER TOP-EDGE FACE (::before) */
@@ -301,11 +370,7 @@
       width: 26px;
       height: 6px;
       background: linear-gradient(90deg,
-        #777 0%,
-        #cccccc 30%,
-        #f0f0f0 50%,
-        #cccccc 70%,
-        #777 100%);
+        #777 0%, #cccccc 30%, #f0f0f0 50%, #cccccc 70%, #777 100%);
       border-radius: 13px 13px 0 0;
       transform: rotateX(90deg);
       transform-origin: center top;
@@ -334,12 +399,8 @@
         #532 0%, #994422 30%, #cc6633 50%, #994422 70%, #532 100%);
     }
 
-    /* =============================================
-       LEVER RIGHT-SIDE EDGE FACE (::after)
-       Dynamic lighting:
-         ON  (-30deg): side angled toward overhead → 0.85
-         OFF (  0deg): lever face-on, side fully visible → 0.70
-       ============================================= */
+    /* LEVER RIGHT-SIDE EDGE FACE (::after)
+       Inherits opacity from .lever — fades with shaft. */
     .lever::after {
       content: '';
       position: absolute;
@@ -358,13 +419,8 @@
       transition: opacity 0.38s cubic-bezier(0.4, 0.0, 0.6, 1.0);
     }
 
-    [data-active="true"] .lever::after {
-      opacity: 0.85;
-    }
-
-    [data-active="false"] .lever::after {
-      opacity: 0.70;
-    }
+    [data-active="true"] .lever::after  { opacity: 0.85; }
+    [data-active="false"] .lever::after { opacity: 0.70; }
 
     .assembly-toggle.radio .lever::after {
       width: 6px;
@@ -395,7 +451,7 @@
 
     /* Reduced motion */
     @media (prefers-reduced-motion: reduce) {
-      .lever { transition: transform 0.01s linear; }
+      .lever { transition: transform 0.01s linear, opacity 0.01s linear; }
       .lever::after { transition: opacity 0.01s linear; }
       .component.toggle { transition: filter 0.01s linear; }
     }
