@@ -136,9 +136,8 @@
        COMPONENT GRID
        filter on .component.toggle only — NOT on
        .assembly-toggle — preserves 3D context.
-       Shadow tuned to the shallower 30deg throw:
-       ON  → moderate shadow cast off the raised lever
-       OFF → very tight shadow, lever near panel plane
+       OFF shadow very tight: lever is face-on,
+       minimal depth above panel surface.
        ============================================= */
     .component {
       position: absolute;
@@ -199,8 +198,8 @@
 
     /* =============================================
        NUT
-       At -30deg / -60deg the lever never goes
-       edge-on so the circular end-cap is suppressed.
+       Lever never goes edge-on at these angles
+       so end-cap remains suppressed.
        ============================================= */
     .nut {
       position: absolute;
@@ -234,21 +233,15 @@
 
     /* =============================================
        LEVER
-       Blueprint geometry:
-         OFF = 0° from panel horizontal (lever flush,
-               pointing away from viewer)
-         ON  = 30° above OFF baseline
+       Protractor-confirmed geometry:
+         ON  = 60° from faceplate → rotateX(-30deg)
+         OFF = 90° from faceplate → rotateX(0deg)
+               lever points straight out at viewer,
+               perpendicular to faceplate surface.
+         Throw = 30° arc ✓
 
-       In CSS rotateX terms (negative = tilts top
-       away from viewer, i.e. lies along panel):
-         OFF → rotateX(-60deg): lever shallow, nearly
-               horizontal along panel surface
-         ON  → rotateX(-30deg): lever 30deg above OFF,
-               clearly raised and readable as UP
-
-       30deg total throw — matches blueprint exactly.
        transform-origin: center 85% — pivot deep
-       inside bushing, confirmed by blueprint.
+       in bushing, confirmed by schematic.
        ============================================= */
     .lever {
       position: absolute;
@@ -284,30 +277,22 @@
       transform-origin: center 85%;
     }
 
-    /* =============================================
-       ON: 30deg above panel horizontal
-       Blueprint confirmed: lever points up-and-away
-       at ~30deg from the panel surface.
-       ============================================= */
+    /* ON: 60° from faceplate — lever tilted up and back */
     [data-active="true"] .lever {
       transform: rotateX(-30deg) translateZ(2px);
     }
 
     /* =============================================
-       OFF: horizontal / flush with panel surface
-       Blueprint confirmed: lever points straight
-       away from viewer along the panel plane.
+       OFF: 90° from faceplate — lever perpendicular,
+       pointing straight out at the viewer.
+       rotateX(0deg) = no tilt = face-on to camera.
+       Matches protractor 90° dashed line exactly.
        ============================================= */
     [data-active="false"] .lever {
-      transform: rotateX(-60deg) translateZ(2px);
+      transform: rotateX(0deg) translateZ(2px);
     }
 
-    /* =============================================
-       LEVER TOP-EDGE FACE (::before)
-       At these shallow angles the face is not
-       directly viewer-facing, but contributes
-       subtle physical depth at the lever tip.
-       ============================================= */
+    /* LEVER TOP-EDGE FACE (::before) */
     .lever::before {
       content: '';
       position: absolute;
@@ -341,29 +326,19 @@
 
     .toggle.red .lever::before {
       background: linear-gradient(90deg,
-        #600 0%,
-        #aa2222 30%,
-        #dd3333 50%,
-        #aa2222 70%,
-        #600 100%);
+        #600 0%, #aa2222 30%, #dd3333 50%, #aa2222 70%, #600 100%);
     }
 
     .toggle.orange .lever::before {
       background: linear-gradient(90deg,
-        #532 0%,
-        #994422 30%,
-        #cc6633 50%,
-        #994422 70%,
-        #532 100%);
+        #532 0%, #994422 30%, #cc6633 50%, #994422 70%, #532 100%);
     }
 
     /* =============================================
        LEVER RIGHT-SIDE EDGE FACE (::after)
-       Dynamic lighting at shallower angles:
-       differential is smaller so opacity range
-       is more subtle than the full 90deg version.
-       ON  (-30deg): side face more toward overhead → 0.85
-       OFF (-60deg): side face more away from light → 0.55
+       Dynamic lighting:
+         ON  (-30deg): side angled toward overhead → 0.85
+         OFF (  0deg): lever face-on, side fully visible → 0.70
        ============================================= */
     .lever::after {
       content: '';
@@ -373,10 +348,7 @@
       width: 5px;
       height: 55px;
       background: linear-gradient(180deg,
-        #888 0%,
-        #666 40%,
-        #555 70%,
-        #444 100%);
+        #888 0%, #666 40%, #555 70%, #444 100%);
       border-radius: 0 13px 6px 0;
       transform: rotateY(-90deg);
       transform-origin: right center;
@@ -391,7 +363,7 @@
     }
 
     [data-active="false"] .lever::after {
-      opacity: 0.55;
+      opacity: 0.70;
     }
 
     .assembly-toggle.radio .lever::after {
@@ -408,18 +380,12 @@
 
     .toggle.red .lever::after {
       background: linear-gradient(180deg,
-        #722 0%,
-        #511 40%,
-        #400 70%,
-        #300 100%);
+        #722 0%, #511 40%, #400 70%, #300 100%);
     }
 
     .toggle.orange .lever::after {
       background: linear-gradient(180deg,
-        #742 0%,
-        #531 40%,
-        #421 70%,
-        #310 100%);
+        #742 0%, #531 40%, #421 70%, #310 100%);
     }
 
     .toggle.red .lever    { background: linear-gradient(to right, #a22, #f44 50%, #811); }
