@@ -1,7 +1,7 @@
 {
-  "name": "RC-9100 Simulator",
-  "short_name": "RC-9100",
-  "description": "Technisonic RC-9100 Radio Simulator - Interactive dual-band radio control head simulator",
+  "name": "Aviation Simulators",
+  "short_name": "AvSim",
+  "description": "Aviation Equipment Simulators — Radio & Audio Panel Training Tools",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#101010",
