@@ -1,6 +1,6 @@
 /* sw.js - service worker for Aviation Simulators PWA */
 
-const CACHE_NAME = "radio-sim-v6";
+const CACHE_NAME = "radio-sim-v7";
 
 const ASSETS = [
   "/",
@@ -9,23 +9,9 @@ const ASSETS = [
   "/manifest.json",
   "/codeplug.json",
 
-  // AA95 assets (real photo cutout system)
+  // AA95 Audio Control Panel (Version B — SVG/CSS synthetic, no photo cutouts)
   "/aa95/aa95.html",
-  "/aa95/styles.css",
-  "/aa95/panel.js",
-  
-  // Base panel
-  "/aa95/assests/img_001.webp",
-  
-  // Real photo cutouts
-  "/aa95/assests/toggle-white.webp",
-  "/aa95/assests/mic-lever.webp",
-  "/aa95/assests/iso-emr.webp",
-  "/aa95/assests/selector-knob.webp",
-  "/aa95/assests/rx-knob.webp",
-  "/aa95/assests/ics-knob.webp",
-  "/aa95/assests/vox-knob.webp",
-  "/aa95/assests/ics-call-btn.webp",
+  "/aa95/aa95-lever.js",
 
   // Icons
   "/icons/icon-16.png",
@@ -90,7 +76,7 @@ self.addEventListener("fetch", (event) => {
         .catch(() => {
           const url = new URL(req.url);
           const mappedFile = ROUTE_MAP[url.pathname];
-          
+
           if (mappedFile) {
             return caches.match(mappedFile);
           }
