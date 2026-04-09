@@ -169,7 +169,7 @@
       position: relative;
       width: 44px;
       height: 110px;
-      perspective: 1400px;
+      perspective: 2600px;
       transform-style: preserve-3d;
     }
 
@@ -256,23 +256,9 @@
           #6f6f6f 100%);
 
       /* lower pivot = more believable hinge */
-      transform-origin: 50% 97%;
+      transform-origin: 50% 99%;
 
-      /* shorter, firmer snap */
-      --spring: linear(
-        0    0%,
-        0.03 10%,
-        0.08 20%,
-        0.16 32%,
-        0.40 44%,
-        0.78 57%,
-        1.03 68%,
-        1.04 74%,
-        1.02 84%,
-        1.00 100%
-      );
-
-      transition: transform 0.34s var(--spring);
+      transition: transform 0.22s cubic-bezier(.22, 1.15, .36, 1);
       z-index: 5;
       backface-visibility: hidden;
       transform-style: preserve-3d;
@@ -288,7 +274,7 @@
       margin-left: -16.5px;
       bottom: 43px;
       border-radius: 16px 16px 8px 8px;
-      transform-origin: 50% 97%;
+      transform-origin: 50% 99%;
     }
 
     .assembly-toggle.small .lever {
@@ -297,16 +283,16 @@
       margin-left: -5.5px;
       bottom: 14px;
       border-radius: 6px 6px 3px 3px;
-      transform-origin: 50% 97%;
+      transform-origin: 50% 99%;
     }
 
     /* ON and OFF both visible */
     [data-active="true"] .lever {
-      transform: rotateX(-24deg) translateZ(2px);
+      transform: rotateX(-11deg) translateZ(1px);
     }
 
     [data-active="false"] .lever {
-      transform: rotateX(16deg) translateZ(2px);
+      transform: rotateX(9deg) translateZ(1px);
     }
 
     /* top face — becomes more visible as lever tilts away */
@@ -366,8 +352,8 @@
       transition: opacity 0.20s ease-out;
     }
 
-    [data-active="true"] .lever::after  { opacity: 0.84; }
-    [data-active="false"] .lever::after { opacity: 0.56; }
+    [data-active="true"] .lever::after  { opacity: 0.78; }
+    [data-active="false"] .lever::after { opacity: 0.64; }
 
     .assembly-toggle.radio .lever::after {
       width: 6px;
