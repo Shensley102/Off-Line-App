@@ -8,13 +8,13 @@ conventions, and development workflows.
 ## Project Overview
 
 An **offline-capable Progressive Web App (PWA)** that simulates aviation radio
-equipment with photo-realistic UIs. There is no backend, no build step, and no
+equipment with interactive UIs. There is no backend, no build step, and no
 runtime dependencies — the entire application is static HTML, CSS, and vanilla
 JavaScript.
 
 **Live simulators:**
 - **RC-9100** — Technisonic dual-band radio control head
-- **AA95** — Audio Control Panel (photo-cutout based)
+- **AA95** — Audio Control Panel (SVG + spring physics synthetic renderer)
 
 ---
 
@@ -31,12 +31,9 @@ Off-Line-App/
 ├── package.json            # Dev dependency: sharp (icon generation only)
 ├── generate-icons.js       # One-time script: SVG → PNG icon set
 ├── icons/                  # PWA icon PNG set (16 px – 512 px)
-├── aa95/                   # AA95 Audio Control Panel sub-app
-│   ├── aa95.html           # Panel layout + SVG leader lines
-│   ├── panel.js            # Full panel controller (~2 500 lines)
-│   ├── styles.css          # Animations, hotspot positioning
-│   └── assests/            # Photo cutouts (41 .webp images)
-└── README_refactor.md      # Deployment & refactor notes
+└── aa95/                   # AA95 Audio Control Panel sub-app
+    ├── aa95.html           # Panel layout, inline CSS, inline JS controller
+    └── aa95-lever.js       # SVG + spring physics lever renderer (external module)
 ```
 
 ---
@@ -48,8 +45,8 @@ Off-Line-App/
 | Language | Vanilla JavaScript (ES2020+), HTML5, CSS3 |
 | Framework | None — no React, Vue, Angular, etc. |
 | Build tool | None — no Webpack, Vite, Rollup |
-| Styling | Plain CSS with variables, Grid, Flexbox, clamp() |
-| Animation | CSS transitions + transforms; data-attribute-driven state |
+| Styling | Plain CSS with variables, Grid, Flexbox |
+| Animation | JS spring physics (requestAnimationFrame) + CSS transitions |
 | Offline | Service Worker (cache-first for assets, network-first for HTML) |
 | Deployment | Vercel (auto-deploy on push) |
 | Dev dependency | `sharp` (icon PNG generation only, not shipped) |
@@ -70,64 +67,90 @@ Routing is handled entirely by `vercel.json` rewrites (no client-side router):
 
 ## Service Worker (`sw.js`)
 
-- **Version constant** at the top of the file — increment it whenever you want
-  to bust the cache and force clients to fetch fresh assets.
+- **Version constant** at the top of the file — increment `CACHE_NAME` whenever
+  you want to bust the cache and force clients to fetch fresh assets.
 - Strategy: navigation requests use **network-first**; static assets use
   **cache-first**.
-- Cache key format: `offline-app-v<N>`.
+- Cache key format: `radio-sim-v<N>`.
 - `sw.js` and all `*.html` files are served with `no-cache` headers (see
   `vercel.json`) so the browser always fetches the latest service worker.
 
 **When to bump the version:**
-Bump `CACHE_VERSION` in `sw.js` after any change to cached assets (images,
-CSS, JS) to ensure existing users get the update.
+Bump the version suffix in `CACHE_NAME` after any change to cached assets
+(JS modules, icons) to ensure existing users get the update.
 
 ---
 
 ## The AA95 Sub-App (`aa95/`)
 
-This is the most complex part of the codebase.
-
 ### Architecture
 
-The panel renders a real hardware photo as the background image. Interactive
-elements are positioned on top using CSS absolute positioning relative to an
-aspect-ratio container (940 × 314).
+The panel is a fully synthetic CSS/SVG simulation — no background photo, no
+image assets. All visual components are drawn with CSS gradients, SVG elements,
+and DOM manipulation.
 
 ```
-aa95.html               ← layout shell + SVG connector lines
-  └── panel.js          ← all controller logic (loaded as <script src>)
-  └── styles.css        ← transitions, hotspot sizing, knob animations
-  └── assests/*.webp    ← cutout PNGs/WebPs for individual hardware pieces
+aa95/
+  aa95.html        ← Panel shell: layout, inline CSS, inline JS controller
+  aa95-lever.js    ← External module: SVG lever builder + spring physics engine
 ```
 
-### `panel.js` — Key Concepts
+### `aa95.html` — Key Concepts
 
-- **DOM utilities** at the top: `$(sel)`, `$$(sel)`, `$id(id)` — always use
-  these instead of `document.querySelector` directly.
-- **State** lives on HTML `data-*` attributes (e.g. `data-active`, `data-angle`).
-  CSS selectors key off these attributes for visual state (no class toggling for
-  binary state).
-- **Knob rotation** is driven by a pointer-capture drag pattern:
-  `pointerdown` → set capture → track `pointermove` angle → update
-  `data-angle` → CSS `rotate(Xdeg)` transform reads the data attribute via
-  inline style.
-- **Selector knob** snaps to discrete detent positions (6 positions). Snapping
-  math lives in the `snapToDetent()` helper.
-- **Toggle switches** have two visual states managed via `data-active="true|false"`.
+- **Self-contained** — all panel CSS and controller JS are inline. The only
+  external dependency is `aa95-lever.js` loaded via `<script src defer>`.
+- **State** lives in a `panelState` object (plain JS). The `syncState()`
+  function reads from `panelState` and writes `data-active` attributes to the
+  DOM. CSS selectors key off these attributes for visual state changes.
+- **Toggles** are `.component.toggle` elements identified by `id`. Clicking
+  toggles `panelState[id]` and calls `updateIndicators()` → `syncState()`.
+- **Knob rotation** uses mouse drag and wheel events. Pointer delta drives a
+  value change; the value maps to a CSS `rotate()` transform on the pointer
+  element.
+- **Selector knob** snaps to 6 discrete detent positions. Snapping logic lives
+  in `setSelAngle(angle, snap)`.
 - **Master Check** sequence runs a timed startup simulation with sequential
-  status-text updates.
+  status-text updates and LED flash.
 
-### SVG Leader Lines (`aa95.html`)
+### `aa95-lever.js` — Key Concepts
 
-`<svg>` sits as an overlay layer between the background photo and the cutout
-elements. Each `<line>` or `<polyline>` draws a connector from a label to a
-hardware component.
+This module replaces the CSS div lever approach with a proper SVG cylinder
+driven by real spring physics.
 
-- Coordinates are in the same 940 × 314 viewBox as the panel.
-- When moving a hotspot, update both the CSS `left/top` positioning **and**
-  the corresponding SVG line endpoint.
-- Lines are grouped with comments (`<!-- COM1 -->`, `<!-- FM2 -->`, etc.).
+- **`buildSVG(size, color, id)`** — constructs a layered SVG for each lever
+  size (`standard`, `radio`, `small`) and color (`silver`, `red`, `orange`).
+  Layers: body gradient → specular overlay → top cap ellipse → edge shadows →
+  base vignette.
+- **`SpringLever` class** — owns one `requestAnimationFrame` loop per lever.
+  Each frame applies Hooke's law + viscous damping to compute position, then
+  writes `rotateX(Xdeg)` to the SVG element's style. Loop stops when settled.
+- **`_updateSpecular()`** — shifts 5 movable SVG gradient stops ±6% as the
+  lever angle changes, so the specular highlight band drifts realistically with
+  rotation.
+- **`MutationObserver`** watches `data-active` on every `.component.toggle[id]`
+  element. When the panel JS changes state, the observer fires and calls
+  `spring.flip(isOn)`. No changes to `aa95.html`'s JS are required.
+- **`prefers-reduced-motion`** — checked at boot. If true, all flips snap
+  immediately with no animation.
+
+### Spring Constants (in `aa95-lever.js`)
+
+```javascript
+const SPRING = { stiffness: 480, damping: 22, mass: 1.0, threshold: 0.004 };
+const ANGLE  = { on: -11, off: 9 };  // rotateX degrees
+```
+
+Tuning guide:
+- `stiffness` ↑ = faster snap, more overshoot
+- `damping` ↑ = less bounce, quicker settle
+- `ANGLE.on / ANGLE.off` — the physical throw of the lever in degrees
+
+### 3D Stage
+
+`.assembly-toggle` has `perspective: 2600px` and `transform-style: preserve-3d`.
+The SVG lever is a direct child; `rotateX()` applied by JS uses this perspective
+context to produce the 3D tilt effect. 2600px = subtle, realistic depth.
+Lower values produce more exaggerated fish-eye distortion.
 
 ---
 
@@ -135,9 +158,10 @@ hardware component.
 
 - Entirely self-contained — CSS and JavaScript are **inline** inside the HTML
   file (no external `.js` or `.css` imports).
-- Channel data is loaded from `codeplug.json` at runtime via `fetch()`.
+- Channel data is inlined directly in the script (not loaded via `fetch` from
+  `codeplug.json` — the JSON file exists as a standalone reference copy).
 - The LCD displays update reactively through direct DOM manipulation.
-- Volume knobs use the same pointer-capture drag pattern as AA95.
+- Volume knobs use scroll-wheel and drag interactions.
 
 ---
 
@@ -147,17 +171,19 @@ Defines the radio's channel and zone structure. Top-level keys:
 
 ```json
 {
-  "zones": [ ... ],    // Array of zone objects
-  "channels": [ ... ]  // Array of channel objects with freq, mode, etc.
+  "band1": { "name": "VHF", "zones": [ ... ] },
+  "band2": { "name": "UHF/800", "zones": [ ... ] }
 }
 ```
 
-Channels are referenced by index from the zone definitions.
+Zones contain arrays of channel objects `{ "name": "CHANNEL NAME" }`.
 
 ---
 
 ## PWA Manifest (`manifest.json`)
 
+- `name`: Aviation Simulators
+- `short_name`: AvSim
 - `start_url`: `/`
 - `display`: `standalone`
 - Theme colour: `#101010` (dark)
@@ -213,8 +239,8 @@ Cache header policy (`vercel.json`):
 | Path | Cache |
 |---|---|
 | `sw.js`, `*.html` | `no-cache` (always fetch) |
+| `/aa95/*.js` | `no-cache` (always fetch — actively developed) |
 | `icons/**` | `max-age=31536000, immutable` |
-| `aa95/**` (assets) | `max-age=31536000, immutable` |
 | `manifest.json` | `max-age=86400` (24 h) |
 
 ---
@@ -223,47 +249,45 @@ Cache header policy (`vercel.json`):
 
 ### HTML
 - Use `data-*` attributes for state; avoid toggling classes for binary on/off.
-- IDs use `kebab-case`.
-- Hotspot `<div>`s inside the panel container use `class="hotspot"` plus a
-  unique `id`.
+- IDs use `kebab-case` for panel elements, `snake_case` for legacy panel JS
+  compatibility.
+- Toggle `<div>`s use `class="component toggle"` plus a unique `id`.
 
 ### CSS
 - Define colours and layout sizes as CSS custom properties (`--var-name`) at
-  the `:root` or component scope.
-- Animation: prefer `transition` on state-driven properties; use `transform`
-  and `opacity` for performance.
-- Knob rotation is expressed as `rotate(calc(var(--angle) * 1deg))` driven by
-  an inline `style` set from JavaScript.
+  `:root` or component scope.
+- Animation: the lever uses JS spring physics via `aa95-lever.js`. All other
+  transitions use CSS `transition` on state-driven properties.
+- Knob rotation is expressed as `rotate(Xdeg)` set via inline style from JS.
 
 ### JavaScript
 - No external libraries at runtime — keep it that way.
-- DOM queries: always use `$()`, `$$()`, or `$id()` from the utility block.
-- Event listeners: `addEventListener` only; no inline `onclick=`.
+- `aa95.html` uses simple `document.getElementById` wrapped in `const $ = id =>`.
+- Event listeners: `addEventListener` preferred; `onclick` used in `aa95.html`
+  for brevity on simple toggle handlers.
 - Prefer `const` for everything that does not need reassignment.
-- Pointer events (`pointerdown`, `pointermove`, `pointerup`) for all drag/knob
-  interactions — do not use mouse events.
-- `setPointerCapture` / `releasePointerCapture` for drag operations so the
-  pointer is not lost when it leaves the element.
+- Mouse events used in `aa95.html`; pointer events preferred for new code.
 
 ---
 
 ## Key Things to Know Before Editing
 
 1. **No build step** — changes to HTML/CSS/JS are immediately live after a
-   browser refresh.
-2. **Service worker caching** — if assets seem stale, bump `CACHE_VERSION` in
-   `sw.js`.
+   browser refresh (with SW bypassed).
+2. **Service worker caching** — if assets seem stale, bump the version suffix
+   in `CACHE_NAME` in `sw.js`.
 3. **AA95 coordinates** — the panel uses a fixed 940 × 314 internal coordinate
-   system. All positioning (CSS `left`/`top` as percentages, SVG coordinates)
-   must be consistent with this ratio.
-4. **Inline code in rc9100.html** — CSS and JS inside `rc9100.html` are
+   system. All `left`/`top`/`right`/`bottom` positioning on `.component`
+   elements is relative to this space.
+4. **Lever module is decoupled** — `aa95-lever.js` communicates only through
+   `MutationObserver` on `data-active`. Editing the panel JS does not require
+   touching the lever module, and vice versa.
+5. **Inline code in `rc9100.html`** — CSS and JS inside `rc9100.html` are
    intentionally inline; don't extract them unless there's a clear reason.
-5. **Image format** — hardware cutouts are `.webp`; do not replace with `.png`
-   unless targeting environments without WebP support.
 6. **Vercel rewrites** — adding a new page requires a new rewrite entry in
    `vercel.json`.
 7. **No npm packages at runtime** — `devDependencies` in `package.json` exist
-   only for the icon-generation script and are never bundled.
+   only for the icon-generation script and are never bundled or shipped.
 
 ---
 
