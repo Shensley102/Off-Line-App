@@ -169,7 +169,6 @@
     }
 
     /* ── TOGGLE COMPONENT ───────────────────────────────────────────────── */
-    /* Drop-shadow shifts between ON (raised) and OFF (flush) states */
     .component.toggle {
       filter: drop-shadow(0px 7px 5px rgba(0, 0, 0, 0.78));
       transition: filter 0.34s ease-out;
@@ -180,8 +179,7 @@
     }
 
     /* ── 3D STAGE ───────────────────────────────────────────────────────── */
-    /* perspective here is what gives the SVG lever its 3D rotation depth.
-       2600px = subtle, realistic. Lower values = more exaggerated fish-eye. */
+    /* perspective: 2600px = subtle, realistic depth for SVG lever rotateX */
     .assembly-toggle {
       position: relative;
       width: 44px;
@@ -236,8 +234,6 @@
     .component.radio-toggle { z-index: 10; }
 
     /* ── REDUCED MOTION ─────────────────────────────────────────────────── */
-    /* lever animation is JS-driven; aa95-lever.js checks prefers-reduced-motion
-       and snaps immediately. CSS only needs to cover the filter transition. */
     @media (prefers-reduced-motion: reduce) {
       .component.toggle { transition: filter 0.01s linear; }
     }
@@ -481,7 +477,7 @@
   </div>
 
   <!-- TOP ROW: RADIO TOGGLES
-       Note: no .lever div — aa95-lever.js builds the SVG lever at runtime -->
+       No .lever div — aa95-lever.js builds the SVG lever at runtime -->
   <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:79px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">COM1</span>
@@ -806,8 +802,8 @@
 })();
 </script>
 
-<!-- Spring lever renderer — must load after panel JS -->
-<script src="aa95-lever.js" defer></script>
+<!-- Spring lever renderer — absolute path required due to Vercel /control-panel rewrite -->
+<script src="/aa95/aa95-lever.js" defer></script>
 
 </body>
 </html>
