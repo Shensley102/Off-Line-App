@@ -179,12 +179,36 @@
     }
 
     /* ── 3D STAGE ───────────────────────────────────────────────────────── */
-    /* perspective: 2600px = subtle, realistic depth for SVG lever rotateX */
+    /*
+     * perspective: 300px
+     *
+     * WHY THIS VALUE:
+     *   The lever SVG is ~69px tall (radio size). At the OFF position the lever
+     *   is at rotateX -80° — nearly horizontal, pointing at the viewer. For this
+     *   to show realistic foreshortening (the lever appearing squashed to a short
+     *   dome, as on the real hardware), the perspective distance must be close
+     *   relative to the lever's Z-depth.
+     *
+     *   At OFF (-80°) the dome tip reaches Z ≈ 68px toward the viewer.
+     *   With perspective 300px: scale = 300/(300-68) ≈ 1.29
+     *   The lever appears ~16px tall — a clearly foreshortened dome. ✓
+     *
+     *   At ON (-50°) the dome tip is at Z ≈ 53px.
+     *   With perspective 300px: scale = 300/(300-53) ≈ 1.21
+     *   The lever appears ~54px tall — a clearly visible side profile. ✓
+     *
+     *   The old value (2600px) produced effectively zero foreshortening at any
+     *   angle — the lever always looked like its full side-profile was visible.
+     *
+     * TUNE: decrease for more dramatic foreshortening at OFF (more "end-on"),
+     *       increase for less foreshortening (flatter, more illustration-like).
+     *       Keep above ~150px or the perspective distortion becomes unrealistic.
+     */
     .assembly-toggle {
       position: relative;
       width: 44px;
       height: 110px;
-      perspective: 2600px;
+      perspective: 300px;
       transform-style: preserve-3d;
     }
 
