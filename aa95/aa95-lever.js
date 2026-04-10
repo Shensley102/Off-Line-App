@@ -24,32 +24,47 @@
   };
 
   // ── Toggle angle targets ──────────────────────────────────────────────────
-  // OFF = 0°  → lever face-on to viewer, 90° from faceplate (pointing straight out)
-  // ON  = -30° → lever tilted back 30°, 60° from faceplate
-  // Total throw: 30° arc — matches physical MS25306-series geometry
+  // These are CSS rotateX values applied to the lever SVG.
+  // Pivot is at the lever base (transformOrigin: '50% 99%').
+  // Negative rotateX = top of lever tilts TOWARD viewer (out of screen, +Z).
+  //
+  // Physical geometry (panel is in the screen plane, viewer is in front):
+  //   rotateX   0° = SVG flat in screen plane = lever side-profile face-on to camera
+  //                  (this is NOT a valid toggle position — it's the 90° viewing angle)
+  //   rotateX -90° = lever perfectly horizontal, dome pointing straight at viewer
+  //                  (OFF = perpendicular to panel = 90° to faceplate)
+  //   rotateX -60° = lever at 60° to panel (physically correct ON angle)
+  //
+  // We use -80° and -50° rather than the exact -90°/-60° because:
+  //   - At exactly -90° the lever collapses to zero visible height (too flat)
+  //   - The 10° offset still reads correctly and gives a more legible dome at OFF
+  //   - Total throw remains exactly 30° either way
+  //
+  // Tune these values together — always keep the difference at 30° to preserve
+  // the physical throw. Moving both values more negative increases foreshortening
+  // of the OFF state. Moving both less negative reduces foreshortening.
+  //
+  // Reference: faceplate = 180°, OFF = 90° (perpendicular), ON = 60° (30° up from perpendicular)
   const ANGLE = {
-    on  : -30,   // rotateX — lever tilts back (ON / UP)
-    off :   0    // rotateX — lever face-on to viewer (OFF / DOWN)
+    on  : -50,   // rotateX — lever ~50° to panel, side profile visible (ON / UP)
+    off : -80    // rotateX — lever ~80° to panel, foreshortened dome (OFF / DOWN)
   };
 
   // ── Fixed presentation cant ───────────────────────────────────────────────
   // WHY THIS EXISTS:
-  //   When the lever is at OFF (rotateX 0°) it points straight at the viewer.
-  //   On a flat screen this causes foreshortening — the lever looks like a disc
-  //   and the 30° throw is hard to read. A small rotateY applied to an OUTER
-  //   wrapper slightly rotates the whole assembly left so the viewer can see
-  //   the lever's depth and motion without changing the physical throw at all.
+  //   A small rotateY applied to an OUTER wrapper slightly rotates the whole
+  //   assembly left so the user can better see the lever depth and motion.
+  //   At the new corrected angles (nearly face-on at OFF), the cant also helps
+  //   the foreshortened dome read as a 3D object rather than a flat circle.
   //
   // WHY rotateY IS SEPARATE FROM rotateX:
   //   Combining them into one transform string on the SVG would make the
   //   spring math interact with the cant angle every frame, causing drift and
-  //   an incorrect effective pivot axis. Keeping rotateY on an outer wrapper
-  //   means the transforms stack as: [cant in world space] → [spring throw
-  //   in lever-local space]. Each is independent and stable.
+  //   an incorrect effective pivot axis. Outer = fixed world cant, inner = throw.
   //
   // HOW TO ADJUST:
-  //   Change the values below. Negative = cant left (lever face opens toward
-  //   the left/viewer's right). Start subtle — more than ±15° looks wrong.
+  //   Change the values below. Negative = cant left. Stay within ±15° or the
+  //   lever reads as skewed rather than merely canted for depth.
   const CANT = {
     radio    : -10,   // deg — large radio toggle levers (COM1/COM2/FM1/FM2/AUX)
     standard :  -8,   // deg — standard toggles (ISO/EMR, ICS MIC)
@@ -289,8 +304,7 @@
 
     // ── Specular band: movable angle-responsive highlight ─────────────────────
     // 7 stops; [0] and [6] are fixed. [1]–[5] are shifted by _updateSpecular().
-    // Peak opacity 0.28 (vs old chrome version's 0.50) — this is the main
-    // "less reflective" tuning. Wider band + lower peak = semi-matte plastic.
+    // Peak opacity 0.28 — semi-matte plastic, not chrome.
     // Tune: the 0.28 value at stop [3] for more or less surface sheen.
     //       specColor in PALETTE for highlight warmth.
     const sc = p.specColor;
@@ -458,13 +472,11 @@
     }
 
     _updateSpecular() {
-      // Map current angle → 0–1 blend: 0 = fully ON (tilted back), 1 = fully OFF
+      // Map current angle → 0–1 blend: 0 = fully ON (side profile), 1 = fully OFF (dome-on)
       const t = (this.pos - ANGLE.on) / (ANGLE.off - ANGLE.on);
 
-      // Shift specular band ±4% based on angle.
-      // Reduced from ±6% (old chrome version) — subtler, more matte response.
-      // Tune: multiply factor (8) — larger = more angle-responsive sheen,
-      //       smaller = flatter / more matte response to angle change.
+      // Shift specular band ±4% based on angle — subtle, semi-matte plastic response.
+      // Tune: multiply factor (8) — larger = more angle-responsive sheen.
       const shift = (t - 0.5) * 8;
 
       // Base offsets for movable stops [1]–[5] — must match specDef in buildSVG
@@ -550,7 +562,8 @@
     window.AA95Levers = registry;
     console.log(
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
-      '| angles: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
+      '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
+      '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
       '| cant: radio', CANT.radio + '° standard', CANT.standard + '° small', CANT.small + '°',
       '| reduced-motion:', REDUCED
     );
