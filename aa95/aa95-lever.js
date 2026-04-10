@@ -9,7 +9,7 @@
  *   - Watches data-active attribute mutations → no changes to existing JS needed
  *
  * Dependencies: none. Drop next to aa95.html and add:
- *   <script src="aa95-lever.js" defer></script>
+ *   <script src="/aa95/aa95-lever.js" defer></script>
  */
 (function () {
   'use strict';
@@ -24,9 +24,12 @@
   };
 
   // ── Toggle angle targets ──────────────────────────────────────────────────
+  // OFF = 0°  → lever face-on to viewer, 90° from faceplate (pointing straight out)
+  // ON  = -30° → lever tilted back 30°, 60° from faceplate
+  // Total throw: 30° arc — matches physical MS25306-series geometry
   const ANGLE = {
-    on  : -11,   // rotateX — lever leans back  (ON / UP)
-    off :   9    // rotateX — lever leans forward (OFF / DOWN)
+    on  : -30,   // rotateX — lever tilts back (ON / UP)
+    off :   0    // rotateX — lever face-on to viewer (OFF / DOWN)
   };
 
   // ── Reduced-motion preference ─────────────────────────────────────────────
@@ -88,16 +91,16 @@
     svg.setAttribute('width',   g.w);
     svg.setAttribute('height',  g.h);
     Object.assign(svg.style, {
-      position        : 'absolute',
-      bottom          : g.bot + 'px',
-      left            : '50%',
-      marginLeft      : g.ml + 'px',
-      zIndex          : '5',
-      overflow        : 'visible',
-      transformOrigin : '50% 99%',
-      willChange      : 'transform',
+      position           : 'absolute',
+      bottom             : g.bot + 'px',
+      left               : '50%',
+      marginLeft         : g.ml + 'px',
+      zIndex             : '5',
+      overflow           : 'visible',
+      transformOrigin    : '50% 99%',
+      willChange         : 'transform',
       backfaceVisibility : 'hidden',
-      display         : 'block'
+      display            : 'block'
     });
 
     // ── defs ──
@@ -258,8 +261,8 @@
       const t = (this.pos - ANGLE.on) / (ANGLE.off - ANGLE.on);
 
       // Shift the specular band ±6% based on angle
-      // ON: highlight drifts slightly left (light catches front face)
-      // OFF: highlight drifts slightly right (light catches back face)
+      // ON:  highlight drifts slightly left (light catches tilted-back face)
+      // OFF: highlight stays centred (lever face-on, highlight symmetric)
       const shift = (t - 0.5) * 12;
 
       // Base offsets for movable stops [1]–[5]
@@ -343,6 +346,7 @@
     window.AA95Levers = registry;
     console.log(
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
+      '| angles: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| reduced-motion:', REDUCED
     );
   }
