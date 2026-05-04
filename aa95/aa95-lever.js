@@ -360,6 +360,19 @@
       fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.62'
     }));
 
+    const endRx = (g.topW / 2).toFixed(2);
+    const endCx = (g.w / 2).toFixed(2);
+    const endTopCy = g.topR.toFixed(2);
+    const endBotCy = (g.h - g.topR).toFixed(2);
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endTopCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapTopId})`, 'clip-path': cp, opacity: '0.82'
+    }));
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endBotCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.70'
+    }));
+
     svg.appendChild(el('path', { d:pathD, fill:'none', stroke:'rgba(0,0,0,0.30)', 'stroke-width':'0.75' }));
 
     rotor.appendChild(svg);
