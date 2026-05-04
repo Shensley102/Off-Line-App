@@ -234,15 +234,10 @@
       willChange     : 'transform',
     });
 
-    // Back face at z=-DEPTH (no dark overlay)
-    rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'bkcl', id + 'bkb', -DEPTH, 0));
+    // Single visible lever body: keep one primary capsule face only.
+    // Depth perception comes from shading, not stacked duplicate capsules.
 
-    // Shell at z=-DEPTH/2 (side-shadow overlay)
-    rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'shcl', id + 'shb', -(DEPTH / 2), 0.38));
-
-    // ── FRONT FACE SVG — translateZ(0) — full artwork, unchanged ─────────
+    // ── FRONT FACE SVG — translateZ(0) — full artwork, cylindrical finish ─
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -338,13 +333,32 @@
     const ch = g.h;
 
     svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${bodyId})`, 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch*0.38).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.75' }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.60' }));
+    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch*0.40).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.82' }));
+    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.70' }));
     svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${specId})`, 'clip-path':cp }));
 
-    const rimW = Math.max(2, Math.round(cw * 0.16));
-    svg.appendChild(el('rect', { x:0, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.20)', 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.13)', 'clip-path':cp }));
+    const rimW = Math.max(2, Math.round(cw * 0.18));
+    svg.appendChild(el('rect', { x:0, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.30)', 'clip-path':cp }));
+    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.24)', 'clip-path':cp }));
+
+    const centerW = Math.max(2, Math.round(cw * 0.22));
+    svg.appendChild(el('rect', {
+      x: ((cw - centerW) / 2).toFixed(2), y:0, width:centerW, height:ch,
+      fill:'rgba(255,255,255,0.10)', 'clip-path':cp
+    }));
+
+    const endRx = (g.topW / 2).toFixed(2);
+    const endCx = (g.w / 2).toFixed(2);
+    const endTopCy = g.topR.toFixed(2);
+    const endBotCy = (g.h - g.topR).toFixed(2);
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endTopCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapTopId})`, 'clip-path': cp, opacity: '0.76'
+    }));
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endBotCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.62'
+    }));
 
     const endRx = (g.topW / 2).toFixed(2);
     const endCx = (g.w / 2).toFixed(2);
@@ -478,7 +492,7 @@
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| depth:', DEPTH + 'px  shell:', (DEPTH/2) + 'px',
+      '| depth-shading:', DEPTH + 'px (single visible face)',
       '| reduced-motion:', REDUCED
     );
   }
