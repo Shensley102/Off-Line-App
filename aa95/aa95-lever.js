@@ -5,7 +5,7 @@
  * v3 — 3D Rotor approach:
  *   The spring no longer rotates the flat SVG directly.
  *   Instead it rotates a 'rotor' div (preserve-3d) that contains:
- *     - Several dark cylinder-wall depth layers at negative translateZ
+ *     - Several cylinder-wall depth layers at negative translateZ
  *     - The full front-face SVG artwork at translateZ(0)
  *   When the rotor tilts, the depth layers peek out from the top/bottom edges,
  *   making the lever read as a solid cylinder with real thickness — not paper.
@@ -34,10 +34,8 @@
   const CANT = { radio: -10, standard: -8, small: -6 };
 
   // ── Cylinder depth configuration ──────────────────────────────────────────
-  // DEPTH.steps : number of dark wall slices behind the front face
+  // DEPTH.steps : number of wall slices behind the front face
   // DEPTH.total : how far back (in px) the deepest layer sits at Z
-  // Increasing DEPTH.total makes the cylinder walls thicker/more visible.
-  // Increasing DEPTH.steps makes the depth gradient smoother.
   const DEPTH = { steps: 6, total: 14 };
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -54,8 +52,9 @@
   };
 
   // ── Color palettes ────────────────────────────────────────────────────────
-  // depthColor: color of cylinder wall slices — darkest shadow tone of the
-  // material so the depth reads as interior shadow / wall thickness.
+  // depthColor: color of cylinder wall slices.
+  // Now matched to the mid-body tone of each material so the cylinder reads
+  // as one unified solid shape — not a dark-walled tube.
   const PALETTE = {
     ivory : {
       bodyStops : [
@@ -68,7 +67,7 @@
       ],
       capGrad   : ['#f5efe3', '#ddd3c0'],
       specColor : '255,248,230',
-      depthColor: '#3e3028',
+      depthColor: '#d4c8b4',   // mid-body cream — matches lever face
     },
     red : {
       bodyStops : [
@@ -81,7 +80,7 @@
       ],
       capGrad   : ['#e86262', '#c03838'],
       specColor : '255,210,210',
-      depthColor: '#280808',
+      depthColor: '#b43838',   // mid-body red — matches lever face
     },
     orange : {
       bodyStops : [
@@ -94,7 +93,7 @@
       ],
       capGrad   : ['#e88840', '#c26020'],
       specColor : '255,228,180',
-      depthColor: '#2a1006',
+      depthColor: '#b86828',   // mid-body orange — matches lever face
     }
   };
 
@@ -107,8 +106,7 @@
 
   // ── Cylinder path ─────────────────────────────────────────────────────────
   // Straight vertical sides (topW = constant diameter), rounded dome crown.
-  // To revert to tapered bat-handle: restore batPath() below and swap the
-  // cylinderPath(g) call in buildSVG() back to batPath(g).
+  // To revert to tapered bat-handle: restore batPath() and swap call in buildSVG.
   function cylinderPath(g) {
     const { w, h, topW, topR } = g;
     const cx = w / 2;
@@ -154,9 +152,9 @@
   // DOM structure:
   //   wrapper (div)   — fixed cant rotateY, absolute in .assembly-toggle
   //     rotor (div)   — receives rotateX from spring, preserve-3d
-  //       depth[0]    — darkest wall slice, translateZ(-DEPTH.total)
+  //       depth[0]    — wall slice at translateZ(-DEPTH.total)
   //       depth[...]
-  //       depth[N-1]  — lightest slice, translateZ(-DEPTH.total/2)
+  //       depth[N-1]  — wall slice at translateZ(-DEPTH.total/2)
   //       svg         — full front face artwork, translateZ(0)
   function buildSVG(size, colorKey, id) {
     const g       = SIZE_CFG[size];
@@ -187,10 +185,7 @@
     });
 
     // ── 3D Rotor ─────────────────────────────────────────────────────────
-    // New element between wrapper and svg.
     // Spring drives rotateX here — NOT on the svg directly.
-    // preserve-3d propagates perspective through to depth layers and front face,
-    // giving them real Z separation visible when the rotor tilts.
     const rotor = document.createElement('div');
     Object.assign(rotor.style, {
       position       : 'absolute',
@@ -204,14 +199,13 @@
     });
 
     // ── Cylinder wall depth layers ────────────────────────────────────────
-    // Dark silhouettes at negative Z behind the front face (Z=0).
-    // When the rotor tilts, these layers emerge at the top/bottom edges,
-    // creating the appearance of a solid cylinder with real wall thickness.
-    // Deepest layer (i=0) is darkest; layers lighten slightly toward front.
+    // Body-colored silhouettes at negative Z behind the front face (Z=0).
+    // Now matched to the lever's own cream/red/orange body color so the
+    // cylinder reads as one solid unified shape when the rotor tilts.
     for (let i = 0; i < DEPTH.steps; i++) {
-      const t  = i / (DEPTH.steps - 1);             // 0 = back, 1 = near front
-      const z  = -(DEPTH.total * (1 - t * 0.5));    // -14px → -7px
-      const op = (0.92 - t * 0.30).toFixed(2);      //  0.92 →  0.62
+      const t  = i / (DEPTH.steps - 1);
+      const z  = -(DEPTH.total * (1 - t * 0.5));   // -14px → -7px
+      const op = (0.92 - t * 0.30).toFixed(2);     //  0.92 →  0.62
 
       const dlClipId = id + 'dc' + i;
 
@@ -245,10 +239,7 @@
       rotor.appendChild(dlSvg);
     }
 
-    // ── Front face SVG — full artwork at translateZ(0) ─────────────────────
-    // All gradient layers are unchanged from the original.
-    // Differences from original: position absolute, translateZ(0),
-    // willChange moved to rotor.
+    // ── Front face SVG — full artwork at translateZ(0) ────────────────────
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -382,8 +373,6 @@
   }
 
   // ── Spring lever class ────────────────────────────────────────────────────
-  // Key change from v2: rotorEl receives rotateX (not the svg directly).
-  // All spring math, ANGLE targets, and SPRING constants are unchanged.
   class SpringLever {
     constructor(rotorEl, specStopEls, isOn) {
       this.rotor     = rotorEl;
@@ -429,7 +418,6 @@
     }
 
     _apply() {
-      // Rotate the entire 3D rotor — depth layers + front face move as one unit
       this.rotor.style.transform = `rotateX(${this.pos.toFixed(3)}deg)`;
       this._updateSpecular();
     }
