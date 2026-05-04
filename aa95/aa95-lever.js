@@ -2,18 +2,9 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v5 — True 3D box walls replace stacked depth layers.
- *   Previous approach: stacked flat SVG silhouettes at negative Z — visible
- *   as separate faces with dark gaps between them.
- *   New approach: one back face + three connecting wall surfaces (top, left,
- *   right) form a real closed 3D box. No gaps, no dark bleed-through.
- *
- *   Rotor contents (back → front):
- *     back face  SVG  translateZ(-DEPTH px)          — full body gradient
- *     top wall   div  y=0,  rotateX(-90°)             — spans z=0 to z=-DEPTH
- *     left wall  div  x=tl, rotateY(90°)              — spans z=0 to z=-DEPTH
- *     right wall div  x=tr, rotateY(-90°)             — spans z=0 to z=-DEPTH
- *     front face SVG  translateZ(0)                   — full artwork, unchanged
+ * v6 — border-radius added to wall divs to match cylindrical dome rounding.
+ *   topR from SIZE_CFG is the same radius used by the SVG dome arc, so the
+ *   wall corners round exactly in line with the front face silhouette.
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -35,7 +26,7 @@
   // ── Fixed presentation cant (unchanged) ───────────────────────────────────
   const CANT = { radio: -10, standard: -8, small: -6 };
 
-  // ── Cylinder depth — distance from front face to back face in px ──────────
+  // ── Cylinder depth ────────────────────────────────────────────────────────
   const DEPTH = 14;
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -146,33 +137,24 @@
     defs.appendChild(grad);
   }
 
-  // ── Build body gradient as CSS linear-gradient string ─────────────────────
-  // Used for wall div backgrounds — same color ramp as the SVG body gradient.
+  // ── Build body gradient as CSS string (for wall div backgrounds) ──────────
   function bodyGradCSS(bodyStops) {
     return `linear-gradient(90deg, ${bodyStops.map(([pct, col]) => `${col} ${pct}%`).join(', ')})`;
   }
 
   // ── Build one lever assembly ───────────────────────────────────────────────
-  // Returns { wrapper, rotor, specStopEls }
-  //
-  // 3D box structure (all children of rotor, depth-sorted by CSS preserve-3d):
-  //   back face  — SVG, translateZ(-DEPTH)
-  //   top wall   — div, rotateX(-90°) from top edge → horizontal crown surface
-  //   left wall  — div, rotateY(90°)  from left edge → left cylinder side
-  //   right wall — div, rotateY(-90°) from right edge → right cylinder side
-  //   front face — SVG, translateZ(0) — full original artwork
   function buildSVG(size, colorKey, id) {
     const g       = SIZE_CFG[size];
     const p       = PALETTE[colorKey] || PALETTE.ivory;
     const cantDeg = CANT[size] || CANT.standard;
     const pathD   = cylinderPath(g);
 
-    const tl = (g.w - g.topW) / 2;   // left edge of cylinder body
-    const tr = tl + g.topW;           // right edge of cylinder body
+    const tl = (g.w - g.topW) / 2;
+    const tr = tl + g.topW;
+    const r  = g.topR;   // dome radius — used for wall border-radius
 
-    // Precompute CSS gradient string for wall divs
     const wallGrad    = bodyGradCSS(p.bodyStops);
-    const shadowColor = p.bodyStops[0][1]; // darkest stop = side shadow tone
+    const shadowColor = p.bodyStops[0][1];
 
     const clipId = id + 'cl';
     const bodyId = id + 'b';
@@ -210,8 +192,6 @@
     });
 
     // ── BACK FACE ─────────────────────────────────────────────────────────
-    // Full body gradient SVG at z = -DEPTH.
-    // Closes the rear of the cylinder — visible through the top wall gap.
     const backSvg = document.createElementNS(NS, 'svg');
     backSvg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     backSvg.setAttribute('width',   g.w);
@@ -224,10 +204,10 @@
       backfaceVisibility : 'hidden',
       transform          : `translateZ(-${DEPTH}px)`,
     });
-    const bkDefs = document.createElementNS(NS, 'defs');
+    const bkDefs   = document.createElementNS(NS, 'defs');
     const bkClipId = id + 'bkcl';
     const bkBodyId = id + 'bkb';
-    const bkClip = document.createElementNS(NS, 'clipPath');
+    const bkClip   = document.createElementNS(NS, 'clipPath');
     bkClip.setAttribute('id', bkClipId);
     bkClip.appendChild(el('path', { d: pathD }));
     bkDefs.appendChild(bkClip);
@@ -235,66 +215,63 @@
     backSvg.appendChild(bkDefs);
     backSvg.appendChild(el('rect', {
       x: 0, y: 0, width: g.w, height: g.h,
-      fill       : `url(#${bkBodyId})`,
-      'clip-path': `url(#${bkClipId})`
+      fill: `url(#${bkBodyId})`, 'clip-path': `url(#${bkClipId})`
     }));
     rotor.appendChild(backSvg);
 
     // ── TOP WALL ──────────────────────────────────────────────────────────
-    // Horizontal surface bridging the top edge of front face to back face.
-    // Pivot at top edge (y=0); rotateX(-90°) lays the panel flat going back.
-    // Width matches cylinder diameter (topW). Color: full body gradient.
-    // This is the PRIMARY surface visible when the lever tilts — the crown.
+    // Crown surface — horizontal, spans z=0 to z=-DEPTH.
+    // border-radius: r on all corners rounds the crown to match the dome arc.
     const topWall = document.createElement('div');
     Object.assign(topWall.style, {
-      position        : 'absolute',
-      top             : '0',
-      left            : `${tl}px`,
-      width           : `${g.topW}px`,
-      height          : `${DEPTH}px`,
-      background      : wallGrad,
-      transformOrigin : '50% 0%',
-      transform       : 'rotateX(-90deg)',
+      position          : 'absolute',
+      top               : '0',
+      left              : `${tl}px`,
+      width             : `${g.topW}px`,
+      height            : `${DEPTH}px`,
+      background        : wallGrad,
+      borderRadius      : `${r}px`,
+      transformOrigin   : '50% 0%',
+      transform         : 'rotateX(-90deg)',
       backfaceVisibility: 'visible',
     });
     rotor.appendChild(topWall);
 
     // ── LEFT SIDE WALL ────────────────────────────────────────────────────
-    // Vertical surface at x=tl spanning z=0 to z=-DEPTH.
-    // Pivot at left edge; rotateY(90°) folds it perpendicular, going back.
-    // Color: darkest body stop (shadow side of cylinder).
+    // border-radius on top two corners rounds where wall meets dome shoulder.
     const leftWall = document.createElement('div');
     Object.assign(leftWall.style, {
-      position        : 'absolute',
-      top             : '0',
-      left            : `${tl}px`,
-      width           : `${DEPTH}px`,
-      height          : `${g.h}px`,
-      background      : shadowColor,
-      transformOrigin : '0% 50%',
-      transform       : 'rotateY(90deg)',
+      position          : 'absolute',
+      top               : '0',
+      left              : `${tl}px`,
+      width             : `${DEPTH}px`,
+      height            : `${g.h}px`,
+      background        : shadowColor,
+      borderRadius      : `${r}px ${r}px 0 0`,
+      transformOrigin   : '0% 50%',
+      transform         : 'rotateY(90deg)',
       backfaceVisibility: 'visible',
     });
     rotor.appendChild(leftWall);
 
     // ── RIGHT SIDE WALL ───────────────────────────────────────────────────
-    // Mirror of left wall. Pivot at right edge (x=tr); rotateY(-90°).
+    // Mirror of left wall.
     const rightWall = document.createElement('div');
     Object.assign(rightWall.style, {
-      position        : 'absolute',
-      top             : '0',
-      left            : `${tr - DEPTH}px`,
-      width           : `${DEPTH}px`,
-      height          : `${g.h}px`,
-      background      : shadowColor,
-      transformOrigin : '100% 50%',
-      transform       : 'rotateY(-90deg)',
+      position          : 'absolute',
+      top               : '0',
+      left              : `${tr - DEPTH}px`,
+      width             : `${DEPTH}px`,
+      height            : `${g.h}px`,
+      background        : shadowColor,
+      borderRadius      : `${r}px ${r}px 0 0`,
+      transformOrigin   : '100% 50%',
+      transform         : 'rotateY(-90deg)',
       backfaceVisibility: 'visible',
     });
     rotor.appendChild(rightWall);
 
     // ── FRONT FACE SVG — full artwork at translateZ(0) ────────────────────
-    // Completely unchanged from previous versions.
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -364,49 +341,18 @@
     const cw = g.w;
     const ch = g.h;
 
-    // Layer 1: Base body
-    svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: ch,
-      fill: `url(#${bodyId})`, 'clip-path': cp
-    }));
-    // Layer 2: Dome cap brightening
-    svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: (ch * 0.38).toFixed(1),
-      fill: `url(#${capId})`, 'clip-path': cp, opacity: '0.75'
-    }));
-    // Layer 3: Plastic radial highlight
-    svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: ch,
-      fill: `url(#${hiId})`, 'clip-path': cp, opacity: '0.60'
-    }));
-    // Layer 4: Movable specular band
-    svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: ch,
-      fill: `url(#${specId})`, 'clip-path': cp
-    }));
-    // Layer 5: Left rim shadow
+    svg.appendChild(el('rect', { x: 0, y: 0, width: cw, height: ch, fill: `url(#${bodyId})`, 'clip-path': cp }));
+    svg.appendChild(el('rect', { x: 0, y: 0, width: cw, height: (ch * 0.38).toFixed(1), fill: `url(#${capId})`, 'clip-path': cp, opacity: '0.75' }));
+    svg.appendChild(el('rect', { x: 0, y: 0, width: cw, height: ch, fill: `url(#${hiId})`, 'clip-path': cp, opacity: '0.60' }));
+    svg.appendChild(el('rect', { x: 0, y: 0, width: cw, height: ch, fill: `url(#${specId})`, 'clip-path': cp }));
+
     const rimW = Math.max(2, Math.round(cw * 0.16));
-    svg.appendChild(el('rect', {
-      x: 0, y: 0, width: rimW, height: ch,
-      fill: 'rgba(0,0,0,0.20)', 'clip-path': cp
-    }));
-    // Layer 6: Right rim shadow
-    svg.appendChild(el('rect', {
-      x: cw - rimW, y: 0, width: rimW, height: ch,
-      fill: 'rgba(0,0,0,0.13)', 'clip-path': cp
-    }));
-    // Layer 7: Base occlusion
+    svg.appendChild(el('rect', { x: 0, y: 0, width: rimW, height: ch, fill: 'rgba(0,0,0,0.20)', 'clip-path': cp }));
+    svg.appendChild(el('rect', { x: cw - rimW, y: 0, width: rimW, height: ch, fill: 'rgba(0,0,0,0.13)', 'clip-path': cp }));
+
     const occH = Math.max(4, Math.round(ch * 0.15));
-    svg.appendChild(el('rect', {
-      x: 1, y: ch - occH, width: cw - 2, height: occH,
-      rx: 2, ry: 2,
-      fill: 'rgba(0,0,0,0.38)', 'clip-path': cp
-    }));
-    // Layer 8: Silhouette outline
-    svg.appendChild(el('path', {
-      d: pathD, fill: 'none',
-      stroke: 'rgba(0,0,0,0.30)', 'stroke-width': '0.75'
-    }));
+    svg.appendChild(el('rect', { x: 1, y: ch - occH, width: cw - 2, height: occH, rx: 2, ry: 2, fill: 'rgba(0,0,0,0.38)', 'clip-path': cp }));
+    svg.appendChild(el('path', { d: pathD, fill: 'none', stroke: 'rgba(0,0,0,0.30)', 'stroke-width': '0.75' }));
 
     rotor.appendChild(svg);
     wrapper.appendChild(rotor);
@@ -414,7 +360,7 @@
     return { wrapper, rotor, specStopEls };
   }
 
-  // ── Spring lever class (unchanged except rotor reference) ─────────────────
+  // ── Spring lever class (unchanged) ────────────────────────────────────────
   class SpringLever {
     constructor(rotorEl, specStopEls, isOn) {
       this.rotor     = rotorEl;
