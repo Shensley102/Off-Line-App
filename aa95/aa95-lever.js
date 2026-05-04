@@ -2,11 +2,16 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v10 — single-piece cylindrical lever body.
- *   Removes translated duplicate depth faces that caused the lever to appear
- *   as three stacked layers. The lever now renders as one continuous SVG
- *   capsule with cylindrical shading, rounded end cues, and the same spring
- *   motion, angles, sizing, positioning, and click behavior.
+ * v11 — single-piece cylindrical bat-handle lever.
+ *   Keeps the existing movement, spring physics, ON/OFF angles, pivot,
+ *   positioning, sizing, and click behavior unchanged.
+ *
+ *   Visual change:
+ *   - No translated duplicate depth faces.
+ *   - One SVG handle body only.
+ *   - Stronger barrel shading from base to tip.
+ *   - Oval rounded tip cap.
+ *   - Soft socket/base shadow where handle enters the nut.
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -22,10 +27,10 @@
     threshold : 0.004
   };
 
-  // ── Toggle angle targets ──────────────────────────────────────────────────
+  // ── Toggle angle targets — unchanged ─────────────────────────────────────
   const ANGLE = { on: -50, off: -80 };
 
-  // ── Fixed presentation cant ───────────────────────────────────────────────
+  // ── Fixed presentation cant — unchanged ──────────────────────────────────
   const CANT = { radio: -10, standard: -8, small: -6 };
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -34,7 +39,7 @@
   let _n = 0;
   const uid = () => 'aa95lv' + (++_n);
 
-  // ── Per-size geometry ─────────────────────────────────────────────────────
+  // ── Per-size geometry — unchanged positioning/sizing ─────────────────────
   const SIZE_CFG = {
     standard : { w: 26, h: 55, topW: 22, botW: 18, topR: 11, bot: 34, ml: -13   },
     radio    : { w: 33, h: 69, topW: 28, botW: 22, topR: 14, bot: 43, ml: -16.5 },
@@ -46,37 +51,40 @@
     ivory : {
       bodyStops : [
         [0,   '#8c7d6e'],
-        [18,  '#c0b09e'],
-        [42,  '#e8dece'],
-        [56,  '#d4c8b4'],
-        [78,  '#b8a892'],
-        [100, '#8c7d6e'],
+        [16,  '#b5a691'],
+        [34,  '#ded3bf'],
+        [48,  '#f0eadc'],
+        [58,  '#d8cdb9'],
+        [76,  '#ad9d87'],
+        [100, '#7d6f61'],
       ],
-      capGrad   : ['#f5efe3', '#ddd3c0'],
+      capGrad   : ['#fff7e7', '#d8cdb9'],
       specColor : '255,248,230',
     },
     red : {
       bodyStops : [
-        [0,   '#5a1212'],
-        [18,  '#982828'],
-        [42,  '#d44848'],
-        [56,  '#b43838'],
-        [78,  '#882020'],
-        [100, '#5a1212'],
+        [0,   '#4c1010'],
+        [16,  '#842323'],
+        [34,  '#bc3d3d'],
+        [48,  '#e05b5b'],
+        [58,  '#bd3b3b'],
+        [76,  '#842020'],
+        [100, '#4c1010'],
       ],
-      capGrad   : ['#e86262', '#c03838'],
+      capGrad   : ['#ff8585', '#b63434'],
       specColor : '255,210,210',
     },
     orange : {
       bodyStops : [
-        [0,   '#5a2d10'],
-        [18,  '#985018'],
-        [42,  '#d48038'],
-        [56,  '#b86828'],
-        [78,  '#8a4818'],
-        [100, '#5a2d10'],
+        [0,   '#4e250d'],
+        [16,  '#814314'],
+        [34,  '#b56625'],
+        [48,  '#e18a3d'],
+        [58,  '#bd6a28'],
+        [76,  '#7c3f14'],
+        [100, '#4e250d'],
       ],
-      capGrad   : ['#e88840', '#c26020'],
+      capGrad   : ['#f0a254', '#b75a1e'],
       specColor : '255,228,180',
     }
   };
@@ -88,7 +96,9 @@
     return e;
   }
 
-  // ── Cylinder path — full capsule, rounded top AND bottom ─────────────────
+  // ── Lever body path ───────────────────────────────────────────────────────
+  // One continuous handle shape. The bottom is rounded but later softened by
+  // the socket shadow, so the handle appears to enter the black nut/collar.
   function cylinderPath(g) {
     const { w, h, topW, topR } = g;
     const cx = w / 2;
@@ -130,7 +140,7 @@
   }
   */
 
-  // ── Build body gradient into SVG defs ─────────────────────────────────────
+  // ── Gradient helpers ──────────────────────────────────────────────────────
   function buildBodyGrad(defs, gradId, bodyStops) {
     const grad = el('linearGradient', {
       id: gradId,
@@ -140,33 +150,66 @@
       y2: '0%'
     });
 
-    bodyStops.forEach(([pct, col]) =>
+    bodyStops.forEach(([pct, col]) => {
       grad.appendChild(el('stop', {
         offset: pct + '%',
         'stop-color': col
-      }))
-    );
+      }));
+    });
 
     defs.appendChild(grad);
   }
 
-  // ── Build one lever assembly ───────────────────────────────────────────────
+  function buildBarrelShade(defs, gradId) {
+    const grad = el('linearGradient', {
+      id: gradId,
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%'
+    });
+
+    [
+      [0,   'rgba(0,0,0,0.34)'],
+      [7,   'rgba(0,0,0,0.25)'],
+      [18,  'rgba(0,0,0,0.12)'],
+      [31,  'rgba(0,0,0,0.02)'],
+      [43,  'rgba(255,255,255,0.06)'],
+      [50,  'rgba(255,255,255,0.18)'],
+      [56,  'rgba(255,255,255,0.10)'],
+      [68,  'rgba(0,0,0,0.03)'],
+      [82,  'rgba(0,0,0,0.14)'],
+      [93,  'rgba(0,0,0,0.26)'],
+      [100, 'rgba(0,0,0,0.34)']
+    ].forEach(([pct, col]) => {
+      grad.appendChild(el('stop', {
+        offset: pct + '%',
+        'stop-color': col
+      }));
+    });
+
+    defs.appendChild(grad);
+  }
+
+  // ── Build one lever assembly ──────────────────────────────────────────────
   function buildSVG(size, colorKey, id) {
     const g       = SIZE_CFG[size];
     const p       = PALETTE[colorKey] || PALETTE.ivory;
     const cantDeg = CANT[size] || CANT.standard;
     const pathD   = cylinderPath(g);
 
-    const clipId      = id + 'cl';
-    const bodyId      = id + 'b';
-    const capId       = id + 'c';
-    const hiId        = id + 'h';
-    const specId      = id + 's';
-    const barrelId    = id + 'barrel';
-    const endCapTopId = id + 'ect';
-    const endCapBotId = id + 'ecb';
+    const clipId       = id + 'cl';
+    const bodyId       = id + 'b';
+    const capId        = id + 'c';
+    const broadHiId    = id + 'h';
+    const barrelId     = id + 'barrel';
+    const specId       = id + 's';
+    const tipFaceId    = id + 'tip';
+    const tipRimId     = id + 'tiprim';
+    const socketId     = id + 'socket';
+    const socketBlurId = id + 'socketblur';
 
-    // ── Outer cant wrapper ────────────────────────────────────────────────
+    // ── Outer cant wrapper — unchanged ────────────────────────────────────
     const wrapper = document.createElement('div');
     Object.assign(wrapper.style, {
       position       : 'absolute',
@@ -182,7 +225,7 @@
       pointerEvents  : 'none'
     });
 
-    // ── Rotor receives rotateX from spring physics ────────────────────────
+    // ── Rotor receives rotateX from spring physics — unchanged ────────────
     const rotor = document.createElement('div');
     Object.assign(rotor.style, {
       position       : 'absolute',
@@ -195,7 +238,7 @@
       willChange     : 'transform'
     });
 
-    // ── Single visible lever body SVG ─────────────────────────────────────
+    // ── Single visible handle SVG ─────────────────────────────────────────
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -213,16 +256,16 @@
 
     const defs = document.createElementNS(NS, 'defs');
 
-    // Clip to the capsule/cylinder silhouette.
+    // Clip to one continuous handle silhouette.
     const clipEl = document.createElementNS(NS, 'clipPath');
     clipEl.setAttribute('id', clipId);
     clipEl.appendChild(el('path', { d: pathD }));
     defs.appendChild(clipEl);
 
-    // Main plastic color gradient.
+    // Main ivory/red/orange body gradient.
     buildBodyGrad(defs, bodyId, p.bodyStops);
 
-    // Top/tip brightening.
+    // Upper plastic glow.
     const capGrad = el('linearGradient', {
       id: capId,
       x1: '0%',
@@ -240,54 +283,34 @@
     }));
     defs.appendChild(capGrad);
 
-    // Broad radial plastic highlight.
-    const hiGrad = el('radialGradient', {
-      id            : hiId,
+    // Broad highlight that makes plastic look less flat.
+    const broadHi = el('radialGradient', {
+      id            : broadHiId,
       gradientUnits : 'userSpaceOnUse',
-      cx            : g.w / 2,
-      cy            : (g.h * 0.22).toFixed(1),
-      r             : (g.w * 0.62).toFixed(1),
-      fx            : g.w / 2,
+      cx            : (g.w * 0.44).toFixed(1),
+      cy            : (g.h * 0.25).toFixed(1),
+      r             : (g.w * 0.78).toFixed(1),
+      fx            : (g.w * 0.42).toFixed(1),
       fy            : (g.h * 0.08).toFixed(1)
     });
-    hiGrad.appendChild(el('stop', {
+    broadHi.appendChild(el('stop', {
       offset: '0%',
-      'stop-color': `rgba(${p.specColor},0.50)`
+      'stop-color': `rgba(${p.specColor},0.42)`
     }));
-    hiGrad.appendChild(el('stop', {
+    broadHi.appendChild(el('stop', {
+      offset: '62%',
+      'stop-color': `rgba(${p.specColor},0.10)`
+    }));
+    broadHi.appendChild(el('stop', {
       offset: '100%',
       'stop-color': `rgba(${p.specColor},0)`
     }));
-    defs.appendChild(hiGrad);
+    defs.appendChild(broadHi);
 
-    // Smooth barrel shading. This replaces the old translated-Z faces.
-    // It makes the one SVG face read as a rounded tube.
-    const barrelGrad = el('linearGradient', {
-      id: barrelId,
-      x1: '0%',
-      y1: '0%',
-      x2: '100%',
-      y2: '0%'
-    });
-    [
-      [0,   'rgba(0,0,0,0.28)'],
-      [10,  'rgba(0,0,0,0.18)'],
-      [24,  'rgba(0,0,0,0.04)'],
-      [42,  'rgba(255,255,255,0.04)'],
-      [52,  'rgba(255,255,255,0.13)'],
-      [62,  'rgba(255,255,255,0.04)'],
-      [78,  'rgba(0,0,0,0.06)'],
-      [90,  'rgba(0,0,0,0.16)'],
-      [100, 'rgba(0,0,0,0.26)']
-    ].forEach(([pct, col]) => {
-      barrelGrad.appendChild(el('stop', {
-        offset: pct + '%',
-        'stop-color': col
-      }));
-    });
-    defs.appendChild(barrelGrad);
+    // Strong side-to-side cylinder shading.
+    buildBarrelShade(defs, barrelId);
 
-    // Movable specular highlight band.
+    // Moving narrow specular band.
     const sc = p.specColor;
     const specGrad = el('linearGradient', {
       id: specId,
@@ -299,11 +322,11 @@
 
     const specDef = [
       { o:  0,  c: `rgba(${sc},0)`    },
-      { o: 30,  c: `rgba(${sc},0)`    },
-      { o: 44,  c: `rgba(${sc},0.12)` },
-      { o: 52,  c: `rgba(${sc},0.28)` },
-      { o: 60,  c: `rgba(${sc},0.10)` },
-      { o: 74,  c: `rgba(${sc},0)`    },
+      { o: 36,  c: `rgba(${sc},0)`    },
+      { o: 46,  c: `rgba(${sc},0.10)` },
+      { o: 51,  c: `rgba(${sc},0.34)` },
+      { o: 56,  c: `rgba(${sc},0.12)` },
+      { o: 66,  c: `rgba(${sc},0)`    },
       { o: 100, c: `rgba(${sc},0)`    }
     ];
 
@@ -317,45 +340,90 @@
     });
     defs.appendChild(specGrad);
 
-    // Rounded top/tip cue.
-    const endCapTop = el('radialGradient', {
-      id: endCapTopId,
+    // Tip face radial gradient — this creates the real oval cap cue.
+    const tipFaceGrad = el('radialGradient', {
+      id: tipFaceId,
       gradientUnits: 'userSpaceOnUse',
-      cx: g.w / 2,
-      cy: g.topR,
-      r: (g.topW * 0.65).toFixed(1)
+      cx: (g.w * 0.43).toFixed(1),
+      cy: (g.topR * 0.72).toFixed(1),
+      r:  (g.topW * 0.62).toFixed(1),
+      fx: (g.w * 0.36).toFixed(1),
+      fy: (g.topR * 0.44).toFixed(1)
     });
-    endCapTop.appendChild(el('stop', {
+    tipFaceGrad.appendChild(el('stop', {
       offset: '0%',
-      'stop-color': 'rgba(255,255,255,0.34)'
+      'stop-color': `rgba(${p.specColor},0.58)`
     }));
-    endCapTop.appendChild(el('stop', {
-      offset: '58%',
-      'stop-color': 'rgba(255,255,255,0.09)'
+    tipFaceGrad.appendChild(el('stop', {
+      offset: '42%',
+      'stop-color': `rgba(${p.specColor},0.22)`
     }));
-    endCapTop.appendChild(el('stop', {
+    tipFaceGrad.appendChild(el('stop', {
+      offset: '78%',
+      'stop-color': 'rgba(0,0,0,0.08)'
+    }));
+    tipFaceGrad.appendChild(el('stop', {
       offset: '100%',
-      'stop-color': 'rgba(0,0,0,0)'
-    }));
-    defs.appendChild(endCapTop);
-
-    // Rounded base cue near nut.
-    const endCapBot = el('radialGradient', {
-      id: endCapBotId,
-      gradientUnits: 'userSpaceOnUse',
-      cx: g.w / 2,
-      cy: g.h - g.topR,
-      r: (g.topW * 0.78).toFixed(1)
-    });
-    endCapBot.appendChild(el('stop', {
-      offset: '0%',
       'stop-color': 'rgba(0,0,0,0.20)'
     }));
-    endCapBot.appendChild(el('stop', {
+    defs.appendChild(tipFaceGrad);
+
+    // Tip rim gradient — darker lower edge, lighter upper edge.
+    const tipRimGrad = el('linearGradient', {
+      id: tipRimId,
+      x1: '0%',
+      y1: '0%',
+      x2: '0%',
+      y2: '100%'
+    });
+    tipRimGrad.appendChild(el('stop', {
+      offset: '0%',
+      'stop-color': 'rgba(255,255,255,0.28)'
+    }));
+    tipRimGrad.appendChild(el('stop', {
+      offset: '54%',
+      'stop-color': 'rgba(0,0,0,0.06)'
+    }));
+    tipRimGrad.appendChild(el('stop', {
+      offset: '100%',
+      'stop-color': 'rgba(0,0,0,0.30)'
+    }));
+    defs.appendChild(tipRimGrad);
+
+    // Socket/base shadow gradient — soft shadow where handle enters nut.
+    const socketGrad = el('radialGradient', {
+      id: socketId,
+      gradientUnits: 'userSpaceOnUse',
+      cx: g.w / 2,
+      cy: (g.h - g.topR * 0.32).toFixed(1),
+      r:  (g.topW * 0.62).toFixed(1)
+    });
+    socketGrad.appendChild(el('stop', {
+      offset: '0%',
+      'stop-color': 'rgba(0,0,0,0.34)'
+    }));
+    socketGrad.appendChild(el('stop', {
+      offset: '58%',
+      'stop-color': 'rgba(0,0,0,0.18)'
+    }));
+    socketGrad.appendChild(el('stop', {
       offset: '100%',
       'stop-color': 'rgba(0,0,0,0)'
     }));
-    defs.appendChild(endCapBot);
+    defs.appendChild(socketGrad);
+
+    // Optional blur for socket shadow.
+    const socketFilter = el('filter', {
+      id: socketBlurId,
+      x: '-20%',
+      y: '-20%',
+      width: '140%',
+      height: '140%'
+    });
+    socketFilter.appendChild(el('feGaussianBlur', {
+      stdDeviation: size === 'small' ? '0.35' : '0.7'
+    }));
+    defs.appendChild(socketFilter);
 
     svg.appendChild(defs);
 
@@ -363,7 +431,9 @@
     const cw = g.w;
     const ch = g.h;
 
-    // Layer 1: main continuous body.
+    // ── Paint stack: still one SVG body, no separated translated faces ─────
+
+    // 1. Main continuous plastic body.
     svg.appendChild(el('rect', {
       x: 0,
       y: 0,
@@ -373,40 +443,39 @@
       'clip-path': cp
     }));
 
-    // Layer 2: upper glow / plastic tip light.
+    // 2. Upper glow.
     svg.appendChild(el('rect', {
       x: 0,
       y: 0,
       width: cw,
-      height: (ch * 0.40).toFixed(1),
+      height: (ch * 0.38).toFixed(1),
       fill: `url(#${capId})`,
       'clip-path': cp,
-      opacity: '0.72'
+      opacity: '0.58'
     }));
 
-    // Layer 3: broad radial body highlight.
+    // 3. Broad plastic highlight.
     svg.appendChild(el('rect', {
       x: 0,
       y: 0,
       width: cw,
       height: ch,
-      fill: `url(#${hiId})`,
+      fill: `url(#${broadHiId})`,
       'clip-path': cp,
-      opacity: '0.55'
+      opacity: '0.72'
     }));
 
-    // Layer 4: smooth cylindrical barrel shading.
+    // 4. Tube/barrel shading from base to tip.
     svg.appendChild(el('rect', {
       x: 0,
       y: 0,
       width: cw,
       height: ch,
       fill: `url(#${barrelId})`,
-      'clip-path': cp,
-      opacity: '1'
+      'clip-path': cp
     }));
 
-    // Layer 5: movable specular band.
+    // 5. Angle-responsive narrow specular band.
     svg.appendChild(el('rect', {
       x: 0,
       y: 0,
@@ -416,51 +485,65 @@
       'clip-path': cp
     }));
 
-    // Layer 6: very soft base occlusion where handle enters the nut.
-    const occH = Math.max(4, Math.round(ch * 0.13));
-    svg.appendChild(el('rect', {
-      x: 1,
-      y: ch - occH,
-      width: cw - 2,
-      height: occH,
-      rx: 2,
-      ry: 2,
-      fill: 'rgba(0,0,0,0.16)',
-      'clip-path': cp
+    // 6. Soft socket shadow at base.
+    const socketH = Math.max(5, Math.round(ch * 0.22));
+    svg.appendChild(el('ellipse', {
+      cx: (cw / 2).toFixed(2),
+      cy: (ch - socketH * 0.28).toFixed(2),
+      rx: (g.topW * 0.48).toFixed(2),
+      ry: (socketH * 0.42).toFixed(2),
+      fill: `url(#${socketId})`,
+      'clip-path': cp,
+      filter: `url(#${socketBlurId})`,
+      opacity: '0.78'
     }));
 
-    // Layer 7: rounded end cues. Keep this block declared only once.
-    const endRx    = (g.topW / 2).toFixed(2);
-    const endCx    = (g.w / 2).toFixed(2);
-    const endTopCy = g.topR.toFixed(2);
-    const endBotCy = (g.h - g.topR).toFixed(2);
+    // 7. Tip oval face. This is the biggest cylinder cue.
+    const tipCx = (g.w / 2).toFixed(2);
+    const tipCy = (g.topR * 0.78).toFixed(2);
+    const tipRx = (g.topW * 0.46).toFixed(2);
+    const tipRy = (g.topR * 0.58).toFixed(2);
 
     svg.appendChild(el('ellipse', {
-      cx: endCx,
-      cy: endTopCy,
-      rx: endRx,
-      ry: (g.topR * 0.92).toFixed(2),
-      fill: `url(#${endCapTopId})`,
+      cx: tipCx,
+      cy: tipCy,
+      rx: tipRx,
+      ry: tipRy,
+      fill: `url(#${tipFaceId})`,
       'clip-path': cp,
-      opacity: '0.58'
+      opacity: '0.90'
     }));
 
+    // 8. Tip rim stroke/fill overlay.
     svg.appendChild(el('ellipse', {
-      cx: endCx,
-      cy: endBotCy,
-      rx: endRx,
-      ry: (g.topR * 0.85).toFixed(2),
-      fill: `url(#${endCapBotId})`,
+      cx: tipCx,
+      cy: tipCy,
+      rx: tipRx,
+      ry: tipRy,
+      fill: 'none',
+      stroke: `url(#${tipRimId})`,
+      'stroke-width': size === 'small' ? '0.45' : '0.85',
       'clip-path': cp,
-      opacity: '0.38'
+      opacity: '0.80'
     }));
 
-    // Layer 8: subtle silhouette outline.
+    // 9. Tiny tip hotspot, slightly off-center like the real examples.
+    svg.appendChild(el('ellipse', {
+      cx: (g.w * 0.38).toFixed(2),
+      cy: (g.topR * 0.52).toFixed(2),
+      rx: Math.max(0.7, g.topW * 0.12).toFixed(2),
+      ry: Math.max(0.5, g.topR * 0.10).toFixed(2),
+      fill: `rgba(${p.specColor},0.30)`,
+      'clip-path': cp,
+      opacity: '0.72'
+    }));
+
+    // 10. Subtle silhouette outline.
     svg.appendChild(el('path', {
       d: pathD,
       fill: 'none',
       stroke: 'rgba(0,0,0,0.26)',
-      'stroke-width': '0.75'
+      'stroke-width': size === 'small' ? '0.45' : '0.75'
     }));
 
     rotor.appendChild(svg);
@@ -469,7 +552,7 @@
     return { wrapper, rotor, specStopEls };
   }
 
-  // ── Spring lever class ────────────────────────────────────────────────────
+  // ── Spring lever class — unchanged behavior ───────────────────────────────
   class SpringLever {
     constructor(rotorEl, specStopEls, isOn) {
       this.rotor     = rotorEl;
@@ -528,8 +611,8 @@
 
     _updateSpecular() {
       const t     = (this.pos - ANGLE.on) / (ANGLE.off - ANGLE.on);
-      const shift = (t - 0.5) * 8;
-      const base  = [30, 44, 52, 60, 74];
+      const shift = (t - 0.5) * 7;
+      const base  = [36, 46, 51, 56, 66];
 
       base.forEach((b, i) => {
         const clamped = Math.max(1, Math.min(99, b + shift));
@@ -612,7 +695,7 @@
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| body: single SVG cylinder shading',
+      '| body: single SVG cylindrical bat-handle',
       '| reduced-motion:', REDUCED
     );
   }
