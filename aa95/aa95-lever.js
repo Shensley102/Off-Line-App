@@ -234,10 +234,15 @@
       willChange     : 'transform',
     });
 
-    // Single visible lever body: keep one primary capsule face only.
-    // Depth perception comes from shading, not stacked duplicate capsules.
+    // Back depth shadow (very subtle, no hard separation)
+    rotor.appendChild(buildDepthFace(g, p, pathD,
+      id + 'bkcl', id + 'bkb', -DEPTH, 0.10));
 
-    // ── FRONT FACE SVG — translateZ(0) — full artwork, cylindrical finish ─
+    // Mid shell tone (kept soft so lever reads as one continuous cylinder)
+    rotor.appendChild(buildDepthFace(g, p, pathD,
+      id + 'shcl', id + 'shb', -(DEPTH / 2), 0.08));
+
+    // ── FRONT FACE SVG — translateZ(0) — primary visible body ────────────
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
