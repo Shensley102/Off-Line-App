@@ -2,10 +2,11 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v9 — subtle 3D depth restored, duplicate end-cap declarations removed.
- *   Keeps the existing spring motion, angles, positioning, sizing, and click behavior.
- *   Uses soft back/shell depth faces plus one primary front capsule face so the
- *   lever reads as a continuous cylindrical bat-handle instead of separated layers.
+ * v10 — single-piece cylindrical lever body.
+ *   Removes translated duplicate depth faces that caused the lever to appear
+ *   as three stacked layers. The lever now renders as one continuous SVG
+ *   capsule with cylindrical shading, rounded end cues, and the same spring
+ *   motion, angles, sizing, positioning, and click behavior.
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -13,7 +14,7 @@
 (function () {
   'use strict';
 
-  // ── Spring constants (unchanged) ──────────────────────────────────────────
+  // ── Spring constants ──────────────────────────────────────────────────────
   const SPRING = {
     stiffness : 480,
     damping   : 22,
@@ -21,14 +22,11 @@
     threshold : 0.004
   };
 
-  // ── Toggle angle targets (unchanged) ─────────────────────────────────────
+  // ── Toggle angle targets ──────────────────────────────────────────────────
   const ANGLE = { on: -50, off: -80 };
 
-  // ── Fixed presentation cant (unchanged) ───────────────────────────────────
+  // ── Fixed presentation cant ───────────────────────────────────────────────
   const CANT = { radio: -10, standard: -8, small: -6 };
-
-  // ── Cylinder depth ────────────────────────────────────────────────────────
-  const DEPTH = 16;
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const NS = 'http://www.w3.org/2000/svg';
@@ -36,14 +34,14 @@
   let _n = 0;
   const uid = () => 'aa95lv' + (++_n);
 
-  // ── Per-size geometry (unchanged) ─────────────────────────────────────────
+  // ── Per-size geometry ─────────────────────────────────────────────────────
   const SIZE_CFG = {
     standard : { w: 26, h: 55, topW: 22, botW: 18, topR: 11, bot: 34, ml: -13   },
     radio    : { w: 33, h: 69, topW: 28, botW: 22, topR: 14, bot: 43, ml: -16.5 },
     small    : { w: 11, h: 21, topW:  9, botW:  7, topR:  4, bot: 14, ml: -5.5  }
   };
 
-  // ── Color palettes (unchanged) ────────────────────────────────────────────
+  // ── Color palettes ────────────────────────────────────────────────────────
   const PALETTE = {
     ivory : {
       bodyStops : [
@@ -91,10 +89,6 @@
   }
 
   // ── Cylinder path — full capsule, rounded top AND bottom ─────────────────
-  // Top dome: two quadratic beziers meeting at crown (cx, 0).
-  // Straight sides: tl/tr down to h-topR.
-  // Bottom dome: mirror of top — two quadratic beziers meeting at (cx, h).
-  // Both top and bottom use topR so the silhouette is a true stadium/capsule.
   function cylinderPath(g) {
     const { w, h, topW, topR } = g;
     const cx = w / 2;
@@ -112,7 +106,7 @@
     ].join(' ');
   }
 
-  // ── Original bat-handle path (preserved, not used) ────────────────────────
+  // ── Original bat-handle path preserved for rollback/testing ───────────────
   /*
   function batPath(g) {
     const { w, h, topW, botW, topR } = g;
@@ -123,11 +117,15 @@
     const br = bl + botW;
     const ts = (h * 0.48).toFixed(2);
     const te = (h * 0.62).toFixed(2);
+
     return [
-      `M ${tl},${topR}`,  `Q ${tl},0 ${cx},0`,  `Q ${tr},0 ${tr},${topR}`,
+      `M ${tl},${topR}`,
+      `Q ${tl},0 ${cx},0`,
+      `Q ${tr},0 ${tr},${topR}`,
       `C ${tr},${ts} ${br},${te} ${br},${h}`,
       `L ${bl},${h}`,
-      `C ${bl},${te} ${tl},${ts} ${tl},${topR}`,  `Z`
+      `C ${bl},${te} ${tl},${ts} ${tl},${topR}`,
+      `Z`
     ].join(' ');
   }
   */
@@ -135,52 +133,21 @@
   // ── Build body gradient into SVG defs ─────────────────────────────────────
   function buildBodyGrad(defs, gradId, bodyStops) {
     const grad = el('linearGradient', {
-      id: gradId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
+      id: gradId,
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%'
     });
+
     bodyStops.forEach(([pct, col]) =>
-      grad.appendChild(el('stop', { offset: pct + '%', 'stop-color': col }))
+      grad.appendChild(el('stop', {
+        offset: pct + '%',
+        'stop-color': col
+      }))
     );
+
     defs.appendChild(grad);
-  }
-
-  // ── Build a subtle depth SVG face ─────────────────────────────────────────
-  function buildDepthFace(g, p, pathD, clipId, bodyGradId, zPos, darkOver) {
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
-    svg.setAttribute('width',   g.w);
-    svg.setAttribute('height',  g.h);
-    Object.assign(svg.style, {
-      position           : 'absolute',
-      top                : '0',
-      left               : '0',
-      display            : 'block',
-      overflow           : 'visible',
-      backfaceVisibility : 'hidden',
-      transform          : `translateZ(${zPos}px)`,
-    });
-
-    const defs = document.createElementNS(NS, 'defs');
-    const clip = document.createElementNS(NS, 'clipPath');
-    clip.setAttribute('id', clipId);
-    clip.appendChild(el('path', { d: pathD }));
-    defs.appendChild(clip);
-    buildBodyGrad(defs, bodyGradId, p.bodyStops);
-    svg.appendChild(defs);
-
-    const cp = `url(#${clipId})`;
-    svg.appendChild(el('rect', {
-      x: 0, y: 0, width: g.w, height: g.h,
-      fill: `url(#${bodyGradId})`, 'clip-path': cp
-    }));
-
-    if (darkOver > 0) {
-      svg.appendChild(el('rect', {
-        x: 0, y: 0, width: g.w, height: g.h,
-        fill: `rgba(0,0,0,${darkOver})`, 'clip-path': cp
-      }));
-    }
-
-    return svg;
   }
 
   // ── Build one lever assembly ───────────────────────────────────────────────
@@ -190,13 +157,16 @@
     const cantDeg = CANT[size] || CANT.standard;
     const pathD   = cylinderPath(g);
 
-    const clipId = id + 'cl';
-    const bodyId = id + 'b';
-    const capId  = id + 'c';
-    const hiId   = id + 'h';
-    const specId = id + 's';
+    const clipId      = id + 'cl';
+    const bodyId      = id + 'b';
+    const capId       = id + 'c';
+    const hiId        = id + 'h';
+    const specId      = id + 's';
+    const barrelId    = id + 'barrel';
+    const endCapTopId = id + 'ect';
+    const endCapBotId = id + 'ecb';
 
-    // ── Outer cant wrapper (unchanged) ────────────────────────────────────
+    // ── Outer cant wrapper ────────────────────────────────────────────────
     const wrapper = document.createElement('div');
     Object.assign(wrapper.style, {
       position       : 'absolute',
@@ -212,7 +182,7 @@
       pointerEvents  : 'none'
     });
 
-    // ── 3D Rotor — receives rotateX from spring ───────────────────────────
+    // ── Rotor receives rotateX from spring physics ────────────────────────
     const rotor = document.createElement('div');
     Object.assign(rotor.style, {
       position       : 'absolute',
@@ -222,22 +192,15 @@
       height         : g.h + 'px',
       transformOrigin: '50% 99%',
       transformStyle : 'preserve-3d',
-      willChange     : 'transform',
+      willChange     : 'transform'
     });
 
-    // Subtle rear/depth faces. These are intentionally low-contrast so they
-    // add thickness without reading as separate stacked levers.
-    rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'bkcl', id + 'bkb', -DEPTH, 0.10));
-
-    rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'shcl', id + 'shb', -(DEPTH / 2), 0.08));
-
-    // ── FRONT FACE SVG — translateZ(0) — primary visible body ────────────
+    // ── Single visible lever body SVG ─────────────────────────────────────
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
     svg.setAttribute('height',   g.h);
+
     Object.assign(svg.style, {
       position           : 'absolute',
       top                : '0',
@@ -250,20 +213,34 @@
 
     const defs = document.createElementNS(NS, 'defs');
 
+    // Clip to the capsule/cylinder silhouette.
     const clipEl = document.createElementNS(NS, 'clipPath');
     clipEl.setAttribute('id', clipId);
     clipEl.appendChild(el('path', { d: pathD }));
     defs.appendChild(clipEl);
 
+    // Main plastic color gradient.
     buildBodyGrad(defs, bodyId, p.bodyStops);
 
+    // Top/tip brightening.
     const capGrad = el('linearGradient', {
-      id: capId, x1: '0%', y1: '0%', x2: '0%', y2: '100%'
+      id: capId,
+      x1: '0%',
+      y1: '0%',
+      x2: '0%',
+      y2: '100%'
     });
-    capGrad.appendChild(el('stop', { offset:   '0%', 'stop-color': p.capGrad[0] }));
-    capGrad.appendChild(el('stop', { offset: '100%', 'stop-color': p.capGrad[1] }));
+    capGrad.appendChild(el('stop', {
+      offset: '0%',
+      'stop-color': p.capGrad[0]
+    }));
+    capGrad.appendChild(el('stop', {
+      offset: '100%',
+      'stop-color': p.capGrad[1]
+    }));
     defs.appendChild(capGrad);
 
+    // Broad radial plastic highlight.
     const hiGrad = el('radialGradient', {
       id            : hiId,
       gradientUnits : 'userSpaceOnUse',
@@ -273,40 +250,52 @@
       fx            : g.w / 2,
       fy            : (g.h * 0.08).toFixed(1)
     });
-    hiGrad.appendChild(el('stop', { offset:   '0%', 'stop-color': `rgba(${p.specColor},0.50)` }));
-    hiGrad.appendChild(el('stop', { offset: '100%', 'stop-color': `rgba(${p.specColor},0)`    }));
+    hiGrad.appendChild(el('stop', {
+      offset: '0%',
+      'stop-color': `rgba(${p.specColor},0.50)`
+    }));
+    hiGrad.appendChild(el('stop', {
+      offset: '100%',
+      'stop-color': `rgba(${p.specColor},0)`
+    }));
     defs.appendChild(hiGrad);
 
+    // Smooth barrel shading. This replaces the old translated-Z faces.
+    // It makes the one SVG face read as a rounded tube.
+    const barrelGrad = el('linearGradient', {
+      id: barrelId,
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%'
+    });
+    [
+      [0,   'rgba(0,0,0,0.28)'],
+      [10,  'rgba(0,0,0,0.18)'],
+      [24,  'rgba(0,0,0,0.04)'],
+      [42,  'rgba(255,255,255,0.04)'],
+      [52,  'rgba(255,255,255,0.13)'],
+      [62,  'rgba(255,255,255,0.04)'],
+      [78,  'rgba(0,0,0,0.06)'],
+      [90,  'rgba(0,0,0,0.16)'],
+      [100, 'rgba(0,0,0,0.26)']
+    ].forEach(([pct, col]) => {
+      barrelGrad.appendChild(el('stop', {
+        offset: pct + '%',
+        'stop-color': col
+      }));
+    });
+    defs.appendChild(barrelGrad);
+
+    // Movable specular highlight band.
     const sc = p.specColor;
     const specGrad = el('linearGradient', {
-      id: specId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
+      id: specId,
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '0%'
     });
-
-    const endCapTopId = id + 'ect';
-    const endCapBotId = id + 'ecb';
-
-    const endCapTop = el('radialGradient', {
-      id: endCapTopId,
-      gradientUnits: 'userSpaceOnUse',
-      cx: g.w / 2,
-      cy: g.topR,
-      r: (g.topW * 0.65).toFixed(1)
-    });
-    endCapTop.appendChild(el('stop', { offset: '0%',  'stop-color': 'rgba(255,255,255,0.36)' }));
-    endCapTop.appendChild(el('stop', { offset: '55%', 'stop-color': 'rgba(255,255,255,0.10)' }));
-    endCapTop.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
-    defs.appendChild(endCapTop);
-
-    const endCapBot = el('radialGradient', {
-      id: endCapBotId,
-      gradientUnits: 'userSpaceOnUse',
-      cx: g.w / 2,
-      cy: g.h - g.topR,
-      r: (g.topW * 0.75).toFixed(1)
-    });
-    endCapBot.appendChild(el('stop', { offset: '0%',   'stop-color': 'rgba(0,0,0,0.22)' }));
-    endCapBot.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
-    defs.appendChild(endCapBot);
 
     const specDef = [
       { o:  0,  c: `rgba(${sc},0)`    },
@@ -317,12 +306,56 @@
       { o: 74,  c: `rgba(${sc},0)`    },
       { o: 100, c: `rgba(${sc},0)`    }
     ];
+
     const specStopEls = specDef.map(d => {
-      const s = el('stop', { offset: d.o + '%', 'stop-color': d.c });
+      const s = el('stop', {
+        offset: d.o + '%',
+        'stop-color': d.c
+      });
       specGrad.appendChild(s);
       return s;
     });
     defs.appendChild(specGrad);
+
+    // Rounded top/tip cue.
+    const endCapTop = el('radialGradient', {
+      id: endCapTopId,
+      gradientUnits: 'userSpaceOnUse',
+      cx: g.w / 2,
+      cy: g.topR,
+      r: (g.topW * 0.65).toFixed(1)
+    });
+    endCapTop.appendChild(el('stop', {
+      offset: '0%',
+      'stop-color': 'rgba(255,255,255,0.34)'
+    }));
+    endCapTop.appendChild(el('stop', {
+      offset: '58%',
+      'stop-color': 'rgba(255,255,255,0.09)'
+    }));
+    endCapTop.appendChild(el('stop', {
+      offset: '100%',
+      'stop-color': 'rgba(0,0,0,0)'
+    }));
+    defs.appendChild(endCapTop);
+
+    // Rounded base cue near nut.
+    const endCapBot = el('radialGradient', {
+      id: endCapBotId,
+      gradientUnits: 'userSpaceOnUse',
+      cx: g.w / 2,
+      cy: g.h - g.topR,
+      r: (g.topW * 0.78).toFixed(1)
+    });
+    endCapBot.appendChild(el('stop', {
+      offset: '0%',
+      'stop-color': 'rgba(0,0,0,0.20)'
+    }));
+    endCapBot.appendChild(el('stop', {
+      offset: '100%',
+      'stop-color': 'rgba(0,0,0,0)'
+    }));
+    defs.appendChild(endCapBot);
 
     svg.appendChild(defs);
 
@@ -330,68 +363,103 @@
     const cw = g.w;
     const ch = g.h;
 
-    // Main cylindrical body and highlights.
+    // Layer 1: main continuous body.
     svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: ch,
-      fill: `url(#${bodyId})`, 'clip-path': cp
+      x: 0,
+      y: 0,
+      width: cw,
+      height: ch,
+      fill: `url(#${bodyId})`,
+      'clip-path': cp
     }));
 
+    // Layer 2: upper glow / plastic tip light.
     svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: (ch * 0.40).toFixed(1),
-      fill: `url(#${capId})`, 'clip-path': cp, opacity: '0.78'
+      x: 0,
+      y: 0,
+      width: cw,
+      height: (ch * 0.40).toFixed(1),
+      fill: `url(#${capId})`,
+      'clip-path': cp,
+      opacity: '0.72'
     }));
 
+    // Layer 3: broad radial body highlight.
     svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: ch,
-      fill: `url(#${hiId})`, 'clip-path': cp, opacity: '0.62'
+      x: 0,
+      y: 0,
+      width: cw,
+      height: ch,
+      fill: `url(#${hiId})`,
+      'clip-path': cp,
+      opacity: '0.55'
     }));
 
+    // Layer 4: smooth cylindrical barrel shading.
     svg.appendChild(el('rect', {
-      x: 0, y: 0, width: cw, height: ch,
-      fill: `url(#${specId})`, 'clip-path': cp
+      x: 0,
+      y: 0,
+      width: cw,
+      height: ch,
+      fill: `url(#${barrelId})`,
+      'clip-path': cp,
+      opacity: '1'
     }));
 
-    // Soft edge shading — even left/right darkness helps it read as rounded,
-    // not as a flat rectangular strip.
-    const rimW = Math.max(2, Math.round(cw * 0.16));
+    // Layer 5: movable specular band.
     svg.appendChild(el('rect', {
-      x: 0, y: 0, width: rimW, height: ch,
-      fill: 'rgba(0,0,0,0.18)', 'clip-path': cp
-    }));
-    svg.appendChild(el('rect', {
-      x: cw - rimW, y: 0, width: rimW, height: ch,
-      fill: 'rgba(0,0,0,0.18)', 'clip-path': cp
+      x: 0,
+      y: 0,
+      width: cw,
+      height: ch,
+      fill: `url(#${specId})`,
+      'clip-path': cp
     }));
 
-    // Subtle base occlusion near the nut. Kept light so it does not become a
-    // hard separate band/layer.
-    const occH = Math.max(4, Math.round(ch * 0.14));
+    // Layer 6: very soft base occlusion where handle enters the nut.
+    const occH = Math.max(4, Math.round(ch * 0.13));
     svg.appendChild(el('rect', {
-      x: 1, y: ch - occH, width: cw - 2, height: occH,
-      rx: 2, ry: 2,
-      fill: 'rgba(0,0,0,0.20)', 'clip-path': cp
+      x: 1,
+      y: ch - occH,
+      width: cw - 2,
+      height: occH,
+      rx: 2,
+      ry: 2,
+      fill: 'rgba(0,0,0,0.16)',
+      'clip-path': cp
     }));
 
-    // Rounded end-cap cues. Declare this block only once — duplicate const
-    // declarations here will break the whole renderer.
-    const endRx = (g.topW / 2).toFixed(2);
-    const endCx = (g.w / 2).toFixed(2);
+    // Layer 7: rounded end cues. Keep this block declared only once.
+    const endRx    = (g.topW / 2).toFixed(2);
+    const endCx    = (g.w / 2).toFixed(2);
     const endTopCy = g.topR.toFixed(2);
     const endBotCy = (g.h - g.topR).toFixed(2);
 
     svg.appendChild(el('ellipse', {
-      cx: endCx, cy: endTopCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
-      fill: `url(#${endCapTopId})`, 'clip-path': cp, opacity: '0.76'
-    }));
-    svg.appendChild(el('ellipse', {
-      cx: endCx, cy: endBotCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
-      fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.62'
+      cx: endCx,
+      cy: endTopCy,
+      rx: endRx,
+      ry: (g.topR * 0.92).toFixed(2),
+      fill: `url(#${endCapTopId})`,
+      'clip-path': cp,
+      opacity: '0.58'
     }));
 
+    svg.appendChild(el('ellipse', {
+      cx: endCx,
+      cy: endBotCy,
+      rx: endRx,
+      ry: (g.topR * 0.85).toFixed(2),
+      fill: `url(#${endCapBotId})`,
+      'clip-path': cp,
+      opacity: '0.38'
+    }));
+
+    // Layer 8: subtle silhouette outline.
     svg.appendChild(el('path', {
       d: pathD,
       fill: 'none',
-      stroke: 'rgba(0,0,0,0.30)',
+      stroke: 'rgba(0,0,0,0.26)',
       'stroke-width': '0.75'
     }));
 
@@ -401,7 +469,7 @@
     return { wrapper, rotor, specStopEls };
   }
 
-  // ── Spring lever class (unchanged) ────────────────────────────────────────
+  // ── Spring lever class ────────────────────────────────────────────────────
   class SpringLever {
     constructor(rotorEl, specStopEls, isOn) {
       this.rotor     = rotorEl;
@@ -416,7 +484,14 @@
 
     flip(isOn) {
       this.target = isOn ? ANGLE.on : ANGLE.off;
-      if (REDUCED) { this.pos = this.target; this.vel = 0; this._apply(); return; }
+
+      if (REDUCED) {
+        this.pos = this.target;
+        this.vel = 0;
+        this._apply();
+        return;
+      }
+
       if (!this.raf) {
         this.prevTime = performance.now();
         this.raf = requestAnimationFrame(t => this._tick(t));
@@ -426,14 +501,23 @@
     _tick(now) {
       const dt = Math.min((now - this.prevTime) / 1000, 0.033);
       this.prevTime = now;
+
       const err   = this.pos - this.target;
       const force = -(SPRING.stiffness * err) - (SPRING.damping * this.vel);
-      this.vel   += (force / SPRING.mass) * dt;
-      this.pos   += this.vel * dt;
+
+      this.vel += (force / SPRING.mass) * dt;
+      this.pos += this.vel * dt;
+
       this._apply();
+
       if (Math.abs(err) < SPRING.threshold && Math.abs(this.vel) < SPRING.threshold) {
-        this.pos = this.target; this.vel = 0; this._apply(); this.raf = null; return;
+        this.pos = this.target;
+        this.vel = 0;
+        this._apply();
+        this.raf = null;
+        return;
       }
+
       this.raf = requestAnimationFrame(t => this._tick(t));
     }
 
@@ -446,6 +530,7 @@
       const t     = (this.pos - ANGLE.on) / (ANGLE.off - ANGLE.on);
       const shift = (t - 0.5) * 8;
       const base  = [30, 44, 52, 60, 74];
+
       base.forEach((b, i) => {
         const clamped = Math.max(1, Math.min(99, b + shift));
         this.specStops[i + 1].setAttribute('offset', clamped.toFixed(1) + '%');
@@ -453,7 +538,10 @@
     }
 
     destroy() {
-      if (this.raf) { cancelAnimationFrame(this.raf); this.raf = null; }
+      if (this.raf) {
+        cancelAnimationFrame(this.raf);
+        this.raf = null;
+      }
     }
   }
 
@@ -473,19 +561,25 @@
   // ── Build all levers and register spring instances ────────────────────────
   function init() {
     const registry = {};
+
     document.querySelectorAll('.assembly-toggle').forEach(assembly => {
       const component = assembly.closest('.component.toggle');
       if (!component) return;
+
       const id    = uid();
       const size  = getSize(assembly);
       const color = getColor(component);
       const isOn  = component.getAttribute('data-active') === 'true';
+
       assembly.querySelector('.lever')?.remove();
+
       const { wrapper, rotor, specStopEls } = buildSVG(size, color, id);
       assembly.appendChild(wrapper);
+
       const spring = new SpringLever(rotor, specStopEls, isOn);
       if (component.id) registry[component.id] = spring;
     });
+
     return registry;
   }
 
@@ -494,10 +588,14 @@
     const obs = new MutationObserver(mutations => {
       for (const m of mutations) {
         if (m.attributeName !== 'data-active') continue;
+
         const sp = registry[m.target.id];
-        if (sp) sp.flip(m.target.getAttribute('data-active') === 'true');
+        if (sp) {
+          sp.flip(m.target.getAttribute('data-active') === 'true');
+        }
       }
     });
+
     document.querySelectorAll('.component.toggle[id]').forEach(el => {
       obs.observe(el, { attributes: true });
     });
@@ -507,12 +605,14 @@
   function boot() {
     const registry = init();
     watch(registry);
+
     window.AA95Levers = registry;
+
     console.log(
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| depth:', DEPTH + 'px subtle shell',
+      '| body: single SVG cylinder shading',
       '| reduced-motion:', REDUCED
     );
   }
