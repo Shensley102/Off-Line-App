@@ -2,20 +2,12 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v7 — CSS rectangular wall divs removed entirely.
- *   Cylinder depth is now achieved with two additional SVG faces:
- *
- *   BACK FACE  translateZ(-16px) — same cylinder silhouette, full body gradient.
- *   SHELL      translateZ(-8px)  — same cylinder silhouette, body gradient +
- *                                  dark overlay to simulate curved side shading.
- *   FRONT FACE translateZ(0)     — full original artwork, unchanged.
- *
- *   When the rotor tilts (rotateX from spring), CSS perspective shifts the
- *   shell and back face in screen space relative to the front face. The
- *   visible strip of the shell that peeks above/around the front face follows
- *   the exact dome curve of cylinderPath — no flat rectangular edges, no
- *   box corners. The darker shell shading reads as the curved side surface
- *   of the cylinder in shadow.
+ * v8 — cylinderPath() now has a rounded bottom matching the dome top.
+ *   Previously the bottom was a flat straight line, visible as a hard edge
+ *   when the lever is in the OFF position (nearly face-on to viewer).
+ *   Now both top and bottom use the same topR quadratic bezier curves —
+ *   a full capsule/stadium silhouette. All three SVG faces (back, shell,
+ *   front) use cylinderPath, so all update from this one change.
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -37,9 +29,7 @@
   // ── Fixed presentation cant (unchanged) ───────────────────────────────────
   const CANT = { radio: -10, standard: -8, small: -6 };
 
-  // ── Cylinder depth ────────────────────────────────────────────────────────
-  // Total front-to-back distance in px.
-  // Shell sits at DEPTH/2. Increase to widen the visible cylinder rim strip.
+  // ── Cylinder depth (unchanged) ────────────────────────────────────────────
   const DEPTH = 16;
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -102,19 +92,33 @@
     return e;
   }
 
-  // ── Cylinder path ─────────────────────────────────────────────────────────
+  // ── Cylinder path — full capsule, rounded top AND bottom ─────────────────
+  // Top dome: two quadratic beziers meeting at crown (cx, 0).
+  // Straight sides: tl/tr down to h-topR.
+  // Bottom dome: mirror of top — two quadratic beziers meeting at (cx, h).
+  // Both top and bottom use topR so the silhouette is a true stadium/capsule.
+  // When foreshortened in OFF position, the viewer sees smooth ovals at both
+  // ends — no flat lines, no hard edges.
   function cylinderPath(g) {
     const { w, h, topW, topR } = g;
     const cx = w / 2;
     const tl = (w - topW) / 2;
     const tr = tl + topW;
+
     return [
+      // Start at top-left dome shoulder
       `M ${tl},${topR}`,
+      // Top dome — left half arc to crown
       `Q ${tl},0 ${cx},0`,
+      // Top dome — right half arc from crown
       `Q ${tr},0 ${tr},${topR}`,
-      `L ${tr},${h}`,
-      `L ${tl},${h}`,
-      `L ${tl},${topR}`,
+      // Right side — straight down to bottom shoulder
+      `L ${tr},${h - topR}`,
+      // Bottom dome — right half arc to base center
+      `Q ${tr},${h} ${cx},${h}`,
+      // Bottom dome — left half arc from base center
+      `Q ${tl},${h} ${tl},${h - topR}`,
+      // Left side — straight back up to top shoulder
       `Z`
     ].join(' ');
   }
@@ -150,12 +154,7 @@
     defs.appendChild(grad);
   }
 
-  // ── Build a depth SVG face ─────────────────────────────────────────────────
-  // Shared builder for both BACK FACE and SHELL.
-  // zPos      : translateZ value (negative = behind front face)
-  // darkOver  : opacity of black overlay applied over body gradient.
-  //             0 = same brightness as front (back face).
-  //             0.35 = side-shadow shading (shell).
+  // ── Build a depth SVG face (back face or shell) ───────────────────────────
   function buildDepthFace(g, p, pathD, clipId, bodyGradId, zPos, darkOver) {
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
@@ -172,31 +171,24 @@
     });
 
     const defs = document.createElementNS(NS, 'defs');
-
     const clip = document.createElementNS(NS, 'clipPath');
     clip.setAttribute('id', clipId);
     clip.appendChild(el('path', { d: pathD }));
     defs.appendChild(clip);
-
     buildBodyGrad(defs, bodyGradId, p.bodyStops);
     svg.appendChild(defs);
 
     const cp = `url(#${clipId})`;
-
-    // Body gradient fill
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: g.w, height: g.h,
       fill: `url(#${bodyGradId})`, 'clip-path': cp
     }));
-
-    // Dark overlay — simulates curved side surface shading
     if (darkOver > 0) {
       svg.appendChild(el('rect', {
         x: 0, y: 0, width: g.w, height: g.h,
         fill: `rgba(0,0,0,${darkOver})`, 'clip-path': cp
       }));
     }
-
     return svg;
   }
 
@@ -242,30 +234,13 @@
       willChange     : 'transform',
     });
 
-    // ── BACK FACE — translateZ(-DEPTH) ────────────────────────────────────
-    // Closes the rear of the cylinder. Same body gradient, no dark overlay.
-    // Visible when lever is nearly horizontal (deep OFF position).
-    rotor.appendChild(
-      buildDepthFace(g, p, pathD,
-        id + 'bkcl', id + 'bkb',
-        -DEPTH,    // z position
-        0          // no darkening — lit same as front
-      )
-    );
+    // Back face at z=-DEPTH (no dark overlay)
+    rotor.appendChild(buildDepthFace(g, p, pathD,
+      id + 'bkcl', id + 'bkb', -DEPTH, 0));
 
-    // ── SHELL — translateZ(-DEPTH/2) ──────────────────────────────────────
-    // The cylinder side surface. Sits at mid-depth between front and back.
-    // Same silhouette as front face — the visible crescent of shell that
-    // peeks around the front face follows the exact dome curve, not a box edge.
-    // Dark overlay (0.38) simulates the curved side being in shadow relative
-    // to the directly-lit front face.
-    rotor.appendChild(
-      buildDepthFace(g, p, pathD,
-        id + 'shcl', id + 'shb',
-        -(DEPTH / 2),  // z position — mid depth
-        0.38           // side-shadow shading
-      )
-    );
+    // Shell at z=-DEPTH/2 (side-shadow overlay)
+    rotor.appendChild(buildDepthFace(g, p, pathD,
+      id + 'shcl', id + 'shb', -(DEPTH / 2), 0.38));
 
     // ── FRONT FACE SVG — translateZ(0) — full artwork, unchanged ─────────
     const svg = document.createElementNS(NS, 'svg');
@@ -467,7 +442,7 @@
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| depth:', DEPTH + 'px  shell:', DEPTH/2 + 'px',
+      '| depth:', DEPTH + 'px  shell:', (DEPTH/2) + 'px',
       '| reduced-motion:', REDUCED
     );
   }
