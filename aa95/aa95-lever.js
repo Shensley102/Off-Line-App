@@ -338,18 +338,18 @@
     const ch = g.h;
 
     svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${bodyId})`, 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch*0.40).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.78' }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.62' }));
+    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch*0.40).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.82' }));
+    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.70' }));
     svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${specId})`, 'clip-path':cp }));
 
-    const rimW = Math.max(2, Math.round(cw * 0.16));
-    svg.appendChild(el('rect', { x:0, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.18)', 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.18)', 'clip-path':cp }));
+    const rimW = Math.max(2, Math.round(cw * 0.18));
+    svg.appendChild(el('rect', { x:0, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.30)', 'clip-path':cp }));
+    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.24)', 'clip-path':cp }));
 
-    const occH = Math.max(4, Math.round(ch * 0.14));
+    const centerW = Math.max(2, Math.round(cw * 0.22));
     svg.appendChild(el('rect', {
-      x: 1, y: ch - occH, width: cw - 2, height: occH,
-      rx: 2, ry: 2, fill:'rgba(0,0,0,0.20)', 'clip-path': cp
+      x: ((cw - centerW) / 2).toFixed(2), y:0, width:centerW, height:ch,
+      fill:'rgba(255,255,255,0.10)', 'clip-path':cp
     }));
 
     const endRx = (g.topW / 2).toFixed(2);
@@ -363,6 +363,19 @@
     svg.appendChild(el('ellipse', {
       cx: endCx, cy: endBotCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
       fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.62'
+    }));
+
+    const endRx = (g.topW / 2).toFixed(2);
+    const endCx = (g.w / 2).toFixed(2);
+    const endTopCy = g.topR.toFixed(2);
+    const endBotCy = (g.h - g.topR).toFixed(2);
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endTopCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapTopId})`, 'clip-path': cp, opacity: '0.82'
+    }));
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endBotCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.70'
     }));
 
     svg.appendChild(el('path', { d:pathD, fill:'none', stroke:'rgba(0,0,0,0.30)', 'stroke-width':'0.75' }));
@@ -484,7 +497,7 @@
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| depth:', DEPTH + 'px  shell:', (DEPTH/2) + 'px',
+      '| depth-shading:', DEPTH + 'px (single visible face)',
       '| reduced-motion:', REDUCED
     );
   }
