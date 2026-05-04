@@ -2,12 +2,10 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v8 — cylinderPath() now has a rounded bottom matching the dome top.
- *   Previously the bottom was a flat straight line, visible as a hard edge
- *   when the lever is in the OFF position (nearly face-on to viewer).
- *   Now both top and bottom use the same topR quadratic bezier curves —
- *   a full capsule/stadium silhouette. All three SVG faces (back, shell,
- *   front) use cylinderPath, so all update from this one change.
+ * v9 — subtle 3D depth restored, duplicate end-cap declarations removed.
+ *   Keeps the existing spring motion, angles, positioning, sizing, and click behavior.
+ *   Uses soft back/shell depth faces plus one primary front capsule face so the
+ *   lever reads as a continuous cylindrical bat-handle instead of separated layers.
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -29,7 +27,7 @@
   // ── Fixed presentation cant (unchanged) ───────────────────────────────────
   const CANT = { radio: -10, standard: -8, small: -6 };
 
-  // ── Cylinder depth (unchanged) ────────────────────────────────────────────
+  // ── Cylinder depth ────────────────────────────────────────────────────────
   const DEPTH = 16;
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -97,8 +95,6 @@
   // Straight sides: tl/tr down to h-topR.
   // Bottom dome: mirror of top — two quadratic beziers meeting at (cx, h).
   // Both top and bottom use topR so the silhouette is a true stadium/capsule.
-  // When foreshortened in OFF position, the viewer sees smooth ovals at both
-  // ends — no flat lines, no hard edges.
   function cylinderPath(g) {
     const { w, h, topW, topR } = g;
     const cx = w / 2;
@@ -106,19 +102,12 @@
     const tr = tl + topW;
 
     return [
-      // Start at top-left dome shoulder
       `M ${tl},${topR}`,
-      // Top dome — left half arc to crown
       `Q ${tl},0 ${cx},0`,
-      // Top dome — right half arc from crown
       `Q ${tr},0 ${tr},${topR}`,
-      // Right side — straight down to bottom shoulder
       `L ${tr},${h - topR}`,
-      // Bottom dome — right half arc to base center
       `Q ${tr},${h} ${cx},${h}`,
-      // Bottom dome — left half arc from base center
       `Q ${tl},${h} ${tl},${h - topR}`,
-      // Left side — straight back up to top shoulder
       `Z`
     ].join(' ');
   }
@@ -154,7 +143,7 @@
     defs.appendChild(grad);
   }
 
-  // ── Build a depth SVG face (back face or shell) ───────────────────────────
+  // ── Build a subtle depth SVG face ─────────────────────────────────────────
   function buildDepthFace(g, p, pathD, clipId, bodyGradId, zPos, darkOver) {
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
@@ -183,12 +172,14 @@
       x: 0, y: 0, width: g.w, height: g.h,
       fill: `url(#${bodyGradId})`, 'clip-path': cp
     }));
+
     if (darkOver > 0) {
       svg.appendChild(el('rect', {
         x: 0, y: 0, width: g.w, height: g.h,
         fill: `rgba(0,0,0,${darkOver})`, 'clip-path': cp
       }));
     }
+
     return svg;
   }
 
@@ -234,11 +225,11 @@
       willChange     : 'transform',
     });
 
-    // Back depth shadow (very subtle, no hard separation)
+    // Subtle rear/depth faces. These are intentionally low-contrast so they
+    // add thickness without reading as separate stacked levers.
     rotor.appendChild(buildDepthFace(g, p, pathD,
       id + 'bkcl', id + 'bkb', -DEPTH, 0.10));
 
-    // Mid shell tone (kept soft so lever reads as one continuous cylinder)
     rotor.appendChild(buildDepthFace(g, p, pathD,
       id + 'shcl', id + 'shb', -(DEPTH / 2), 0.08));
 
@@ -293,6 +284,7 @@
 
     const endCapTopId = id + 'ect';
     const endCapBotId = id + 'ecb';
+
     const endCapTop = el('radialGradient', {
       id: endCapTopId,
       gradientUnits: 'userSpaceOnUse',
@@ -300,7 +292,7 @@
       cy: g.topR,
       r: (g.topW * 0.65).toFixed(1)
     });
-    endCapTop.appendChild(el('stop', { offset: '0%', 'stop-color': 'rgba(255,255,255,0.36)' }));
+    endCapTop.appendChild(el('stop', { offset: '0%',  'stop-color': 'rgba(255,255,255,0.36)' }));
     endCapTop.appendChild(el('stop', { offset: '55%', 'stop-color': 'rgba(255,255,255,0.10)' }));
     endCapTop.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
     defs.appendChild(endCapTop);
@@ -312,9 +304,10 @@
       cy: g.h - g.topR,
       r: (g.topW * 0.75).toFixed(1)
     });
-    endCapBot.appendChild(el('stop', { offset: '0%', 'stop-color': 'rgba(0,0,0,0.22)' }));
+    endCapBot.appendChild(el('stop', { offset: '0%',   'stop-color': 'rgba(0,0,0,0.22)' }));
     endCapBot.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
     defs.appendChild(endCapBot);
+
     const specDef = [
       { o:  0,  c: `rgba(${sc},0)`    },
       { o: 30,  c: `rgba(${sc},0)`    },
@@ -337,25 +330,55 @@
     const cw = g.w;
     const ch = g.h;
 
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${bodyId})`, 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch*0.40).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.82' }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.70' }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${specId})`, 'clip-path':cp }));
-
-    const rimW = Math.max(2, Math.round(cw * 0.18));
-    svg.appendChild(el('rect', { x:0, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.30)', 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.24)', 'clip-path':cp }));
-
-    const centerW = Math.max(2, Math.round(cw * 0.22));
+    // Main cylindrical body and highlights.
     svg.appendChild(el('rect', {
-      x: ((cw - centerW) / 2).toFixed(2), y:0, width:centerW, height:ch,
-      fill:'rgba(255,255,255,0.10)', 'clip-path':cp
+      x: 0, y: 0, width: cw, height: ch,
+      fill: `url(#${bodyId})`, 'clip-path': cp
     }));
 
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: cw, height: (ch * 0.40).toFixed(1),
+      fill: `url(#${capId})`, 'clip-path': cp, opacity: '0.78'
+    }));
+
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: cw, height: ch,
+      fill: `url(#${hiId})`, 'clip-path': cp, opacity: '0.62'
+    }));
+
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: cw, height: ch,
+      fill: `url(#${specId})`, 'clip-path': cp
+    }));
+
+    // Soft edge shading — even left/right darkness helps it read as rounded,
+    // not as a flat rectangular strip.
+    const rimW = Math.max(2, Math.round(cw * 0.16));
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: rimW, height: ch,
+      fill: 'rgba(0,0,0,0.18)', 'clip-path': cp
+    }));
+    svg.appendChild(el('rect', {
+      x: cw - rimW, y: 0, width: rimW, height: ch,
+      fill: 'rgba(0,0,0,0.18)', 'clip-path': cp
+    }));
+
+    // Subtle base occlusion near the nut. Kept light so it does not become a
+    // hard separate band/layer.
+    const occH = Math.max(4, Math.round(ch * 0.14));
+    svg.appendChild(el('rect', {
+      x: 1, y: ch - occH, width: cw - 2, height: occH,
+      rx: 2, ry: 2,
+      fill: 'rgba(0,0,0,0.20)', 'clip-path': cp
+    }));
+
+    // Rounded end-cap cues. Declare this block only once — duplicate const
+    // declarations here will break the whole renderer.
     const endRx = (g.topW / 2).toFixed(2);
     const endCx = (g.w / 2).toFixed(2);
     const endTopCy = g.topR.toFixed(2);
     const endBotCy = (g.h - g.topR).toFixed(2);
+
     svg.appendChild(el('ellipse', {
       cx: endCx, cy: endTopCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
       fill: `url(#${endCapTopId})`, 'clip-path': cp, opacity: '0.76'
@@ -365,20 +388,12 @@
       fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.62'
     }));
 
-    const endRx = (g.topW / 2).toFixed(2);
-    const endCx = (g.w / 2).toFixed(2);
-    const endTopCy = g.topR.toFixed(2);
-    const endBotCy = (g.h - g.topR).toFixed(2);
-    svg.appendChild(el('ellipse', {
-      cx: endCx, cy: endTopCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
-      fill: `url(#${endCapTopId})`, 'clip-path': cp, opacity: '0.82'
+    svg.appendChild(el('path', {
+      d: pathD,
+      fill: 'none',
+      stroke: 'rgba(0,0,0,0.30)',
+      'stroke-width': '0.75'
     }));
-    svg.appendChild(el('ellipse', {
-      cx: endCx, cy: endBotCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
-      fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.70'
-    }));
-
-    svg.appendChild(el('path', { d:pathD, fill:'none', stroke:'rgba(0,0,0,0.30)', 'stroke-width':'0.75' }));
 
     rotor.appendChild(svg);
     wrapper.appendChild(rotor);
@@ -497,7 +512,7 @@
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| depth-shading:', DEPTH + 'px (single visible face)',
+      '| depth:', DEPTH + 'px subtle shell',
       '| reduced-motion:', REDUCED
     );
   }
