@@ -2,16 +2,11 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v3 — 3D Rotor approach:
- *   The spring no longer rotates the flat SVG directly.
- *   Instead it rotates a 'rotor' div (preserve-3d) that contains:
- *     - Several cylinder-wall depth layers at negative translateZ
- *     - The full front-face SVG artwork at translateZ(0)
- *   When the rotor tilts, the depth layers peek out from the top/bottom edges,
- *   making the lever read as a solid cylinder with real thickness — not paper.
- *
- * To revert to flat SVG rotation: swap rotor animation back to svg animation
- * in SpringLever._apply() and remove the depth layer loop in buildSVG().
+ * v4 — depth layers now carry the full body gradient (fully opaque).
+ *   Previously depth layers were a flat semi-transparent color, letting the
+ *   dark panel bleed through and not matching the front face gradient.
+ *   Now each depth layer renders the same warm left→right body gradient as
+ *   the front face — the cylinder reads as one solid unified shape.
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -34,8 +29,6 @@
   const CANT = { radio: -10, standard: -8, small: -6 };
 
   // ── Cylinder depth configuration ──────────────────────────────────────────
-  // DEPTH.steps : number of wall slices behind the front face
-  // DEPTH.total : how far back (in px) the deepest layer sits at Z
   const DEPTH = { steps: 6, total: 14 };
 
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,9 +45,7 @@
   };
 
   // ── Color palettes ────────────────────────────────────────────────────────
-  // depthColor: color of cylinder wall slices.
-  // Now matched to the mid-body tone of each material so the cylinder reads
-  // as one unified solid shape — not a dark-walled tube.
+  // depthColor removed — depth layers now use bodyStops gradient directly.
   const PALETTE = {
     ivory : {
       bodyStops : [
@@ -67,7 +58,6 @@
       ],
       capGrad   : ['#f5efe3', '#ddd3c0'],
       specColor : '255,248,230',
-      depthColor: '#d4c8b4',   // mid-body cream — matches lever face
     },
     red : {
       bodyStops : [
@@ -80,7 +70,6 @@
       ],
       capGrad   : ['#e86262', '#c03838'],
       specColor : '255,210,210',
-      depthColor: '#b43838',   // mid-body red — matches lever face
     },
     orange : {
       bodyStops : [
@@ -93,7 +82,6 @@
       ],
       capGrad   : ['#e88840', '#c26020'],
       specColor : '255,228,180',
-      depthColor: '#b86828',   // mid-body orange — matches lever face
     }
   };
 
@@ -105,8 +93,6 @@
   }
 
   // ── Cylinder path ─────────────────────────────────────────────────────────
-  // Straight vertical sides (topW = constant diameter), rounded dome crown.
-  // To revert to tapered bat-handle: restore batPath() and swap call in buildSVG.
   function cylinderPath(g) {
     const { w, h, topW, topR } = g;
     const cx = w / 2;
@@ -146,21 +132,25 @@
   }
   */
 
+  // ── Build body gradient into an SVG defs block ────────────────────────────
+  // Used by both depth layers and the front face.
+  // Each caller passes its own unique gradientId to avoid ID collisions.
+  function buildBodyGrad(defs, gradientId, bodyStops) {
+    const grad = el('linearGradient', {
+      id: gradientId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
+    });
+    bodyStops.forEach(([pct, col]) =>
+      grad.appendChild(el('stop', { offset: pct + '%', 'stop-color': col }))
+    );
+    defs.appendChild(grad);
+  }
+
   // ── Build one lever assembly ───────────────────────────────────────────────
-  // Returns { wrapper, rotor, svg, specStopEls }
-  //
-  // DOM structure:
-  //   wrapper (div)   — fixed cant rotateY, absolute in .assembly-toggle
-  //     rotor (div)   — receives rotateX from spring, preserve-3d
-  //       depth[0]    — wall slice at translateZ(-DEPTH.total)
-  //       depth[...]
-  //       depth[N-1]  — wall slice at translateZ(-DEPTH.total/2)
-  //       svg         — full front face artwork, translateZ(0)
   function buildSVG(size, colorKey, id) {
     const g       = SIZE_CFG[size];
     const p       = PALETTE[colorKey] || PALETTE.ivory;
     const cantDeg = CANT[size] || CANT.standard;
-    const pathD   = cylinderPath(g);  // swap to batPath(g) to revert shape
+    const pathD   = cylinderPath(g);
 
     const clipId = id + 'cl';
     const bodyId = id + 'b';
@@ -184,8 +174,7 @@
       pointerEvents  : 'none'
     });
 
-    // ── 3D Rotor ─────────────────────────────────────────────────────────
-    // Spring drives rotateX here — NOT on the svg directly.
+    // ── 3D Rotor — receives rotateX from spring ───────────────────────────
     const rotor = document.createElement('div');
     Object.assign(rotor.style, {
       position       : 'absolute',
@@ -199,15 +188,14 @@
     });
 
     // ── Cylinder wall depth layers ────────────────────────────────────────
-    // Body-colored silhouettes at negative Z behind the front face (Z=0).
-    // Now matched to the lever's own cream/red/orange body color so the
-    // cylinder reads as one solid unified shape when the rotor tilts.
+    // Each layer carries the full body gradient — fully opaque — so the
+    // cylinder wall matches the front face exactly with no dark bleed-through.
     for (let i = 0; i < DEPTH.steps; i++) {
       const t  = i / (DEPTH.steps - 1);
       const z  = -(DEPTH.total * (1 - t * 0.5));   // -14px → -7px
-      const op = (0.92 - t * 0.30).toFixed(2);     //  0.92 →  0.62
-
+      const dlId     = id + 'dl' + i;
       const dlClipId = id + 'dc' + i;
+      const dlBodyId = id + 'db' + i;
 
       const dlSvg = document.createElementNS(NS, 'svg');
       dlSvg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
@@ -223,16 +211,22 @@
       });
 
       const dlDefs = document.createElementNS(NS, 'defs');
+
+      // Clip to cylinder silhouette
       const dlClip = document.createElementNS(NS, 'clipPath');
       dlClip.setAttribute('id', dlClipId);
       dlClip.appendChild(el('path', { d: pathD }));
       dlDefs.appendChild(dlClip);
+
+      // Full body gradient — same warm left→right shading as front face
+      buildBodyGrad(dlDefs, dlBodyId, p.bodyStops);
+
       dlSvg.appendChild(dlDefs);
 
+      // Fully opaque gradient fill — no opacity, no flat color, no bleed-through
       dlSvg.appendChild(el('rect', {
         x: 0, y: 0, width: g.w, height: g.h,
-        fill       : p.depthColor,
-        opacity    : op,
+        fill       : `url(#${dlBodyId})`,
         'clip-path': `url(#${dlClipId})`
       }));
 
@@ -261,13 +255,7 @@
     clipEl.appendChild(el('path', { d: pathD }));
     defs.appendChild(clipEl);
 
-    const bodyGrad = el('linearGradient', {
-      id: bodyId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
-    });
-    p.bodyStops.forEach(([pct, col]) =>
-      bodyGrad.appendChild(el('stop', { offset: pct + '%', 'stop-color': col }))
-    );
-    defs.appendChild(bodyGrad);
+    buildBodyGrad(defs, bodyId, p.bodyStops);
 
     const capGrad = el('linearGradient', {
       id: capId, x1: '0%', y1: '0%', x2: '0%', y2: '100%'
