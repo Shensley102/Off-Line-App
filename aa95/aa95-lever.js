@@ -15,60 +15,24 @@
   'use strict';
 
   // ── Spring constants ──────────────────────────────────────────────────────
-  // Tuned for a heavy mil-spec toggle: snappy snap, slight overshoot, quick settle
   const SPRING = {
-    stiffness : 480,   // N·m / rad  — higher = faster snap
-    damping   : 22,    // N·m·s/rad  — higher = less bounce
+    stiffness : 480,
+    damping   : 22,
     mass      : 1.0,
-    threshold : 0.004  // deg / deg·s⁻¹ — stop condition
+    threshold : 0.004
   };
 
   // ── Toggle angle targets ──────────────────────────────────────────────────
-  // These are CSS rotateX values applied to the lever SVG.
-  // Pivot is at the lever base (transformOrigin: '50% 99%').
-  // Negative rotateX = top of lever tilts TOWARD viewer (out of screen, +Z).
-  //
-  // Physical geometry (panel is in the screen plane, viewer is in front):
-  //   rotateX   0° = SVG flat in screen plane = lever side-profile face-on to camera
-  //                  (this is NOT a valid toggle position — it's the 90° viewing angle)
-  //   rotateX -90° = lever perfectly horizontal, dome pointing straight at viewer
-  //                  (OFF = perpendicular to panel = 90° to faceplate)
-  //   rotateX -60° = lever at 60° to panel (physically correct ON angle)
-  //
-  // We use -80° and -50° rather than the exact -90°/-60° because:
-  //   - At exactly -90° the lever collapses to zero visible height (too flat)
-  //   - The 10° offset still reads correctly and gives a more legible dome at OFF
-  //   - Total throw remains exactly 30° either way
-  //
-  // Tune these values together — always keep the difference at 30° to preserve
-  // the physical throw. Moving both values more negative increases foreshortening
-  // of the OFF state. Moving both less negative reduces foreshortening.
-  //
-  // Reference: faceplate = 180°, OFF = 90° (perpendicular), ON = 60° (30° up from perpendicular)
   const ANGLE = {
-    on  : -50,   // rotateX — lever ~50° to panel, side profile visible (ON / UP)
-    off : -80    // rotateX — lever ~80° to panel, foreshortened dome (OFF / DOWN)
+    on  : -50,
+    off : -80
   };
 
   // ── Fixed presentation cant ───────────────────────────────────────────────
-  // WHY THIS EXISTS:
-  //   A small rotateY applied to an OUTER wrapper slightly rotates the whole
-  //   assembly left so the user can better see the lever depth and motion.
-  //   At the new corrected angles (nearly face-on at OFF), the cant also helps
-  //   the foreshortened dome read as a 3D object rather than a flat circle.
-  //
-  // WHY rotateY IS SEPARATE FROM rotateX:
-  //   Combining them into one transform string on the SVG would make the
-  //   spring math interact with the cant angle every frame, causing drift and
-  //   an incorrect effective pivot axis. Outer = fixed world cant, inner = throw.
-  //
-  // HOW TO ADJUST:
-  //   Change the values below. Negative = cant left. Stay within ±15° or the
-  //   lever reads as skewed rather than merely canted for depth.
   const CANT = {
-    radio    : -10,   // deg — large radio toggle levers (COM1/COM2/FM1/FM2/AUX)
-    standard :  -8,   // deg — standard toggles (ISO/EMR, ICS MIC)
-    small    :  -6    // deg — small toggles (PAT, KEY)
+    radio    : -10,
+    standard :  -8,
+    small    :  -6
   };
 
   // ── Reduced-motion preference ─────────────────────────────────────────────
@@ -82,14 +46,7 @@
   const uid = () => 'aa95lv' + (++_n);
 
   // ── Per-size geometry ─────────────────────────────────────────────────────
-  // w, h     — SVG canvas size in px
-  // topW     — lever width at the dome (widest point, near top)
-  // botW     — lever width at the base (narrowest, where it enters the nut)
-  // topR     — dome radius: larger = more bulbous rounded tip, smaller = flatter crown
-  // bot, ml  — bottom/margin-left positioning within the .assembly-toggle stage
-  //
-  // Tune topW/botW ratio to change how tapered the bat handle looks.
-  // Tune topR to change how round the tip dome is.
+  // topW is used as the cylinder diameter — straight sides, no taper.
   const SIZE_CFG = {
     standard : { w: 26, h: 55, topW: 22, botW: 18, topR: 11, bot: 34, ml: -13   },
     radio    : { w: 33, h: 69, topW: 28, botW: 22, topR: 14, bot: 43, ml: -16.5 },
@@ -97,35 +54,19 @@
   };
 
   // ── Color palettes ────────────────────────────────────────────────────────
-  // bodyStops : [[pct, color], ...] — left→right gradient, simulates rounded form
-  //             Tune these colors to adjust warm/cool balance or apparent age.
-  //             More yellow-tan = older/worn. More neutral gray = newer.
-  // capGrad   : [topColor, bottomColor] — dome tip top→bottom gradient
-  //             Tune to change how bright the dome crown reads.
-  // specColor : 'R,G,B' — base color for all specular/highlight layers
-  //             Tune to push the plastic sheen warmer or cooler.
   const PALETTE = {
-
-    // ── Ivory / cream ────────────────────────────────────────────────────────
-    // Matches real AA95 bat-handle phenolic/nylon material — warm, slightly aged.
-    // To make it look newer/cleaner: shift bodyStops center toward #f0ece0.
-    // To make it look more worn: shift center toward #c8b898.
     ivory : {
       bodyStops : [
-        [0,   '#8c7d6e'],   // deep warm shadow — left edge
-        [18,  '#c0b09e'],   // mid-shadow
-        [42,  '#e8dece'],   // main body — warm cream center
-        [56,  '#d4c8b4'],   // mid-light right
-        [78,  '#b8a892'],   // shadow right
-        [100, '#8c7d6e'],   // deep shadow — right edge
+        [0,   '#8c7d6e'],
+        [18,  '#c0b09e'],
+        [42,  '#e8dece'],
+        [56,  '#d4c8b4'],
+        [78,  '#b8a892'],
+        [100, '#8c7d6e'],
       ],
-      capGrad  : ['#f5efe3', '#ddd3c0'],   // dome: very light ivory → cream
-      specColor: '255,248,230',             // warm cream-white specular
+      capGrad  : ['#f5efe3', '#ddd3c0'],
+      specColor: '255,248,230',
     },
-
-    // ── Red ──────────────────────────────────────────────────────────────────
-    // ISO/EMR lever. Same bat-handle material treatment, red-tinted.
-    // Tune bodyStops center ([42]) to adjust red saturation.
     red : {
       bodyStops : [
         [0,   '#5a1212'],
@@ -138,9 +79,6 @@
       capGrad  : ['#e86262', '#c03838'],
       specColor: '255,210,210',
     },
-
-    // ── Orange ───────────────────────────────────────────────────────────────
-    // ICS MIC lever. Same material, orange-tinted.
     orange : {
       bodyStops : [
         [0,   '#5a2d10'],
@@ -162,51 +100,59 @@
     return e;
   }
 
-  // ── Bat-handle path ───────────────────────────────────────────────────────
-  // Returns an SVG path 'd' string describing the lever silhouette.
-  //
-  // Shape anatomy:
-  //   Dome top  — two quadratic beziers meeting at the crown (cx, 0):
-  //               Q tl,0 → cx,0 then Q tr,0 → tr,topR forms a smooth rounded tip.
-  //   Sides     — cubic beziers tapering from topW at the dome to botW at the base.
-  //               Control points at taperStart / taperEnd govern the taper timing:
-  //                 taperStart (h*0.48): where the straight upper body ends
-  //                 taperEnd   (h*0.62): where the taper finishes into the shaft
-  //               Adjust these fractions to change the bat-handle feel:
-  //                 lower taperStart → taper starts sooner (dramatic bottle shape)
-  //                 higher taperEnd  → taper completes later (straighter, cylindrical)
-  //   Flat base — sits flush with the nut at y = h
+  // ── ORIGINAL bat-handle path (kept for reference — not used) ──────────────
+  // To restore: replace cylinderPath(g) with batPath(g) in buildSVG()
+  /*
   function batPath(g) {
     const { w, h, topW, botW, topR } = g;
     const cx = w / 2;
-    const tl = (w - topW) / 2;         // top-left x (dome edge)
-    const tr = tl + topW;               // top-right x (dome edge)
-    const bl = (w - botW) / 2;         // bottom-left x (base edge)
-    const br = bl + botW;               // bottom-right x (base edge)
-    const ts = (h * 0.48).toFixed(2);  // taper start — upper body → shaft
-    const te = (h * 0.62).toFixed(2);  // taper end   — shaft reaches base width
+    const tl = (w - topW) / 2;
+    const tr = tl + topW;
+    const bl = (w - botW) / 2;
+    const br = bl + botW;
+    const ts = (h * 0.48).toFixed(2);
+    const te = (h * 0.62).toFixed(2);
+    return [
+      `M ${tl},${topR}`,
+      `Q ${tl},0 ${cx},0`,
+      `Q ${tr},0 ${tr},${topR}`,
+      `C ${tr},${ts} ${br},${te} ${br},${h}`,
+      `L ${bl},${h}`,
+      `C ${bl},${te} ${tl},${ts} ${tl},${topR}`,
+      `Z`
+    ].join(' ');
+  }
+  */
+
+  // ── Cylinder path ─────────────────────────────────────────────────────────
+  // Straight vertical sides using topW as the consistent diameter.
+  // Rounded dome crown (same topR as before).
+  // Flat base flush at y = h.
+  // To revert to bat-handle: replace cylinderPath(g) with batPath(g) in buildSVG()
+  // and uncomment batPath() above.
+  function cylinderPath(g) {
+    const { w, h, topW, topR } = g;
+    const cx = w / 2;
+    const tl = (w - topW) / 2;   // left edge — constant all the way down
+    const tr = tl + topW;         // right edge — constant all the way down
 
     return [
       `M ${tl},${topR}`,
-      `Q ${tl},0 ${cx},0`,               // left half of dome arc
-      `Q ${tr},0 ${tr},${topR}`,         // right half of dome arc
-      `C ${tr},${ts} ${br},${te} ${br},${h}`,    // right side: dome → base
-      `L ${bl},${h}`,                    // flat base
-      `C ${bl},${te} ${tl},${ts} ${tl},${topR}`, // left side: base → dome
+      `Q ${tl},0 ${cx},0`,         // left half of dome arc
+      `Q ${tr},0 ${tr},${topR}`,   // right half of dome arc
+      `L ${tr},${h}`,              // right side — perfectly straight
+      `L ${tl},${h}`,              // flat base
+      `L ${tl},${topR}`,           // left side — perfectly straight
       `Z`
     ].join(' ');
   }
 
   // ── Build one SVG lever + its cant wrapper ────────────────────────────────
-  // Returns { wrapper, svg, specStopEls }
-  //   wrapper     — outer div with fixed rotateY cant; append to .assembly-toggle
-  //   svg         — inner SVG; SpringLever drives rotateX on this element
-  //   specStopEls — 7-element array; [1]–[5] are shifted each animation frame
   function buildSVG(size, colorKey, id) {
     const g       = SIZE_CFG[size];
     const p       = PALETTE[colorKey] || PALETTE.ivory;
     const cantDeg = CANT[size] || CANT.standard;
-    const pathD   = batPath(g);
+    const pathD   = cylinderPath(g);   // ← swap to batPath(g) to revert
 
     const clipId = id + 'cl';
     const bodyId = id + 'b';
@@ -215,10 +161,6 @@
     const specId = id + 's';
 
     // ── Outer cant wrapper ────────────────────────────────────────────────────
-    // Owns the absolute positioning (same bottom/left/marginLeft as the old SVG).
-    // Applies a fixed rotateY presentation cant — never touched by the spring.
-    // transform-style: preserve-3d required so the inner SVG's rotateX composes
-    // correctly within the perspective context of the parent .assembly-toggle.
     const wrapper = document.createElement('div');
     Object.assign(wrapper.style, {
       position       : 'absolute',
@@ -235,8 +177,6 @@
     });
 
     // ── Inner SVG ─────────────────────────────────────────────────────────────
-    // SpringLever animates rotateX here every frame.
-    // The wrapper's rotateY is fixed at build time — both transforms are independent.
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -252,17 +192,13 @@
 
     const defs = document.createElementNS(NS, 'defs');
 
-    // ── ClipPath: bat silhouette ──────────────────────────────────────────────
-    // All fill layers are clipped to this shape.
-    // Change batPath() parameters (via SIZE_CFG) to reshape all layers at once.
+    // ── ClipPath: cylinder silhouette ─────────────────────────────────────────
     const clipEl = document.createElementNS(NS, 'clipPath');
     clipEl.setAttribute('id', clipId);
     clipEl.appendChild(el('path', { d: pathD }));
     defs.appendChild(clipEl);
 
     // ── Body gradient: left→right cylindrical shading ─────────────────────────
-    // Simulates light from slightly left-of-center on a rounded surface.
-    // Tune: bodyStops colors in PALETTE for material warmth and saturation.
     const bodyGrad = el('linearGradient', {
       id: bodyId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
     });
@@ -272,9 +208,6 @@
     defs.appendChild(bodyGrad);
 
     // ── Cap gradient: dome tip brightening ────────────────────────────────────
-    // Applied to the top ~38% of lever height (Layer 2 below).
-    // Makes the crown read lighter than the body — gives the tip a lifted look.
-    // Tune: capGrad colors in PALETTE, and Layer 2 opacity below.
     const capGrad = el('linearGradient', {
       id: capId, x1: '0%', y1: '0%', x2: '0%', y2: '100%'
     });
@@ -283,12 +216,6 @@
     defs.appendChild(capGrad);
 
     // ── Plastic radial highlight ──────────────────────────────────────────────
-    // Soft oval glow in the upper body — simulates overhead/ambient light on a
-    // semi-matte plastic surface. This is the main thing that keeps the lever
-    // from reading as chrome.
-    // Tune: cy (glow center height, as fraction of h),
-    //       r  (spread, as fraction of w),
-    //       Layer 3 opacity below.
     const hiGrad = el('radialGradient', {
       id            : hiId,
       gradientUnits : 'userSpaceOnUse',
@@ -303,22 +230,18 @@
     defs.appendChild(hiGrad);
 
     // ── Specular band: movable angle-responsive highlight ─────────────────────
-    // 7 stops; [0] and [6] are fixed. [1]–[5] are shifted by _updateSpecular().
-    // Peak opacity 0.28 — semi-matte plastic, not chrome.
-    // Tune: the 0.28 value at stop [3] for more or less surface sheen.
-    //       specColor in PALETTE for highlight warmth.
     const sc = p.specColor;
     const specGrad = el('linearGradient', {
       id: specId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
     });
     const specDef = [
-      { o:  0,  c: `rgba(${sc},0)`    },  // [0] fixed  — left transparent edge
-      { o: 30,  c: `rgba(${sc},0)`    },  // [1] movable
-      { o: 44,  c: `rgba(${sc},0.12)` },  // [2] movable — soft shoulder
-      { o: 52,  c: `rgba(${sc},0.28)` },  // [3] movable — peak (tune opacity here)
-      { o: 60,  c: `rgba(${sc},0.10)` },  // [4] movable — soft shoulder
-      { o: 74,  c: `rgba(${sc},0)`    },  // [5] movable
-      { o: 100, c: `rgba(${sc},0)`    }   // [6] fixed  — right transparent edge
+      { o:  0,  c: `rgba(${sc},0)`    },
+      { o: 30,  c: `rgba(${sc},0)`    },
+      { o: 44,  c: `rgba(${sc},0.12)` },
+      { o: 52,  c: `rgba(${sc},0.28)` },
+      { o: 60,  c: `rgba(${sc},0.10)` },
+      { o: 74,  c: `rgba(${sc},0)`    },
+      { o: 100, c: `rgba(${sc},0)`    }
     ];
     const specStopEls = specDef.map(d => {
       const s = el('stop', { offset: d.o + '%', 'stop-color': d.c });
@@ -333,15 +256,14 @@
     const cw = g.w;
     const ch = g.h;
 
-    // ── Layer 1: Base body (warm ivory cylindrical gradient) ──────────────────
+    // ── Layer 1: Base body (cylindrical gradient) ──────────────────────────────
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${bodyId})`,
       'clip-path': cp
     }));
 
-    // ── Layer 2: Dome cap brightening (top ~38% of lever) ─────────────────────
-    // Tune: the 0.38 fraction and opacity (0.75) to change how bright the crown is.
+    // ── Layer 2: Dome cap brightening ─────────────────────────────────────────
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: (ch * 0.38).toFixed(1),
       fill: `url(#${capId})`,
@@ -349,8 +271,7 @@
       opacity: '0.75'
     }));
 
-    // ── Layer 3: Plastic radial highlight (soft center glow) ──────────────────
-    // Tune: opacity (0.60) — lower = more matte, higher = more glossy plastic.
+    // ── Layer 3: Plastic radial highlight ─────────────────────────────────────
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${hiId})`,
@@ -358,8 +279,7 @@
       opacity: '0.60'
     }));
 
-    // ── Layer 4: Movable specular band (angle-responsive) ─────────────────────
-    // Shifts ±4% with lever angle (see _updateSpecular). Subtle by design.
+    // ── Layer 4: Movable specular band ────────────────────────────────────────
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${specId})`,
@@ -367,8 +287,6 @@
     }));
 
     // ── Layer 5: Left rim shadow ───────────────────────────────────────────────
-    // Darkens the left edge — simulates shadow on the rim of a rounded form.
-    // Tune: width fraction (0.16) and fill opacity.
     const rimW = Math.max(2, Math.round(cw * 0.16));
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: rimW, height: ch,
@@ -376,16 +294,14 @@
       'clip-path': cp
     }));
 
-    // ── Layer 6: Right rim shadow (slightly lighter — ambient bounce from panel)
+    // ── Layer 6: Right rim shadow ──────────────────────────────────────────────
     svg.appendChild(el('rect', {
       x: cw - rimW, y: 0, width: rimW, height: ch,
       fill: 'rgba(0,0,0,0.13)',
       'clip-path': cp
     }));
 
-    // ── Layer 7: Base occlusion (where lever emerges from the nut) ────────────
-    // Dark shadow at the very bottom — gives a sense the lever is mounted in depth.
-    // Tune: height fraction (0.15) and fill opacity (0.38).
+    // ── Layer 7: Base occlusion ───────────────────────────────────────────────
     const occH = Math.max(4, Math.round(ch * 0.15));
     svg.appendChild(el('rect', {
       x: 1, y: ch - occH, width: cw - 2, height: occH,
@@ -395,8 +311,6 @@
     }));
 
     // ── Layer 8: Silhouette outline ───────────────────────────────────────────
-    // Thin dark stroke helps the lever read against the dark panel surface.
-    // Tune: stroke-width (0.75) — set to 0 to remove entirely.
     svg.appendChild(el('path', {
       d: pathD,
       fill: 'none',
@@ -418,10 +332,9 @@
       this.target    = this.pos;
       this.raf       = null;
       this.prevTime  = null;
-      this._apply();  // set initial transform
+      this._apply();
     }
 
-    // Called when data-active changes
     flip(isOn) {
       this.target = isOn ? ANGLE.on : ANGLE.off;
 
@@ -432,7 +345,6 @@
         return;
       }
 
-      // If already animating, just update target — tick loop picks it up
       if (!this.raf) {
         this.prevTime = performance.now();
         this.raf = requestAnimationFrame(t => this._tick(t));
@@ -440,10 +352,9 @@
     }
 
     _tick(now) {
-      const dt = Math.min((now - this.prevTime) / 1000, 0.033); // cap 33ms
+      const dt = Math.min((now - this.prevTime) / 1000, 0.033);
       this.prevTime = now;
 
-      // Hooke's law + viscous damping
       const err   = this.pos - this.target;
       const force = -(SPRING.stiffness * err) - (SPRING.damping * this.vel);
       this.vel   += (force / SPRING.mass) * dt;
@@ -451,7 +362,6 @@
 
       this._apply();
 
-      // Settle check
       if (Math.abs(err) < SPRING.threshold && Math.abs(this.vel) < SPRING.threshold) {
         this.pos = this.target;
         this.vel = 0;
@@ -464,22 +374,13 @@
     }
 
     _apply() {
-      // Animate only rotateX on the inner SVG.
-      // The outer wrapper's rotateY cant is set once at build time and never
-      // touched here — the two transforms are fully independent and stable.
       this.el.style.transform = `rotateX(${this.pos.toFixed(3)}deg)`;
       this._updateSpecular();
     }
 
     _updateSpecular() {
-      // Map current angle → 0–1 blend: 0 = fully ON (side profile), 1 = fully OFF (dome-on)
       const t = (this.pos - ANGLE.on) / (ANGLE.off - ANGLE.on);
-
-      // Shift specular band ±4% based on angle — subtle, semi-matte plastic response.
-      // Tune: multiply factor (8) — larger = more angle-responsive sheen.
       const shift = (t - 0.5) * 8;
-
-      // Base offsets for movable stops [1]–[5] — must match specDef in buildSVG
       const base  = [30, 44, 52, 60, 74];
       const stops = this.specStops;
       base.forEach((b, i) => {
@@ -500,7 +401,6 @@
     return 'standard';
   }
 
-  // Returns palette key. 'ivory' is the default — matches real AA95 bat handles.
   function getColor(componentEl) {
     if (componentEl.classList.contains('red'))    return 'red';
     if (componentEl.classList.contains('orange')) return 'orange';
@@ -520,16 +420,11 @@
       const color = getColor(component);
       const isOn  = component.getAttribute('data-active') === 'true';
 
-      // Remove any leftover CSS lever div
       assembly.querySelector('.lever')?.remove();
 
-      // Build SVG + cant wrapper; attach wrapper to the assembly.
-      // The wrapper owns absolute positioning; the SVG animates inside it.
       const { wrapper, svg, specStopEls } = buildSVG(size, color, id);
       assembly.appendChild(wrapper);
 
-      // Spring instance keyed by component ID.
-      // References only the inner SVG — rotateX only, nothing else changes.
       const spring = new SpringLever(svg, specStopEls, isOn);
       if (component.id) registry[component.id] = spring;
     });
@@ -538,8 +433,6 @@
   }
 
   // ── Watch data-active mutations, relay to springs ─────────────────────────
-  // Fully decoupled from aa95.html's click/state logic.
-  // Existing JS toggles data-active → MutationObserver fires → spring flips.
   function watch(registry) {
     const obs = new MutationObserver(mutations => {
       for (const m of mutations) {
