@@ -234,15 +234,15 @@
       willChange     : 'transform',
     });
 
-    // Back face at z=-DEPTH (no dark overlay)
+    // Back depth shadow (very subtle, no hard separation)
     rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'bkcl', id + 'bkb', -DEPTH, 0));
+      id + 'bkcl', id + 'bkb', -DEPTH, 0.10));
 
-    // Shell at z=-DEPTH/2 (side-shadow overlay)
+    // Mid shell tone (kept soft so lever reads as one continuous cylinder)
     rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'shcl', id + 'shb', -(DEPTH / 2), 0.38));
+      id + 'shcl', id + 'shb', -(DEPTH / 2), 0.08));
 
-    // ── FRONT FACE SVG — translateZ(0) — full artwork, unchanged ─────────
+    // ── FRONT FACE SVG — translateZ(0) — primary visible body ────────────
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -290,6 +290,31 @@
     const specGrad = el('linearGradient', {
       id: specId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
     });
+
+    const endCapTopId = id + 'ect';
+    const endCapBotId = id + 'ecb';
+    const endCapTop = el('radialGradient', {
+      id: endCapTopId,
+      gradientUnits: 'userSpaceOnUse',
+      cx: g.w / 2,
+      cy: g.topR,
+      r: (g.topW * 0.65).toFixed(1)
+    });
+    endCapTop.appendChild(el('stop', { offset: '0%', 'stop-color': 'rgba(255,255,255,0.36)' }));
+    endCapTop.appendChild(el('stop', { offset: '55%', 'stop-color': 'rgba(255,255,255,0.10)' }));
+    endCapTop.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
+    defs.appendChild(endCapTop);
+
+    const endCapBot = el('radialGradient', {
+      id: endCapBotId,
+      gradientUnits: 'userSpaceOnUse',
+      cx: g.w / 2,
+      cy: g.h - g.topR,
+      r: (g.topW * 0.75).toFixed(1)
+    });
+    endCapBot.appendChild(el('stop', { offset: '0%', 'stop-color': 'rgba(0,0,0,0.22)' }));
+    endCapBot.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
+    defs.appendChild(endCapBot);
     const specDef = [
       { o:  0,  c: `rgba(${sc},0)`    },
       { o: 30,  c: `rgba(${sc},0)`    },
@@ -313,16 +338,33 @@
     const ch = g.h;
 
     svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${bodyId})`, 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch*0.38).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.75' }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.60' }));
+    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch*0.40).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.78' }));
+    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.62' }));
     svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${specId})`, 'clip-path':cp }));
 
     const rimW = Math.max(2, Math.round(cw * 0.16));
-    svg.appendChild(el('rect', { x:0, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.20)', 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.13)', 'clip-path':cp }));
+    svg.appendChild(el('rect', { x:0, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.18)', 'clip-path':cp }));
+    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.18)', 'clip-path':cp }));
 
-    const occH = Math.max(4, Math.round(ch * 0.15));
-    svg.appendChild(el('rect', { x:1, y:ch-occH, width:cw-2, height:occH, rx:2, ry:2, fill:'rgba(0,0,0,0.38)', 'clip-path':cp }));
+    const occH = Math.max(4, Math.round(ch * 0.14));
+    svg.appendChild(el('rect', {
+      x: 1, y: ch - occH, width: cw - 2, height: occH,
+      rx: 2, ry: 2, fill:'rgba(0,0,0,0.20)', 'clip-path': cp
+    }));
+
+    const endRx = (g.topW / 2).toFixed(2);
+    const endCx = (g.w / 2).toFixed(2);
+    const endTopCy = g.topR.toFixed(2);
+    const endBotCy = (g.h - g.topR).toFixed(2);
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endTopCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapTopId})`, 'clip-path': cp, opacity: '0.76'
+    }));
+    svg.appendChild(el('ellipse', {
+      cx: endCx, cy: endBotCy, rx: endRx, ry: (g.topR * 0.95).toFixed(2),
+      fill: `url(#${endCapBotId})`, 'clip-path': cp, opacity: '0.62'
+    }));
+
     svg.appendChild(el('path', { d:pathD, fill:'none', stroke:'rgba(0,0,0,0.30)', 'stroke-width':'0.75' }));
 
     rotor.appendChild(svg);
