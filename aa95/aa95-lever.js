@@ -2,17 +2,16 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v12 — one-piece cylindrical lever rendering pass.
- *   Keeps the existing motion, spring physics, ON/OFF angles, pivot,
- *   positioning, sizing, and click behavior unchanged.
+ * v13 — paint-mockup-inspired lever construction.
+ *   Keeps motion/angles/pivot/placement unchanged.
  *
- *   Visual goals:
- *   - One visible handle body only (no stacked depth faces)
- *   - Less "flat paper" look in OFF position
- *   - More tube-like silhouette
- *   - Stronger barrel shading
- *   - More convincing oval tip face
- *   - Softer socket/base seating shadow
+ *   Visual structure:
+ *   - one SVG lever assembly
+ *   - shaft body
+ *   - rear depth/shadow wedge
+ *   - front circular cap
+ *   - cap highlight
+ *   - socket/base shadow
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -42,68 +41,73 @@
 
   // ── Per-size geometry — unchanged placement/sizing values ────────────────
   const SIZE_CFG = {
-    standard : { w: 26, h: 55, topW: 22, botW: 17, topR: 10, bot: 34, ml: -13   },
-    radio    : { w: 33, h: 69, topW: 28, botW: 21, topR: 13, bot: 43, ml: -16.5 },
-    small    : { w: 11, h: 21, topW:  9, botW:  6, topR:  4, bot: 14, ml: -5.5  }
+    standard : { w: 26, h: 55, topW: 20, botW: 15, topR: 10, bot: 34, ml: -13   },
+    radio    : { w: 33, h: 69, topW: 25, botW: 19, topR: 13, bot: 43, ml: -16.5 },
+    small    : { w: 11, h: 21, topW:  8, botW:  6, topR:  4, bot: 14, ml: -5.5  }
   };
 
   // ── Color palettes ────────────────────────────────────────────────────────
   const PALETTE = {
     ivory : {
       bodyStops : [
-        [0,   '#7f7164'],
-        [16,  '#b7a993'],
-        [33,  '#ddd2be'],
-        [46,  '#f6efe0'],
-        [58,  '#ddd1bd'],
-        [77,  '#aa9a84'],
-        [100, '#786b5f'],
+        [0,   '#7c6f62'],
+        [18,  '#b9ab95'],
+        [40,  '#e4dac8'],
+        [54,  '#f5eee0'],
+        [70,  '#d2c6b2'],
+        [86,  '#a79781'],
+        [100, '#7b6e61'],
       ],
       capGrad   : ['#fff8ea', '#d8ccb8'],
       specColor : '255,248,230',
+      wedgeDark : 'rgba(80,70,58,0.75)',
+      wedgeLite : 'rgba(155,140,118,0.35)'
     },
     red : {
       bodyStops : [
-        [0,   '#4e1111'],
-        [16,  '#892525'],
-        [33,  '#bf4040'],
-        [46,  '#e46262'],
-        [58,  '#bf4040'],
-        [77,  '#822121'],
-        [100, '#4b1010'],
+        [0,   '#511111'],
+        [18,  '#8b2828'],
+        [40,  '#c64747'],
+        [54,  '#e66a6a'],
+        [70,  '#b83c3c'],
+        [86,  '#7d1f1f'],
+        [100, '#4f1010'],
       ],
-      capGrad   : ['#ff8c8c', '#c13a3a'],
+      capGrad   : ['#ff8a8a', '#c23d3d'],
       specColor : '255,210,210',
+      wedgeDark : 'rgba(70,10,10,0.72)',
+      wedgeLite : 'rgba(150,60,60,0.34)'
     },
     orange : {
       bodyStops : [
-        [0,   '#54280f'],
-        [16,  '#8c4918'],
-        [33,  '#c26f2e'],
-        [46,  '#ea9547'],
-        [58,  '#c46f2c'],
-        [77,  '#854416'],
-        [100, '#54280f'],
+        [0,   '#582b10'],
+        [18,  '#91501c'],
+        [40,  '#cb7834'],
+        [54,  '#ee9d54'],
+        [70,  '#bf6b27'],
+        [86,  '#864515'],
+        [100, '#56290f'],
       ],
-      capGrad   : ['#ffb066', '#c76621'],
+      capGrad   : ['#ffb46d', '#cb6c28'],
       specColor : '255,228,180',
+      wedgeDark : 'rgba(92,45,10,0.72)',
+      wedgeLite : 'rgba(190,120,55,0.30)'
     }
   };
 
-  // ── SVG element helper ────────────────────────────────────────────────────
+  // ── SVG helper ────────────────────────────────────────────────────────────
   function el(tag, attrs) {
     const e = document.createElementNS(NS, tag);
     for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
     return e;
   }
 
-  // ── Tube-like handle silhouette ───────────────────────────────────────────
-  // Rounded tip, mostly straight shaft, and a slightly reduced lower end that
-  // tucks into the socket visually. This helps the OFF position read more like
-  // a cylinder emerging from a collar, not a flat pill shape.
-  function handlePath(g) {
+  // ── Body path: tube shaft behind the front cap ────────────────────────────
+  function shaftPath(g) {
     const { w, h, topW, botW, topR } = g;
-    const cx = w / 2;
+
+    const topY = +(topR * 0.72).toFixed(2);
+    const botY = h;
 
     const tl = (w - topW) / 2;
     const tr = tl + topW;
@@ -111,21 +115,49 @@
     const bl = (w - botW) / 2;
     const br = bl + botW;
 
-    const neckY = +(h * 0.68).toFixed(2);
-    const flareY = +(h * 0.86).toFixed(2);
+    const midY1 = +(h * 0.36).toFixed(2);
+    const midY2 = +(h * 0.72).toFixed(2);
 
     return [
-      `M ${tl},${topR}`,
-      `Q ${tl},0 ${cx},0`,
-      `Q ${tr},0 ${tr},${topR}`,
-      `C ${tr},${neckY} ${br},${flareY} ${br},${h}`,
-      `L ${bl},${h}`,
-      `C ${bl},${flareY} ${tl},${neckY} ${tl},${topR}`,
+      `M ${tl},${topY}`,
+      `Q ${tl},${topY - 1} ${(w / 2).toFixed(2)},${topY - 1}`,
+      `Q ${tr},${topY - 1} ${tr},${topY}`,
+      `C ${tr},${midY1} ${br},${midY2} ${br},${botY}`,
+      `L ${bl},${botY}`,
+      `C ${bl},${midY2} ${tl},${midY1} ${tl},${topY}`,
       `Z`
     ].join(' ');
   }
 
-  // ── Gradient helpers ──────────────────────────────────────────────────────
+  // ── Rear wedge path: small dark depth wedge near the back/base ───────────
+  function rearWedgePath(g) {
+    const { w, h, topW, botW, topR } = g;
+
+    const bodyTr = (w - topW) / 2 + topW;
+    const bodyBr = (w - botW) / 2 + botW;
+
+    const x1 = +(bodyTr - Math.max(1.2, w * 0.10)).toFixed(2);
+    const y1 = +(topR * 1.35).toFixed(2);
+
+    const x2 = +(w - 0.8).toFixed(2);
+    const y2 = +(h * 0.52).toFixed(2);
+
+    const x3 = +(bodyBr - Math.max(0.8, w * 0.05)).toFixed(2);
+    const y3 = +(h * 0.76).toFixed(2);
+
+    const x4 = +(bodyTr - Math.max(1.6, w * 0.16)).toFixed(2);
+    const y4 = +(h * 0.48).toFixed(2);
+
+    return [
+      `M ${x1},${y1}`,
+      `L ${x2},${y2}`,
+      `L ${x3},${y3}`,
+      `L ${x4},${y4}`,
+      `Z`
+    ].join(' ');
+  }
+
+  // ── Gradient helper ───────────────────────────────────────────────────────
   function buildBodyGrad(defs, gradId, bodyStops) {
     const grad = el('linearGradient', {
       id: gradId,
@@ -145,7 +177,7 @@
     defs.appendChild(grad);
   }
 
-  function buildBarrelShade(defs, gradId) {
+  function buildBarrelGrad(defs, gradId) {
     const grad = el('linearGradient', {
       id: gradId,
       x1: '0%',
@@ -155,17 +187,15 @@
     });
 
     [
-      [0,   'rgba(0,0,0,0.38)'],
-      [8,   'rgba(0,0,0,0.28)'],
-      [18,  'rgba(0,0,0,0.14)'],
-      [30,  'rgba(0,0,0,0.03)'],
-      [42,  'rgba(255,255,255,0.06)'],
-      [49,  'rgba(255,255,255,0.22)'],
+      [0,   'rgba(0,0,0,0.34)'],
+      [10,  'rgba(0,0,0,0.22)'],
+      [22,  'rgba(0,0,0,0.10)'],
+      [36,  'rgba(255,255,255,0.02)'],
+      [48,  'rgba(255,255,255,0.18)'],
       [54,  'rgba(255,255,255,0.11)'],
-      [64,  'rgba(255,255,255,0.03)'],
-      [78,  'rgba(0,0,0,0.08)'],
-      [90,  'rgba(0,0,0,0.20)'],
-      [100, 'rgba(0,0,0,0.34)']
+      [66,  'rgba(0,0,0,0.03)'],
+      [82,  'rgba(0,0,0,0.16)'],
+      [100, 'rgba(0,0,0,0.30)']
     ].forEach(([pct, col]) => {
       grad.appendChild(el('stop', {
         offset: pct + '%',
@@ -181,19 +211,21 @@
     const g       = SIZE_CFG[size];
     const p       = PALETTE[colorKey] || PALETTE.ivory;
     const cantDeg = CANT[size] || CANT.standard;
-    const pathD   = handlePath(g);
 
-    const clipId       = id + 'cl';
-    const bodyId       = id + 'b';
-    const capId        = id + 'c';
-    const broadHiId    = id + 'h';
-    const barrelId     = id + 'barrel';
-    const specId       = id + 's';
-    const tipFaceId    = id + 'tip';
-    const tipRimId     = id + 'tiprim';
-    const tipShadowId  = id + 'tipshadow';
-    const socketId     = id + 'socket';
-    const socketBlurId = id + 'socketblur';
+    const shaftD = shaftPath(g);
+    const wedgeD = rearWedgePath(g);
+
+    const shaftClipId   = id + 'shaftclip';
+    const bodyId        = id + 'body';
+    const capGlowId     = id + 'capglow';
+    const broadHiId     = id + 'broadhi';
+    const barrelId      = id + 'barrel';
+    const specId        = id + 'spec';
+    const wedgeId       = id + 'wedge';
+    const tipFaceId     = id + 'tipface';
+    const tipRimId      = id + 'tiprim';
+    const socketId      = id + 'socket';
+    const socketBlurId  = id + 'socketblur';
 
     // ── Outer cant wrapper — unchanged ────────────────────────────────────
     const wrapper = document.createElement('div');
@@ -224,11 +256,11 @@
       willChange     : 'transform'
     });
 
-    // ── Single visible handle SVG ─────────────────────────────────────────
+    // ── Single visible lever SVG ─────────────────────────────────────────
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
-    svg.setAttribute('width',    g.w);
-    svg.setAttribute('height',   g.h);
+    svg.setAttribute('width', g.w);
+    svg.setAttribute('height', g.h);
 
     Object.assign(svg.style, {
       position           : 'absolute',
@@ -242,38 +274,41 @@
 
     const defs = document.createElementNS(NS, 'defs');
 
-    // Clip all paint to the one handle silhouette.
-    const clipEl = document.createElementNS(NS, 'clipPath');
-    clipEl.setAttribute('id', clipId);
-    clipEl.appendChild(el('path', { d: pathD }));
-    defs.appendChild(clipEl);
+    // Clip for shaft-only shading.
+    const shaftClip = document.createElementNS(NS, 'clipPath');
+    shaftClip.setAttribute('id', shaftClipId);
+    shaftClip.appendChild(el('path', { d: shaftD }));
+    defs.appendChild(shaftClip);
 
+    // Shaft body gradient.
     buildBodyGrad(defs, bodyId, p.bodyStops);
 
-    const capGrad = el('linearGradient', {
-      id: capId,
+    // Gentle upper glow.
+    const capGlow = el('linearGradient', {
+      id: capGlowId,
       x1: '0%',
       y1: '0%',
       x2: '0%',
       y2: '100%'
     });
-    capGrad.appendChild(el('stop', {
+    capGlow.appendChild(el('stop', {
       offset: '0%',
       'stop-color': p.capGrad[0]
     }));
-    capGrad.appendChild(el('stop', {
+    capGlow.appendChild(el('stop', {
       offset: '100%',
       'stop-color': p.capGrad[1]
     }));
-    defs.appendChild(capGrad);
+    defs.appendChild(capGlow);
 
+    // Broad plastic highlight.
     const broadHi = el('radialGradient', {
       id            : broadHiId,
       gradientUnits : 'userSpaceOnUse',
-      cx            : (g.w * 0.43).toFixed(1),
-      cy            : (g.h * 0.24).toFixed(1),
-      r             : (g.w * 0.88).toFixed(1),
-      fx            : (g.w * 0.40).toFixed(1),
+      cx            : (g.w * 0.42).toFixed(1),
+      cy            : (g.h * 0.22).toFixed(1),
+      r             : (g.w * 0.85).toFixed(1),
+      fx            : (g.w * 0.38).toFixed(1),
       fy            : (g.h * 0.08).toFixed(1)
     });
     broadHi.appendChild(el('stop', {
@@ -281,8 +316,8 @@
       'stop-color': `rgba(${p.specColor},0.40)`
     }));
     broadHi.appendChild(el('stop', {
-      offset: '58%',
-      'stop-color': `rgba(${p.specColor},0.10)`
+      offset: '62%',
+      'stop-color': `rgba(${p.specColor},0.08)`
     }));
     broadHi.appendChild(el('stop', {
       offset: '100%',
@@ -290,9 +325,10 @@
     }));
     defs.appendChild(broadHi);
 
-    buildBarrelShade(defs, barrelId);
+    // Barrel/tube shading.
+    buildBarrelGrad(defs, barrelId);
 
-    // Narrow angle-responsive specular highlight.
+    // Moving specular stripe.
     const sc = p.specColor;
     const specGrad = el('linearGradient', {
       id: specId,
@@ -304,11 +340,11 @@
 
     const specDef = [
       { o:  0,  c: `rgba(${sc},0)`    },
-      { o: 39,  c: `rgba(${sc},0)`    },
-      { o: 47,  c: `rgba(${sc},0.10)` },
-      { o: 51,  c: `rgba(${sc},0.38)` },
-      { o: 55,  c: `rgba(${sc},0.12)` },
-      { o: 63,  c: `rgba(${sc},0)`    },
+      { o: 38,  c: `rgba(${sc},0)`    },
+      { o: 46,  c: `rgba(${sc},0.10)` },
+      { o: 50,  c: `rgba(${sc},0.36)` },
+      { o: 55,  c: `rgba(${sc},0.10)` },
+      { o: 64,  c: `rgba(${sc},0)`    },
       { o: 100, c: `rgba(${sc},0)`    }
     ];
 
@@ -322,27 +358,45 @@
     });
     defs.appendChild(specGrad);
 
-    // Tip face / end cap cue.
+    // Rear wedge gradient.
+    const wedgeGrad = el('linearGradient', {
+      id: wedgeId,
+      x1: '0%',
+      y1: '0%',
+      x2: '100%',
+      y2: '100%'
+    });
+    wedgeGrad.appendChild(el('stop', {
+      offset: '0%',
+      'stop-color': p.wedgeLite
+    }));
+    wedgeGrad.appendChild(el('stop', {
+      offset: '100%',
+      'stop-color': p.wedgeDark
+    }));
+    defs.appendChild(wedgeGrad);
+
+    // Front cap gradient.
     const tipFaceGrad = el('radialGradient', {
       id: tipFaceId,
       gradientUnits: 'userSpaceOnUse',
-      cx: (g.w * 0.42).toFixed(1),
-      cy: (g.topR * 0.72).toFixed(1),
-      r:  (g.topW * 0.62).toFixed(1),
-      fx: (g.w * 0.36).toFixed(1),
-      fy: (g.topR * 0.42).toFixed(1)
+      cx: (g.w * 0.36).toFixed(1),
+      cy: (g.topR * 0.55).toFixed(1),
+      r:  (g.topW * 0.70).toFixed(1),
+      fx: (g.w * 0.31).toFixed(1),
+      fy: (g.topR * 0.38).toFixed(1)
     });
     tipFaceGrad.appendChild(el('stop', {
       offset: '0%',
-      'stop-color': `rgba(${p.specColor},0.62)`
+      'stop-color': `rgba(${p.specColor},0.70)`
     }));
     tipFaceGrad.appendChild(el('stop', {
-      offset: '42%',
-      'stop-color': `rgba(${p.specColor},0.24)`
+      offset: '38%',
+      'stop-color': `rgba(${p.specColor},0.28)`
     }));
     tipFaceGrad.appendChild(el('stop', {
-      offset: '76%',
-      'stop-color': 'rgba(0,0,0,0.10)'
+      offset: '72%',
+      'stop-color': 'rgba(0,0,0,0.08)'
     }));
     tipFaceGrad.appendChild(el('stop', {
       offset: '100%',
@@ -350,6 +404,7 @@
     }));
     defs.appendChild(tipFaceGrad);
 
+    // Tip rim gradient.
     const tipRimGrad = el('linearGradient', {
       id: tipRimId,
       x1: '0%',
@@ -359,48 +414,32 @@
     });
     tipRimGrad.appendChild(el('stop', {
       offset: '0%',
-      'stop-color': 'rgba(255,255,255,0.28)'
+      'stop-color': 'rgba(255,255,255,0.24)'
     }));
     tipRimGrad.appendChild(el('stop', {
-      offset: '55%',
-      'stop-color': 'rgba(0,0,0,0.06)'
+      offset: '58%',
+      'stop-color': 'rgba(0,0,0,0.04)'
     }));
     tipRimGrad.appendChild(el('stop', {
       offset: '100%',
-      'stop-color': 'rgba(0,0,0,0.34)'
+      'stop-color': 'rgba(0,0,0,0.32)'
     }));
     defs.appendChild(tipRimGrad);
 
-    const tipShadowGrad = el('radialGradient', {
-      id: tipShadowId,
-      gradientUnits: 'userSpaceOnUse',
-      cx: g.w / 2,
-      cy: (g.topR * 1.10).toFixed(1),
-      r: (g.topW * 0.68).toFixed(1)
-    });
-    tipShadowGrad.appendChild(el('stop', {
-      offset: '0%',
-      'stop-color': 'rgba(0,0,0,0.10)'
-    }));
-    tipShadowGrad.appendChild(el('stop', {
-      offset: '100%',
-      'stop-color': 'rgba(0,0,0,0)'
-    }));
-    defs.appendChild(tipShadowGrad);
-
+    // Socket/base shadow.
     const socketGrad = el('radialGradient', {
       id: socketId,
       gradientUnits: 'userSpaceOnUse',
       cx: g.w / 2,
-      cy: (g.h - g.topR * 0.12).toFixed(1),
-      r: (g.topW * 0.78).toFixed(1)
+      cy: (g.h - g.topR * 0.1).toFixed(1),
+      r: (g.botW * 0.95).toFixed(1)
     });
     socketGrad.appendChild(el('stop', {
       offset: '0%',
-      'stop-color': 'rgba(0,0,0,0.44)'
+      'stop-color': 'rgba(0,0,0,0.46)'
     }));
     socketGrad.appendChild(el('stop', {
-      offset: '54%',
+      offset: '55%',
       'stop-color': 'rgba(0,0,0,0.20)'
     }));
     socketGrad.appendChild(el('stop', {
@@ -417,84 +456,68 @@
       height: '150%'
     });
     socketFilter.appendChild(el('feGaussianBlur', {
-      stdDeviation: size === 'small' ? '0.30' : '0.65'
+      stdDeviation: size === 'small' ? '0.28' : '0.62'
     }));
     defs.appendChild(socketFilter);
 
     svg.appendChild(defs);
 
-    const cp = `url(#${clipId})`;
+    const shaftCP = `url(#${shaftClipId})`;
     const cw = g.w;
     const ch = g.h;
 
-    // ── Paint stack: one body, no translated depth faces ──────────────────
+    // ── Paint order ────────────────────────────────────────────────────────
+    // back wedge -> shaft -> front cap -> cap hotspot -> socket shadow
 
-    // 1) Main body fill.
+    // 1) Rear depth wedge
+    svg.appendChild(el('path', {
+      d: wedgeD,
+      fill: `url(#${wedgeId})`,
+      opacity: '0.92'
+    }));
+
+    // 2) Shaft main body
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${bodyId})`,
-      'clip-path': cp
+      'clip-path': shaftCP
     }));
 
-    // 2) Soft upper glow.
+    // 3) Shaft upper glow
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: (ch * 0.38).toFixed(1),
-      fill: `url(#${capId})`,
-      'clip-path': cp,
-      opacity: '0.55'
+      fill: `url(#${capGlowId})`,
+      'clip-path': shaftCP,
+      opacity: '0.50'
     }));
 
-    // 3) Broad plastic highlight.
+    // 4) Broad body highlight
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${broadHiId})`,
-      'clip-path': cp,
-      opacity: '0.70'
+      'clip-path': shaftCP,
+      opacity: '0.66'
     }));
 
-    // 4) Barrel shading to sell the cylindrical body.
+    // 5) Barrel shading
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${barrelId})`,
-      'clip-path': cp
+      'clip-path': shaftCP
     }));
 
-    // 5) Narrow moving specular stripe.
+    // 6) Moving specular stripe
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${specId})`,
-      'clip-path': cp
+      'clip-path': shaftCP
     }));
 
-    // 6) Slight darkening behind the tip to stop the top from reading flat.
-    svg.appendChild(el('ellipse', {
-      cx: (cw / 2).toFixed(2),
-      cy: (g.topR * 0.95).toFixed(2),
-      rx: (g.topW * 0.48).toFixed(2),
-      ry: (g.topR * 0.42).toFixed(2),
-      fill: `url(#${tipShadowId})`,
-      'clip-path': cp,
-      opacity: '0.75'
-    }));
-
-    // 7) Socket/base shadow so the lower end looks seated in the collar.
-    const socketH = Math.max(5, Math.round(ch * 0.20));
-    svg.appendChild(el('ellipse', {
-      cx: (cw / 2).toFixed(2),
-      cy: (ch - socketH * 0.12).toFixed(2),
-      rx: (g.botW * 0.46).toFixed(2),
-      ry: (socketH * 0.45).toFixed(2),
-      fill: `url(#${socketId})`,
-      'clip-path': cp,
-      filter: `url(#${socketBlurId})`,
-      opacity: '0.88'
-    }));
-
-    // 8) Oval tip face.
+    // 7) Front circular end cap
     const tipCx = (g.w / 2).toFixed(2);
-    const tipCy = (g.topR * 0.80).toFixed(2);
-    const tipRx = (g.topW * 0.45).toFixed(2);
-    const tipRy = (g.topR * 0.56).toFixed(2);
+    const tipCy = (g.topR * 0.92).toFixed(2);
+    const tipRx = (g.topW * 0.47).toFixed(2);
+    const tipRy = (g.topR * 0.78).toFixed(2);
 
     svg.appendChild(el('ellipse', {
       cx: tipCx,
@@ -502,11 +525,10 @@
       rx: tipRx,
       ry: tipRy,
       fill: `url(#${tipFaceId})`,
-      'clip-path': cp,
-      opacity: '0.92'
+      opacity: '0.96'
     }));
 
-    // 9) Tip rim stroke.
+    // 8) Cap rim
     svg.appendChild(el('ellipse', {
       cx: tipCx,
       cy: tipCy,
@@ -514,28 +536,39 @@
       ry: tipRy,
       fill: 'none',
       stroke: `url(#${tipRimId})`,
-      'stroke-width': size === 'small' ? '0.42' : '0.82',
-      'clip-path': cp,
-      opacity: '0.82'
+      'stroke-width': size === 'small' ? '0.40' : '0.80',
+      opacity: '0.84'
     }));
 
-    // 10) Small off-center hotspot on tip.
+    // 9) Cap hotspot
     svg.appendChild(el('ellipse', {
       cx: (g.w * 0.38).toFixed(2),
-      cy: (g.topR * 0.50).toFixed(2),
-      rx: Math.max(0.7, g.topW * 0.11).toFixed(2),
-      ry: Math.max(0.45, g.topR * 0.10).toFixed(2),
+      cy: (g.topR * 0.62).toFixed(2),
+      rx: Math.max(0.7, g.topW * 0.12).toFixed(2),
+      ry: Math.max(0.5, g.topR * 0.12).toFixed(2),
       fill: `rgba(${p.specColor},0.34)`,
-      'clip-path': cp,
-      opacity: '0.70'
+      opacity: '0.74'
     }));
 
-    // 11) Subtle silhouette outline.
+    // 10) Soft socket/base shadow
+    const sockRx = (g.botW * 0.44).toFixed(2);
+    const sockRy = Math.max(1.1, g.topR * 0.34).toFixed(2);
+    svg.appendChild(el('ellipse', {
+      cx: (cw / 2).toFixed(2),
+      cy: (ch - g.topR * 0.06).toFixed(2),
+      rx: sockRx,
+      ry: sockRy,
+      fill: `url(#${socketId})`,
+      filter: `url(#${socketBlurId})`,
+      opacity: '0.88'
+    }));
+
+    // 11) subtle shaft outline
     svg.appendChild(el('path', {
-      d: pathD,
+      d: shaftD,
       fill: 'none',
-      stroke: 'rgba(0,0,0,0.24)',
-      'stroke-width': size === 'small' ? '0.42' : '0.72'
+      stroke: 'rgba(0,0,0,0.20)',
+      'stroke-width': size === 'small' ? '0.38' : '0.65'
     }));
 
     rotor.appendChild(svg);
@@ -604,7 +637,7 @@
     _updateSpecular() {
       const t     = (this.pos - ANGLE.on) / (ANGLE.off - ANGLE.on);
       const shift = (t - 0.5) * 6.5;
-      const base  = [39, 47, 51, 55, 63];
+      const base  = [38, 46, 50, 55, 64];
 
       base.forEach((b, i) => {
         const clamped = Math.max(1, Math.min(99, b + shift));
@@ -685,7 +718,7 @@
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| body: one SVG cylindrical tube shading',
+      '| body: cap + shaft + rear wedge',
       '| reduced-motion:', REDUCED
     );
   }
