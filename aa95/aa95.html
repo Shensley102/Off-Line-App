@@ -624,8 +624,10 @@
       // 0° = stripe pointing up, positive = clockwise.
       //   COM2 = -90° → straight left (9 o'clock), points at COM2 leader endpoint (415,230)
       //   FM1  = -67° → locked to current visual alignment with FM1 leader
-      // COM1, FM2, AUX, PA still pending alignment.
-      angles: [-130, -90, -67, 20, 70, 120]
+      //   FM2  = -32° → between FM1 and AUX, points at FM2 leader endpoint (443,179)
+      //   AUX  =   0° → straight up (12 o'clock), points at AUX leader (471,175)
+      // COM1, PA still pending alignment.
+      angles: [-130, -90, -67, -32, 0, 120]
     },
     volume: { min: 0, max: 100, angleMin: -150, angleMax: 150 }
   };
