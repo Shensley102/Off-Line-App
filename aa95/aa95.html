@@ -490,6 +490,9 @@
     <line class="leader-line" x1="400" y1="162" x2="443" y2="179" />
     <polyline class="leader-line" points="461,152 481,152" />
     <line class="leader-line" x1="471" y1="152" x2="471" y2="175" />
+    <!-- PA leader: horizontal bar under PA label + diagonal to knob perimeter at +45° -->
+    <polyline class="leader-line" points="555,200 575,200" />
+    <line class="leader-line" x1="555" y1="200" x2="515" y2="192" />
     <polyline class="leader-line" points="415,230 395,230 225,162" />
     <line class="leader-line" x1="430" y1="265" x2="355" y2="275" />
     <line class="leader-line" x1="355" y1="275" x2="355" y2="295" />
@@ -498,6 +501,11 @@
   <!-- COM1 SELECTOR LABEL -->
   <div class="component" style="left:330px; top:295px; pointer-events:none;">
     <span class="label" style="margin:0; color:#999;">COM1</span>
+  </div>
+
+  <!-- PA SELECTOR LABEL -->
+  <div class="component" style="left:558px; top:182px; pointer-events:none;">
+    <span class="label" style="margin:0; color:#999;">PA</span>
   </div>
 
   <!-- TOP ROW: RADIO TOGGLES
@@ -626,8 +634,9 @@
       //   FM1  = -67° → locked to current visual alignment with FM1 leader
       //   FM2  = -32° → between FM1 and AUX, points at FM2 leader endpoint (443,179)
       //   AUX  =   0° → straight up (12 o'clock), points at AUX leader (471,175)
-      // COM1, PA still pending alignment.
-      angles: [-130, -90, -67, -32, 0, 120]
+      //   PA   =  45° → 1:30 position, points at PA leader endpoint (515,192)
+      // COM1 still pending alignment.
+      angles: [-130, -90, -67, -32, 0, 45]
     },
     volume: { min: 0, max: 100, angleMin: -150, angleMax: 150 }
   };
