@@ -620,7 +620,10 @@
   const CONFIG = {
     selector: {
       positions: ['COM1', 'COM2', 'FM1', 'FM2', 'AUX', 'PA'],
-      angles: [-130, -80, -30, 20, 70, 120]
+      // COM2 angle changed from -80 to -67 to align stripe with the COM2
+      // leader-line endpoint at panel coords (415, 205) — see CLAUDE.md notes.
+      // Other positions unchanged; will be aligned individually.
+      angles: [-130, -67, -30, 20, 70, 120]
     },
     volume: { min: 0, max: 100, angleMin: -150, angleMax: 150 }
   };
