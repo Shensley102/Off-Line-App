@@ -2,11 +2,27 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * Image-2 restore:
- * - restores the layered cylindrical lever structure
- * - reduces visible layer separation slightly
- * - softens the shell shading so the body feels more filled in
- * - keeps motion, angles, pivot, sizing, and placement unchanged
+ * SOLID CYLINDER FIX:
+ * Previously the lever was built from THREE parallel SVG planes — a back face,
+ * a mid shell, and a front face — at staggered Z depths to suggest 3D thickness.
+ * Parallel flat planes cannot form a continuous cylinder side wall, so the
+ * lever read as three stacked discs at high tilt angles (especially near OFF
+ * at -80°). Two rectangular overlays compounded the banding:
+ *   1. A cap gradient rect clipped to top 40% — hard seam at the 40% line.
+ *   2. A bottom occlusion rect covering the bottom 14% — second hard seam.
+ *
+ * Fix:
+ *   - Removed the back face and mid shell — only one SVG plane is rendered.
+ *   - Removed the partial-height cap gradient rect (the radial highlight
+ *     already produces a lit-top effect with no hard edges).
+ *   - Removed the bottom occlusion rect (rim shadows + body gradient handle
+ *     cylindrical curvature without it).
+ *
+ * What remains: a single cylindrical silhouette shaded entirely by smooth
+ * full-height gradients (horizontal body shading + radial top highlight +
+ * specular band + edge rim shadows + radial end-cap ellipses).
+ *
+ * Motion, angles, pivot, sizing, and placement are unchanged.
  *
  * Dependencies: none.
  *   <script src="/aa95/aa95-lever.js" defer></script>
@@ -28,9 +44,6 @@
   // ── Fixed presentation cant (unchanged) ───────────────────────────────────
   const CANT = { radio: -10, standard: -8, small: -6 };
 
-  // ── Cylinder depth ────────────────────────────────────────────────────────
-  const DEPTH = 14;
-
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const NS = 'http://www.w3.org/2000/svg';
 
@@ -44,7 +57,7 @@
     small    : { w: 11, h: 21, topW:  9, botW:  7, topR:  4, bot: 14, ml: -5.5  }
   };
 
-  // ── Color palettes (unchanged) ────────────────────────────────────────────
+  // ── Color palettes (capGrad entries retained but unused after fix) ───────
   const PALETTE = {
     ivory : {
       bodyStops : [
@@ -109,26 +122,6 @@
     ].join(' ');
   }
 
-  // ── Original bat-handle path (preserved, not used) ────────────────────────
-  /*
-  function batPath(g) {
-    const { w, h, topW, botW, topR } = g;
-    const cx = w / 2;
-    const tl = (w - topW) / 2;
-    const tr = tl + topW;
-    const bl = (w - botW) / 2;
-    const br = bl + botW;
-    const ts = (h * 0.48).toFixed(2);
-    const te = (h * 0.62).toFixed(2);
-    return [
-      `M ${tl},${topR}`,  `Q ${tl},0 ${cx},0`,  `Q ${tr},0 ${tr},${topR}`,
-      `C ${tr},${ts} ${br},${te} ${br},${h}`,
-      `L ${bl},${h}`,
-      `C ${bl},${te} ${tl},${ts} ${tl},${topR}`,  `Z`
-    ].join(' ');
-  }
-  */
-
   // ── Build body gradient into SVG defs ─────────────────────────────────────
   function buildBodyGrad(defs, gradId, bodyStops) {
     const grad = el('linearGradient', {
@@ -140,44 +133,6 @@
     defs.appendChild(grad);
   }
 
-  // ── Build a depth SVG face (back face or shell) ───────────────────────────
-  function buildDepthFace(g, p, pathD, clipId, bodyGradId, zPos, darkOver) {
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
-    svg.setAttribute('width',   g.w);
-    svg.setAttribute('height',  g.h);
-    Object.assign(svg.style, {
-      position           : 'absolute',
-      top                : '0',
-      left               : '0',
-      display            : 'block',
-      overflow           : 'visible',
-      backfaceVisibility : 'hidden',
-      transform          : `translateZ(${zPos}px)`,
-    });
-
-    const defs = document.createElementNS(NS, 'defs');
-    const clip = document.createElementNS(NS, 'clipPath');
-    clip.setAttribute('id', clipId);
-    clip.appendChild(el('path', { d: pathD }));
-    defs.appendChild(clip);
-    buildBodyGrad(defs, bodyGradId, p.bodyStops);
-    svg.appendChild(defs);
-
-    const cp = `url(#${clipId})`;
-    svg.appendChild(el('rect', {
-      x: 0, y: 0, width: g.w, height: g.h,
-      fill: `url(#${bodyGradId})`, 'clip-path': cp
-    }));
-    if (darkOver > 0) {
-      svg.appendChild(el('rect', {
-        x: 0, y: 0, width: g.w, height: g.h,
-        fill: `rgba(0,0,0,${darkOver})`, 'clip-path': cp
-      }));
-    }
-    return svg;
-  }
-
   // ── Build one lever assembly ───────────────────────────────────────────────
   function buildSVG(size, colorKey, id) {
     const g       = SIZE_CFG[size];
@@ -185,13 +140,14 @@
     const cantDeg = CANT[size] || CANT.standard;
     const pathD   = cylinderPath(g);
 
-    const clipId = id + 'cl';
-    const bodyId = id + 'b';
-    const capId  = id + 'c';
-    const hiId   = id + 'h';
-    const specId = id + 's';
+    const clipId      = id + 'cl';
+    const bodyId      = id + 'b';
+    const hiId        = id + 'h';
+    const specId      = id + 's';
+    const endCapTopId = id + 'ect';
+    const endCapBotId = id + 'ecb';
 
-    // ── Outer cant wrapper (unchanged) ────────────────────────────────────
+    // ── Outer cant wrapper ────────────────────────────────────────────────
     const wrapper = document.createElement('div');
     Object.assign(wrapper.style, {
       position       : 'absolute',
@@ -220,15 +176,7 @@
       willChange     : 'transform',
     });
 
-    // Back depth shadow — subtle so the handle keeps thickness without looking like a separate slice
-    rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'bkcl', id + 'bkb', -DEPTH, 0.10));
-
-    // Mid shell tone — softened so the body reads more filled-in and less like stacked layers
-    rotor.appendChild(buildDepthFace(g, p, pathD,
-      id + 'shcl', id + 'shb', -(DEPTH / 2), 0.14));
-
-    // ── FRONT FACE SVG — translateZ(0) ────────────────────────────────────
+    // ── Single solid SVG face — no parallel depth planes ─────────────────
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -239,26 +187,21 @@
       left               : '0',
       display            : 'block',
       backfaceVisibility : 'hidden',
-      transform          : 'translateZ(0px)',
       overflow           : 'visible'
     });
 
     const defs = document.createElementNS(NS, 'defs');
 
+    // ── Clip path that defines the silhouette ────────────────────────────
     const clipEl = document.createElementNS(NS, 'clipPath');
     clipEl.setAttribute('id', clipId);
     clipEl.appendChild(el('path', { d: pathD }));
     defs.appendChild(clipEl);
 
+    // ── Horizontal body gradient (cylinder side shading) ─────────────────
     buildBodyGrad(defs, bodyId, p.bodyStops);
 
-    const capGrad = el('linearGradient', {
-      id: capId, x1: '0%', y1: '0%', x2: '0%', y2: '100%'
-    });
-    capGrad.appendChild(el('stop', { offset: '0%',   'stop-color': p.capGrad[0] }));
-    capGrad.appendChild(el('stop', { offset: '100%', 'stop-color': p.capGrad[1] }));
-    defs.appendChild(capGrad);
-
+    // ── Radial top highlight (the "lit dome" effect) ─────────────────────
     const hiGrad = el('radialGradient', {
       id            : hiId,
       gradientUnits : 'userSpaceOnUse',
@@ -272,37 +215,11 @@
     hiGrad.appendChild(el('stop', { offset: '100%', 'stop-color': `rgba(${p.specColor},0)` }));
     defs.appendChild(hiGrad);
 
+    // ── Specular band (drifts horizontally with rotation) ─────────────────
     const sc = p.specColor;
     const specGrad = el('linearGradient', {
       id: specId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
     });
-
-    const endCapTopId = id + 'ect';
-    const endCapBotId = id + 'ecb';
-
-    const endCapTop = el('radialGradient', {
-      id: endCapTopId,
-      gradientUnits: 'userSpaceOnUse',
-      cx: g.w / 2,
-      cy: g.topR,
-      r: (g.topW * 0.65).toFixed(1)
-    });
-    endCapTop.appendChild(el('stop', { offset: '0%',   'stop-color': 'rgba(255,255,255,0.36)' }));
-    endCapTop.appendChild(el('stop', { offset: '55%',  'stop-color': 'rgba(255,255,255,0.10)' }));
-    endCapTop.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
-    defs.appendChild(endCapTop);
-
-    const endCapBot = el('radialGradient', {
-      id: endCapBotId,
-      gradientUnits: 'userSpaceOnUse',
-      cx: g.w / 2,
-      cy: g.h - g.topR,
-      r: (g.topW * 0.75).toFixed(1)
-    });
-    endCapBot.appendChild(el('stop', { offset: '0%',   'stop-color': 'rgba(0,0,0,0.22)' }));
-    endCapBot.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
-    defs.appendChild(endCapBot);
-
     const specDef = [
       { o:  0,  c: `rgba(${sc},0)`    },
       { o: 30,  c: `rgba(${sc},0)`    },
@@ -319,21 +236,67 @@
     });
     defs.appendChild(specGrad);
 
+    // ── Top end cap (lit) ────────────────────────────────────────────────
+    const endCapTop = el('radialGradient', {
+      id: endCapTopId,
+      gradientUnits: 'userSpaceOnUse',
+      cx: g.w / 2,
+      cy: g.topR,
+      r: (g.topW * 0.65).toFixed(1)
+    });
+    endCapTop.appendChild(el('stop', { offset: '0%',   'stop-color': 'rgba(255,255,255,0.36)' }));
+    endCapTop.appendChild(el('stop', { offset: '55%',  'stop-color': 'rgba(255,255,255,0.10)' }));
+    endCapTop.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
+    defs.appendChild(endCapTop);
+
+    // ── Bottom end cap (shadowed) ────────────────────────────────────────
+    const endCapBot = el('radialGradient', {
+      id: endCapBotId,
+      gradientUnits: 'userSpaceOnUse',
+      cx: g.w / 2,
+      cy: g.h - g.topR,
+      r: (g.topW * 0.75).toFixed(1)
+    });
+    endCapBot.appendChild(el('stop', { offset: '0%',   'stop-color': 'rgba(0,0,0,0.22)' }));
+    endCapBot.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
+    defs.appendChild(endCapBot);
+
     svg.appendChild(defs);
 
     const cp = `url(#${clipId})`;
     const cw = g.w;
     const ch = g.h;
 
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${bodyId})`, 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:(ch * 0.40).toFixed(1), fill:`url(#${capId})`, 'clip-path':cp, opacity:'0.78' }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${hiId})`, 'clip-path':cp, opacity:'0.62' }));
-    svg.appendChild(el('rect', { x:0, y:0, width:cw, height:ch, fill:`url(#${specId})`, 'clip-path':cp }));
+    // ── 1. Horizontal body gradient (full height) ────────────────────────
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: cw, height: ch,
+      fill: `url(#${bodyId})`, 'clip-path': cp
+    }));
 
+    // ── 2. Radial top highlight (full height) ────────────────────────────
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: cw, height: ch,
+      fill: `url(#${hiId})`, 'clip-path': cp, opacity: '0.62'
+    }));
+
+    // ── 3. Specular band (full height — drifts with rotateX) ─────────────
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: cw, height: ch,
+      fill: `url(#${specId})`, 'clip-path': cp
+    }));
+
+    // ── 4. Edge rim shadows for cylindrical curvature ────────────────────
     const rimW = Math.max(2, Math.round(cw * 0.16));
-    svg.appendChild(el('rect', { x:0, y:0, width:rimW,    height:ch, fill:'rgba(0,0,0,0.18)', 'clip-path':cp }));
-    svg.appendChild(el('rect', { x:cw-rimW, y:0, width:rimW, height:ch, fill:'rgba(0,0,0,0.18)', 'clip-path':cp }));
+    svg.appendChild(el('rect', {
+      x: 0, y: 0, width: rimW, height: ch,
+      fill: 'rgba(0,0,0,0.18)', 'clip-path': cp
+    }));
+    svg.appendChild(el('rect', {
+      x: cw - rimW, y: 0, width: rimW, height: ch,
+      fill: 'rgba(0,0,0,0.18)', 'clip-path': cp
+    }));
 
+    // ── 5. Center light strip (subtle reflective sheen) ──────────────────
     const centerW = Math.max(2, Math.round(cw * 0.18));
     svg.appendChild(el('rect', {
       x: ((cw - centerW) / 2).toFixed(2),
@@ -344,18 +307,7 @@
       'clip-path': cp
     }));
 
-    const occH = Math.max(4, Math.round(ch * 0.14));
-    svg.appendChild(el('rect', {
-      x: 1,
-      y: ch - occH,
-      width: cw - 2,
-      height: occH,
-      rx: 2,
-      ry: 2,
-      fill: 'rgba(0,0,0,0.18)',
-      'clip-path': cp
-    }));
-
+    // ── 6. End cap ellipses ──────────────────────────────────────────────
     const endRx    = (g.topW / 2).toFixed(2);
     const endCx    = (g.w / 2).toFixed(2);
     const endTopCy = g.topR.toFixed(2);
@@ -381,6 +333,7 @@
       opacity: '0.62'
     }));
 
+    // ── 7. Outer silhouette stroke ───────────────────────────────────────
     svg.appendChild(el('path', {
       d: pathD,
       fill: 'none',
@@ -529,7 +482,7 @@
       `[AA95] Spring levers ready — ${Object.keys(registry).length} instances`,
       '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
       '| throw:', Math.abs(ANGLE.off - ANGLE.on) + '°',
-      '| depth:', DEPTH + 'px softened layered cylinder',
+      '| solid single-face cylinder (no stacked-disc artifacts)',
       '| reduced-motion:', REDUCED
     );
   }
