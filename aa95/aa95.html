@@ -122,32 +122,6 @@
     .rx-drop-line:nth-child(4) { left: 301px; }
     .rx-drop-line:nth-child(5) { left: 392px; }
 
-    /* ── MUSIC BRACKET (visual connector spanning ADF + DPLR) ───────────── */
-    .music-bracket {
-      position: absolute;
-      pointer-events: none;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .music-bracket-text {
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: 1px;
-      color: var(--label-white);
-      background: #181818;
-      padding: 0 6px;
-      position: relative;
-      z-index: 2;
-    }
-    .music-bracket-line {
-      width: 100%;
-      height: 1px;
-      background: var(--boundary-line);
-      margin-top: -6px;
-    }
-
     /* ── SVG LEADER LINES ───────────────────────────────────────────────── */
     .panel-svg {
       position: absolute;
@@ -194,6 +168,42 @@
       margin-top: -28px;
       position: relative;
       z-index: 10;
+    }
+
+    /* ── TOP-STACK LABELS (above radio toggles) ─────────────────────────── */
+    /*
+     * Used for MUSIC (above ADF), PAT, and ON (above PAT toggle).
+     * Absolutely positioned so they don't push the assembly down — keeps
+     * ADF/DPLR/PAT levers vertically aligned with the COMs/FMs/AUX.
+     *
+     * label-stack-2 = upper line (PAT, MUSIC).
+     * label-stack-1 = lower line (ON), sits just above the dome.
+     */
+    .label-stack-top {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #999;
+      white-space: nowrap;
+      line-height: 1;
+      z-index: 11;
+    }
+    .label-stack-1 { top: 6px; }    /* lower line — close to dome */
+    .label-stack-2 { top: -7px; }   /* upper line — further from dome */
+
+    /* ── MUSIC CONNECTOR (horizontal line between ADF and DPLR domes) ───── */
+    .music-connector {
+      position: absolute;
+      height: 2px;
+      background: rgba(220, 220, 220, 0.85);
+      border-radius: 1px;
+      z-index: 4;
+      pointer-events: none;
+      box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
     }
 
     /* ── TOGGLE COMPONENT ───────────────────────────────────────────────── */
@@ -380,12 +390,6 @@
     }
 
     /* ── PLT/ISO CROSSHATCHED YELLOW DOME INDICATOR ─────────────────────── */
-    /*
-     * Single hardware indicator with two side-flanking labels.
-     * Static visual only for now — on/off behavior wired up in a later pass.
-     * The crosshatch is achieved with two repeating-linear-gradients at ±45°
-     * layered over an amber radial dome and topped with a soft highlight.
-     */
     .plt-iso-indicator {
       position: absolute;
       display: flex;
@@ -410,19 +414,15 @@
       border-radius: 50%;
       flex-shrink: 0;
       background:
-        /* top-left highlight */
         radial-gradient(ellipse at 33% 25%,
           rgba(255,250,200,0.50) 0%,
           rgba(255,250,200,0) 48%),
-        /* crosshatch \\\\ */
         repeating-linear-gradient(45deg,
           rgba(0,0,0,0.55) 0 1px,
           transparent 1px 3px),
-        /* crosshatch //// */
         repeating-linear-gradient(-45deg,
           rgba(0,0,0,0.55) 0 1px,
           transparent 1px 3px),
-        /* base amber dome */
         radial-gradient(circle at 50% 45%,
           #d8a420 0%,
           #c0901a 55%,
@@ -506,11 +506,9 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- MUSIC BRACKET — visual connector spanning ADF + DPLR pair -->
-  <div class="music-bracket" style="left:560px; top:62px; width:130px;">
-    <span class="music-bracket-text">MUSIC</span>
-    <div class="music-bracket-line"></div>
-  </div>
+  <!-- MUSIC CONNECTOR — thin horizontal line between ADF and DPLR domes.
+       Goes BEHIND the levers (z-index:4 vs lever z-index:5+). -->
+  <div class="music-connector" style="left:600px; top:44px; width:39px;"></div>
 
   <!-- SVG LEADER LINES -->
   <svg class="panel-svg">
@@ -560,20 +558,25 @@
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
-  <!-- MUSIC pair: ADF (blue) + DPLR (blue), tight 65px center-to-center -->
+  <!-- ADF (blue) — "MUSIC" label sits directly ABOVE this toggle -->
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
+    <span class="label-stack-top label-stack-2">MUSIC</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">ADF</span>
   </div>
+
+  <!-- DPLR (blue) — no top label; connector line spans from ADF to DPLR dome -->
   <div class="component toggle radio-toggle blue" id="dplr" data-active="false" style="left:625px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">DPLR</span>
   </div>
 
-  <!-- PAT (yellow) — separated from MUSIC pair by 90px gap -->
+  <!-- PAT (yellow) — "PAT" + "ON" stacked above, "OFF" below -->
   <div class="component toggle radio-toggle yellow" id="pat" data-active="true" style="left:715px; top:25px;">
+    <span class="label-stack-top label-stack-2">PAT</span>
+    <span class="label-stack-top label-stack-1">ON</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
-    <span class="label radio-toggle-label">PAT</span>
+    <span class="label radio-toggle-label">OFF</span>
   </div>
 
   <!-- RX VOL -->
@@ -583,11 +586,6 @@
   </div>
 
   <!-- ── MIDDLE ROW: PLT/ISO CROSSHATCHED YELLOW DOME ───────────────────── -->
-  <!--
-    Single dome indicator flanked by PLT label (left) and ISO label (right).
-    Static visual for now — light on/off behavior to be added later.
-    Positioned in the middle band, between PAT (top row) and ICS CALL (bottom row).
-  -->
   <div class="plt-iso-indicator" style="right:198px; top:158px;">
     <span class="plt-iso-label">PLT</span>
     <div class="plt-iso-dome"></div>
@@ -650,9 +648,6 @@
 (function() {
   'use strict';
 
-  // ── Panel state ────────────────────────────────────────────────────────
-  // ADF, DPLR, PAT are now full toggles (PAT defaults ON, ADF/DPLR default OFF).
-  // SO removed entirely. plt_light removed (PLT/ISO is static visual for now).
   const panelState = {
     com1: true, com2: true, fm1: true, fm2: true, aux: true,
     adf: false, dplr: false, pat: true,
@@ -679,7 +674,6 @@
   function setStatus(text) { $('stat').innerText = text; }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-  // ── List of all toggle component IDs (used by syncState + click handlers) ─
   const TOGGLE_IDS = [
     'com1','com2','fm1','fm2','aux',
     'adf','dplr','pat',
@@ -732,7 +726,6 @@
     }
   }
 
-  // ── Toggle click handlers (all toggles share the same flip behavior) ────
   TOGGLE_IDS.forEach(id => {
     const el = $(id);
     if (!el) return;
@@ -743,7 +736,6 @@
     };
   });
 
-  // ── ICS CALL — momentary push button ────────────────────────────────────
   const icsCall = $('ics_call');
   if (icsCall) {
     const press   = () => { panelState.ics_call = true;  syncState(); setStatus('ICS CALL: PRESSED'); };
@@ -755,7 +747,6 @@
     icsCall.ontouchend   = e => { e.preventDefault(); release(); };
   }
 
-  // ── Selector knob ───────────────────────────────────────────────────────
   const selector = $('selector');
   if (selector) {
     let dragging = false, startY, startAngle;
@@ -810,7 +801,6 @@
     };
   }
 
-  // ── Volume knobs ────────────────────────────────────────────────────────
   [['rxvol','ptr_rx'], ['vox','ptr_vox'], ['icsvol','ptr_ics']].forEach(([id, ptrId]) => {
     const knob = $(id);
     const ptr  = $(ptrId);
@@ -852,7 +842,6 @@
     };
   });
 
-  // ── Keyboard shortcuts ──────────────────────────────────────────────────
   document.onkeydown = e => {
     const k = e.key.toLowerCase();
     if (k === 'm') masterCheck();
