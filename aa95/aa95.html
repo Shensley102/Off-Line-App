@@ -173,11 +173,13 @@
     /* ── TOP-STACK LABELS (above radio toggles) ─────────────────────────── */
     /*
      * Used for MUSIC (above ADF), PAT, and ON (above PAT toggle).
-     * Absolutely positioned so they don't push the assembly down — keeps
-     * ADF/DPLR/PAT levers vertically aligned with the COMs/FMs/AUX.
+     * Sit on the same horizontal plane as the RX-ON text (~y=62 from panel top).
+     * z-index: 1 so labels render BEHIND the lever bodies — when the toggle
+     * is ON (lever up), the lever covers the label, matching the real hardware.
+     * When OFF (lever down/foreshortened), the label is fully visible.
      *
-     * label-stack-2 = upper line (PAT, MUSIC).
-     * label-stack-1 = lower line (ON), sits just above the dome.
+     * label-stack-2 = upper line (PAT, MUSIC) — aligns with RX-ON text.
+     * label-stack-1 = lower line (ON), sits just below the upper line.
      */
     .label-stack-top {
       position: absolute;
@@ -190,10 +192,10 @@
       color: #999;
       white-space: nowrap;
       line-height: 1;
-      z-index: 11;
+      z-index: 1;
     }
-    .label-stack-1 { top: 6px; }    /* lower line — close to dome */
-    .label-stack-2 { top: -7px; }   /* upper line — further from dome */
+    .label-stack-1 { top: 50px; }   /* lower line — ON */
+    .label-stack-2 { top: 37px; }   /* upper line — PAT, MUSIC (aligned to RX-ON plane) */
 
     /* ── MUSIC CONNECTOR (horizontal line between ADF and DPLR domes) ───── */
     .music-connector {
@@ -506,8 +508,7 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- MUSIC CONNECTOR — thin horizontal line between ADF and DPLR domes.
-       Goes BEHIND the levers (z-index:4 vs lever z-index:5+). -->
+  <!-- MUSIC CONNECTOR — thin horizontal line between ADF and DPLR domes. -->
   <div class="music-connector" style="left:600px; top:44px; width:39px;"></div>
 
   <!-- SVG LEADER LINES -->
@@ -558,7 +559,7 @@
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
-  <!-- ADF (blue) — "MUSIC" label sits directly ABOVE this toggle -->
+  <!-- ADF (blue) — "MUSIC" label sits behind the lever, on RX-ON plane -->
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
     <span class="label-stack-top label-stack-2">MUSIC</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
@@ -571,7 +572,7 @@
     <span class="label radio-toggle-label">DPLR</span>
   </div>
 
-  <!-- PAT (yellow) — "PAT" + "ON" stacked above, "OFF" below -->
+  <!-- PAT (yellow) — "PAT" + "ON" stacked behind lever, "OFF" below -->
   <div class="component toggle radio-toggle yellow" id="pat" data-active="true" style="left:715px; top:25px;">
     <span class="label-stack-top label-stack-2">PAT</span>
     <span class="label-stack-top label-stack-1">ON</span>
