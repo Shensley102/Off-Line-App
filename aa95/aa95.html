@@ -536,20 +536,22 @@
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
-  <!-- MUSIC SECTION -->
+  <!-- ── MUSIC SECTION (top-right) ──────────────────────────────────────
+       Spacing: ADF↔DPLR 40px (tight MUSIC pair), DPLR↔PAT 60px (group break),
+                PAT↔SO 40px (tight pair). All at top:45 for label alignment. -->
   <div class="component" id="adf" data-active="false" style="left:610px; top:45px;">
     <span class="label">ADF</span>
     <div class="btn-round blue"></div>
   </div>
-  <div class="component" id="dplr" data-active="false" style="left:660px; top:45px;">
+  <div class="component" id="dplr" data-active="false" style="left:650px; top:45px;">
     <span class="label">DPLR</span>
     <div class="btn-round black"></div>
   </div>
-  <div class="component toggle" id="pat" data-active="true" style="left:710px; top:50px;">
+  <div class="component toggle" id="pat" data-active="true" style="left:710px; top:45px;">
     <span class="label">PAT</span>
     <div class="assembly-toggle small"><div class="nut"></div></div>
   </div>
-  <div class="component" id="so" data-active="false" style="left:760px; top:45px;">
+  <div class="component" id="so" data-active="false" style="left:750px; top:45px;">
     <span class="label">SO</span>
     <div class="btn-round yellow"></div>
   </div>
@@ -570,7 +572,7 @@
     <span class="label label-bottom">SELECTOR</span>
   </div>
 
-  <!-- BOTTOM ROW -->
+  <!-- ── BOTTOM-LEFT ROW (unchanged) ──────────────────────────────────── -->
   <div class="component toggle red" id="iso_emr" data-active="false" style="left:80px; bottom:50px;">
     <div class="assembly-toggle"><div class="nut"></div></div>
     <span class="label label-bottom">ISO/EMR</span>
@@ -586,22 +588,28 @@
     <div class="knob-vol small" id="vox" data-value="50"><div class="vol-pointer" id="ptr_vox"></div></div>
   </div>
 
-  <div class="component" id="ics_call" data-active="false" style="right:280px; bottom:45px;">
-    <span class="label">ICS CALL</span>
-    <div class="btn-ics-call"></div>
-  </div>
-
-  <div class="component" style="right:220px; bottom:55px;">
+  <!-- ── MIDDLE ROW (Option B): PLT lifted up to its own row above ICS CALL -->
+  <div class="component" style="right:230px; top:140px;">
     <div class="led" id="plt_light" data-active="true"></div>
     <span class="label label-bottom">PLT</span>
   </div>
 
-  <div class="component toggle orange" id="ics_mic" data-active="true" style="right:140px; bottom:45px;">
-    <span class="label">ICS MIC</span>
-    <div class="assembly-toggle"><div class="nut"></div></div>
+  <!-- ── BOTTOM-RIGHT ROW (Option B) ──────────────────────────────────────
+       ICS CALL sits below PLT in the same column.
+       ICS MIC + KEY are stacked vertically as a single column at right:130. -->
+  <div class="component" id="ics_call" data-active="false" style="right:230px; bottom:45px;">
+    <span class="label">ICS CALL</span>
+    <div class="btn-ics-call"></div>
   </div>
 
-  <div class="component toggle" id="key" data-active="true" style="right:85px; bottom:50px;">
+  <!-- ICS MIC (top of stack) — small orange toggle to match KEY's size -->
+  <div class="component toggle orange" id="ics_mic" data-active="true" style="right:130px; bottom:90px;">
+    <span class="label">ICS MIC</span>
+    <div class="assembly-toggle small"><div class="nut"></div></div>
+  </div>
+
+  <!-- KEY (bottom of stack) — same column as ICS MIC -->
+  <div class="component toggle" id="key" data-active="true" style="right:130px; bottom:25px;">
     <span class="label">KEY</span>
     <div class="assembly-toggle small"><div class="nut"></div></div>
   </div>
