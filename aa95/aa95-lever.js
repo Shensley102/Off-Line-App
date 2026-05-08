@@ -2,7 +2,7 @@
  * aa95-lever.js
  * SVG + Spring Physics lever renderer for AA95 Audio Control Panel
  *
- * v3 — Photoreal lever update:
+ * v3 — Photoreal lever update + blue/yellow palettes added (v3.1):
  *   • Perpendicular dome cap (hemisphere shading) — fixes the "flat oval" OFF state.
  *     Cap is a child of the rotor with rotateX(90°), so it composes with the spring
  *     rotation. At OFF the cap faces the viewer; at ON it's nearly edge-on.
@@ -10,6 +10,7 @@
  *   • Narrower, brighter specular stripe (peak alpha 0.50, ~10% wide).
  *   • Slimmer proportions (radio width 33→30; standard 26→24).
  *   • Chrome collar on the .nut element (applied via JS — HTML untouched).
+ *   • NEW v3.1: Added `blue` and `yellow` palettes for ADF/DPLR/PAT toggles.
  *
  * Behavior unchanged: SPRING constants, ANGLE.on/off, CANT, MutationObserver,
  * registry, prefers-reduced-motion handling.
@@ -40,22 +41,20 @@
   const uid = () => 'aa95lv' + (++_n);
 
   // ── Slimmer geometry ──────────────────────────────────────────────────────
-  // Was: standard w26, radio w33, small w11.
-  // Reference levers are slimmer relative to height — narrowed by ~10%.
   const SIZE_CFG = {
     standard : { w: 24, h: 55, topW: 20, botW: 16, topR: 10, bot: 34, ml: -12 },
     radio    : { w: 30, h: 69, topW: 26, botW: 20, topR: 13, bot: 43, ml: -15 },
     small    : { w: 10, h: 21, topW:  8, botW:  6, topR:  4, bot: 14, ml: -5  }
   };
 
-  // ── Warmer ivory palette + dedicated dome-cap colors ─────────────────────
+  // ── Palettes ──────────────────────────────────────────────────────────────
   const PALETTE = {
     ivory : {
       bodyStops : [
         [0,   '#6a5a48'],
         [18,  '#a89882'],
         [38,  '#e0d0b0'],
-        [50,  '#f4e8c8'],   // brightest lit peak
+        [50,  '#f4e8c8'],
         [62,  '#d4c4a0'],
         [80,  '#a89478'],
         [100, '#6a5a48'],
@@ -97,6 +96,40 @@
       capDark   : '#5a2c10',
       capRim    : '#2a1408',
       specColor : '255,228,180',
+    },
+    // NEW: Bright royal blue for ADF and DPLR (MUSIC pair)
+    blue : {
+      bodyStops : [
+        [0,   '#0a1a4a'],
+        [18,  '#1838a0'],
+        [38,  '#3866d4'],
+        [50,  '#5a8aee'],
+        [62,  '#2c52b8'],
+        [80,  '#143082'],
+        [100, '#0a1a4a'],
+      ],
+      capCenter : '#a0c0ff',
+      capMid    : '#3866d4',
+      capDark   : '#142058',
+      capRim    : '#060a28',
+      specColor : '210,225,255',
+    },
+    // NEW: Saturated yellow for PAT
+    yellow : {
+      bodyStops : [
+        [0,   '#4a3808'],
+        [18,  '#8e7018'],
+        [38,  '#d4b028'],
+        [50,  '#f4d038'],
+        [62,  '#b89020'],
+        [80,  '#7a5e14'],
+        [100, '#4a3808'],
+      ],
+      capCenter : '#fff498',
+      capMid    : '#dab428',
+      capDark   : '#5a4810',
+      capRim    : '#2a2008',
+      specColor : '255,250,200',
     }
   };
 
@@ -136,13 +169,7 @@
     defs.appendChild(grad);
   }
 
-  // ── NEW: Build dome cap (perpendicular disc with hemisphere shading) ─────
-  // The cap is a flat circular SVG disc that we rotate 90° about X, making it
-  // sit horizontally on top of the cylinder body. Because it's a child of the
-  // rotor, the rotor's rotateX composes with the cap's rotateX — so:
-  //   • At ON  (rotor=-50°): cap world angle = -50 + 90 =  40° (mostly edge-on)
-  //   • At OFF (rotor=-80°): cap world angle = -80 + 90 =  10° (faces viewer)
-  // Hemisphere illusion comes from the radial gradient — bright spot upper-left.
+  // ── Build dome cap (perpendicular disc with hemisphere shading) ──────────
   function buildCap(g, p, id) {
     const D     = g.topW;
     const r     = D / 2;
@@ -153,7 +180,6 @@
     const rimId  = id + 'cr';
     const sc     = p.specColor;
 
-    // Wrapper div — positioned so its CENTER is exactly at the top of the body.
     const cap = document.createElement('div');
     Object.assign(cap.style, {
       position           : 'absolute',
@@ -178,7 +204,6 @@
 
     const defs = document.createElementNS(NS, 'defs');
 
-    // Hemisphere shading: bright peak upper-left, fading to dark lower-right rim
     const domeGrad = el('radialGradient', {
       id : gradId,
       cx : '32%',
@@ -194,7 +219,6 @@
     domeGrad.appendChild(el('stop', { offset: '100%', 'stop-color': p.capRim }));
     defs.appendChild(domeGrad);
 
-    // Subtle inner shadow ring (ambient occlusion at the rim)
     const rimGrad = el('radialGradient', {
       id : rimId,
       cx : '50%',
@@ -207,19 +231,16 @@
 
     svg.appendChild(defs);
 
-    // Main dome face
     svg.appendChild(el('circle', {
       cx: cx, cy: cy, r: r,
       fill: `url(#${gradId})`
     }));
 
-    // Rim shadow overlay (subtle vignette at the perimeter)
     svg.appendChild(el('circle', {
       cx: cx, cy: cy, r: r,
       fill: `url(#${rimId})`
     }));
 
-    // Bright tiny specular hotspot
     svg.appendChild(el('ellipse', {
       cx: D * 0.30,
       cy: D * 0.22,
@@ -228,7 +249,6 @@
       fill: 'rgba(255,255,255,0.55)'
     }));
 
-    // Crisp dark outline for definition
     svg.appendChild(el('circle', {
       cx: cx, cy: cy, r: r - 0.4,
       fill: 'none',
@@ -254,7 +274,6 @@
     const endCapTopId = id + 'ect';
     const endCapBotId = id + 'ecb';
 
-    // ── Outer cant wrapper ────────────────────────────────────────────────
     const wrapper = document.createElement('div');
     Object.assign(wrapper.style, {
       position       : 'absolute',
@@ -270,7 +289,6 @@
       pointerEvents  : 'none'
     });
 
-    // ── 3D Rotor — receives rotateX from spring ───────────────────────────
     const rotor = document.createElement('div');
     Object.assign(rotor.style, {
       position       : 'absolute',
@@ -283,7 +301,6 @@
       willChange     : 'transform',
     });
 
-    // ── Body SVG (single solid plane — cap handles the OFF-state 3D read) ─
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
     svg.setAttribute('width',    g.w);
@@ -306,7 +323,6 @@
 
     buildBodyGrad(defs, bodyId, p.bodyStops);
 
-    // Radial top highlight (full height, illuminates upper portion of cylinder)
     const hiGrad = el('radialGradient', {
       id            : hiId,
       gradientUnits : 'userSpaceOnUse',
@@ -320,8 +336,6 @@
     hiGrad.appendChild(el('stop', { offset: '100%', 'stop-color': `rgba(${p.specColor},0)` }));
     defs.appendChild(hiGrad);
 
-    // ── Narrower, brighter specular stripe ───────────────────────────────
-    // base offsets [35, 42, 47, 53, 62] — peak alpha 0.50 (was 0.28 over 30–74)
     const sc = p.specColor;
     const specGrad = el('linearGradient', {
       id: specId, x1: '0%', y1: '0%', x2: '100%', y2: '0%'
@@ -342,7 +356,6 @@
     });
     defs.appendChild(specGrad);
 
-    // Top end-cap shading (visible when body is angled; supplements the dome cap)
     const endCapTop = el('radialGradient', {
       id: endCapTopId,
       gradientUnits: 'userSpaceOnUse',
@@ -355,7 +368,6 @@
     endCapTop.appendChild(el('stop', { offset: '100%', 'stop-color': 'rgba(0,0,0,0)' }));
     defs.appendChild(endCapTop);
 
-    // Bottom end-cap shadow
     const endCapBot = el('radialGradient', {
       id: endCapBotId,
       gradientUnits: 'userSpaceOnUse',
@@ -373,25 +385,21 @@
     const cw = g.w;
     const ch = g.h;
 
-    // 1. Horizontal body gradient
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${bodyId})`, 'clip-path': cp
     }));
 
-    // 2. Radial top highlight
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${hiId})`, 'clip-path': cp, opacity: '0.70'
     }));
 
-    // 3. Specular stripe (drifts horizontally with rotateX)
     svg.appendChild(el('rect', {
       x: 0, y: 0, width: cw, height: ch,
       fill: `url(#${specId})`, 'clip-path': cp
     }));
 
-    // 4. Edge rim shadows (cylindrical curvature — deeper on the unlit side)
     const rimWLight = Math.max(2, Math.round(cw * 0.13));
     const rimWDark  = Math.max(2, Math.round(cw * 0.20));
     svg.appendChild(el('rect', {
@@ -403,7 +411,6 @@
       fill: 'rgba(0,0,0,0.28)', 'clip-path': cp
     }));
 
-    // 5. Top end-cap ellipse (subtle dome hint when body is visible)
     const endRx    = (g.topW / 2).toFixed(2);
     const endCx    = (g.w / 2).toFixed(2);
     const endTopCy = g.topR.toFixed(2);
@@ -419,7 +426,6 @@
       opacity: '0.72'
     }));
 
-    // 6. Bottom end-cap shadow
     svg.appendChild(el('ellipse', {
       cx: endCx,
       cy: endBotCy,
@@ -430,7 +436,6 @@
       opacity: '0.62'
     }));
 
-    // 7. Horizon line at top of body (where dome meets cylinder)
     const hlY = g.topR + 0.8;
     svg.appendChild(el('path', {
       d: `M ${(g.w - g.topW) / 2 + 1},${hlY} Q ${g.w / 2},${hlY - 1} ${(g.w + g.topW) / 2 - 1},${hlY}`,
@@ -440,7 +445,6 @@
       'clip-path': cp
     }));
 
-    // 8. Outer silhouette stroke
     svg.appendChild(el('path', {
       d: pathD,
       fill: 'none',
@@ -450,7 +454,6 @@
 
     rotor.appendChild(svg);
 
-    // ── NEW: Dome cap — child of rotor, composes with spring rotation ────
     const cap = buildCap(g, p, id);
     rotor.appendChild(cap);
 
@@ -517,7 +520,6 @@
     _updateSpecular() {
       const t     = (this.pos - ANGLE.on) / (ANGLE.off - ANGLE.on);
       const shift = (t - 0.5) * 8;
-      // Updated base offsets to match new tighter specular stripe
       const base  = [35, 42, 47, 53, 62];
 
       base.forEach((b, i) => {
@@ -544,13 +546,13 @@
   function getColor(componentEl) {
     if (componentEl.classList.contains('red'))    return 'red';
     if (componentEl.classList.contains('orange')) return 'orange';
+    if (componentEl.classList.contains('blue'))   return 'blue';   // NEW
+    if (componentEl.classList.contains('yellow')) return 'yellow'; // NEW
     return 'ivory';
   }
 
-  // ── NEW: Apply chrome-collar styling to the .nut element from JS ─────────
-  // Keeps all visual changes confined to aa95-lever.js (HTML untouched).
+  // ── Apply chrome-collar styling to the .nut element from JS ──────────────
   function styleChromeCollar(nutEl, size) {
-    // Wider/taller for radio, scaled down for small
     const dims = {
       radio    : { w: 50, h: 24, br: 6 },
       standard : { w: 42, h: 20, br: 5 },
@@ -562,22 +564,16 @@
       height       : dims.h + 'px',
       borderRadius : dims.br + 'px',
       background   :
-        // Inner dark socket where the lever pivots
         'radial-gradient(ellipse 14% 38% at 50% 55%, ' +
           '#020202 0%, #1a1a1a 70%, transparent 100%),' +
-        // Chrome collar (silver ring) — elliptical, bright top
         'radial-gradient(ellipse 38% 78% at 50% 42%, ' +
           '#9a9a9a 0%, #6e6e6e 38%, #3e3e3e 78%, transparent 100%),' +
-        // Dark backing plate
         'linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%)',
       boxShadow    :
         '0 4px 6px rgba(0,0,0,0.78),' +
         'inset 0 1px 0 rgba(255,255,255,0.10),' +
         'inset 0 -2px 3px rgba(0,0,0,0.60)'
     });
-
-    // Override the empty ::before that the original CSS hides
-    // (no-op — CSS already has opacity:0 on .nut::before)
   }
 
   // ── Build all levers and register spring instances ────────────────────────
@@ -592,7 +588,6 @@
       const color = getColor(component);
       const isOn  = component.getAttribute('data-active') === 'true';
 
-      // Polish the chrome collar
       const nut = assembly.querySelector('.nut');
       if (nut) styleChromeCollar(nut, size);
 
@@ -629,9 +624,8 @@
     window.AA95Levers = registry;
 
     console.log(
-      `[AA95] v3 levers ready — ${Object.keys(registry).length} instances`,
-      '| rotateX: ON', ANGLE.on + '° OFF', ANGLE.off + '°',
-      '| dome cap: rotateX(90°) child of rotor',
+      `[AA95] v3.1 levers ready — ${Object.keys(registry).length} instances`,
+      '| palettes: ivory, red, orange, blue, yellow',
       '| reduced-motion:', REDUCED
     );
   }
