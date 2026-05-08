@@ -122,6 +122,32 @@
     .rx-drop-line:nth-child(4) { left: 301px; }
     .rx-drop-line:nth-child(5) { left: 392px; }
 
+    /* ── MUSIC BRACKET (visual connector spanning ADF + DPLR) ───────────── */
+    .music-bracket {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .music-bracket-text {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--label-white);
+      background: #181818;
+      padding: 0 6px;
+      position: relative;
+      z-index: 2;
+    }
+    .music-bracket-line {
+      width: 100%;
+      height: 1px;
+      background: var(--boundary-line);
+      margin-top: -6px;
+    }
+
     /* ── SVG LEADER LINES ───────────────────────────────────────────────── */
     .panel-svg {
       position: absolute;
@@ -181,36 +207,11 @@
     }
 
     /* ── 3D STAGE ───────────────────────────────────────────────────────── */
-    /*
-     * perspective: 800px  /* was: 300px */
-     *
-     * WHY THIS VALUE:
-     *   The lever SVG is ~69px tall (radio size). At the OFF position the lever
-     *   is at rotateX -80° — nearly horizontal, pointing at the viewer. For this
-     *   to show realistic foreshortening (the lever appearing squashed to a short
-     *   dome, as on the real hardware), the perspective distance must be close
-     *   relative to the lever's Z-depth.
-     *
-     *   At OFF (-80°) the dome tip reaches Z ≈ 68px toward the viewer.
-     *   With perspective 300px: scale = 300/(300-68) ≈ 1.29
-     *   The lever appears ~16px tall — a clearly foreshortened dome. ✓
-     *
-     *   At ON (-50°) the dome tip is at Z ≈ 53px.
-     *   With perspective 300px: scale = 300/(300-53) ≈ 1.21
-     *   The lever appears ~54px tall — a clearly visible side profile. ✓
-     *
-     *   The old value (2600px) produced effectively zero foreshortening at any
-     *   angle — the lever always looked like its full side-profile was visible.
-     *
-     * TUNE: decrease for more dramatic foreshortening at OFF (more "end-on"),
-     *       increase for less foreshortening (flatter, more illustration-like).
-     *       Keep above ~150px or the perspective distortion becomes unrealistic.
-     */
     .assembly-toggle {
       position: relative;
       width: 44px;
       height: 110px;
-      perspective: 800px; /* was: 300px */
+      perspective: 800px;
       transform-style: preserve-3d;
     }
 
@@ -238,7 +239,6 @@
       box-shadow: inset 0 -2px 4px rgba(0,0,0,0.5);
     }
 
-    /* End-cap permanently hidden — SVG lever is visible in both states */
     .nut::before {
       opacity: 0 !important;
       transition: none !important;
@@ -344,39 +344,6 @@
       pointer-events: none;
     }
 
-    /* ── PUSH BUTTONS ───────────────────────────────────────────────────── */
-    .btn-round {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s ease;
-      border: none;
-    }
-
-    .btn-round.blue {
-      background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.3) 0%, transparent 50%),
-                  linear-gradient(180deg, #5588cc 0%, #3366aa 50%, #224488 100%);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.3);
-    }
-
-    .btn-round.black {
-      background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.15) 0%, transparent 50%),
-                  linear-gradient(180deg, #4a4a4a 0%, #333333 50%, #1a1a1a 100%);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.15);
-    }
-
-    .btn-round.yellow {
-      background: radial-gradient(ellipse 70% 40% at 50% 25%, rgba(255,255,255,0.4) 0%, transparent 50%),
-                  linear-gradient(180deg, #ffdd44 0%, #ddbb22 50%, #aa8800 100%);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.4);
-    }
-
-    .btn-round[data-active="true"] {
-      transform: scale(0.95);
-      filter: brightness(0.85);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.3);
-    }
-
     /* ── ICS CALL ───────────────────────────────────────────────────────── */
     .btn-ics-call {
       width: 45px; height: 45px;
@@ -410,6 +377,62 @@
       background: radial-gradient(circle at 35% 35%, #aaffaa 0%, #66ff66 20%, #00ff44 50%, #00cc22 100%);
       box-shadow: 0 0 4px #00ff44, 0 0 8px #00ff44, 0 0 16px rgba(0,255,68,0.6),
                   inset 0 1px 3px rgba(255,255,255,0.4);
+    }
+
+    /* ── PLT/ISO CROSSHATCHED YELLOW DOME INDICATOR ─────────────────────── */
+    /*
+     * Single hardware indicator with two side-flanking labels.
+     * Static visual only for now — on/off behavior wired up in a later pass.
+     * The crosshatch is achieved with two repeating-linear-gradients at ±45°
+     * layered over an amber radial dome and topped with a soft highlight.
+     */
+    .plt-iso-indicator {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    .plt-iso-indicator .plt-iso-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #999;
+      margin: 0;
+    }
+
+    .plt-iso-dome {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      background:
+        /* top-left highlight */
+        radial-gradient(ellipse at 33% 25%,
+          rgba(255,250,200,0.50) 0%,
+          rgba(255,250,200,0) 48%),
+        /* crosshatch \\\\ */
+        repeating-linear-gradient(45deg,
+          rgba(0,0,0,0.55) 0 1px,
+          transparent 1px 3px),
+        /* crosshatch //// */
+        repeating-linear-gradient(-45deg,
+          rgba(0,0,0,0.55) 0 1px,
+          transparent 1px 3px),
+        /* base amber dome */
+        radial-gradient(circle at 50% 45%,
+          #d8a420 0%,
+          #c0901a 55%,
+          #8a6210 88%,
+          #4a3608 100%);
+      box-shadow:
+        inset 0 -2px 4px rgba(0,0,0,0.55),
+        inset 0 1px 1px rgba(255,255,200,0.30),
+        0 1px 2px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(0,0,0,0.8);
     }
 
     /* ── STATUS BAR ─────────────────────────────────────────────────────── */
@@ -483,10 +506,13 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- SVG LEADER LINES
-       All knob-end points are at distance 65px from selector center (475,230),
-       producing a uniform 5px gap between each leader and the knob's 60px radius.
-       FM1 was already correct and is the visual reference. -->
+  <!-- MUSIC BRACKET — visual connector spanning ADF + DPLR pair -->
+  <div class="music-bracket" style="left:560px; top:62px; width:130px;">
+    <span class="music-bracket-text">MUSIC</span>
+    <div class="music-bracket-line"></div>
+  </div>
+
+  <!-- SVG LEADER LINES -->
   <svg class="panel-svg">
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
     <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
@@ -495,8 +521,6 @@
     <line class="leader-line" x1="400" y1="162" x2="438" y2="177" />
     <polyline class="leader-line" points="461,152 481,152" />
     <line class="leader-line" x1="471" y1="152" x2="471" y2="165" />
-    <!-- PA leader: hockey-stick shape — 45° diagonal up-right from knob edge,
-         sharp bend, then horizontal segment ending just before the PA label -->
     <polyline class="leader-line" points="521,184 525,180 555,180" />
     <polyline class="leader-line" points="410,230 395,230 225,162" />
     <line class="leader-line" x1="424" y1="270" x2="355" y2="275" />
@@ -513,8 +537,8 @@
     <span class="label" style="margin:0; color:#999;">PA</span>
   </div>
 
-  <!-- TOP ROW: RADIO TOGGLES
-       No .lever div — aa95-lever.js builds the SVG lever at runtime -->
+  <!-- ── TOP ROW: RADIO TOGGLES ────────────────────────────────────────── -->
+  <!-- COMs / FMs / AUX -->
   <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:79px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">COM1</span>
@@ -536,30 +560,38 @@
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
-  <!-- ── MUSIC SECTION (top-right) ──────────────────────────────────────
-       Spacing: ADF↔DPLR 40px (tight MUSIC pair), DPLR↔PAT 60px (group break),
-                PAT↔SO 40px (tight pair). All at top:45 for label alignment. -->
-  <div class="component" id="adf" data-active="false" style="left:610px; top:45px;">
-    <span class="label">ADF</span>
-    <div class="btn-round blue"></div>
+  <!-- MUSIC pair: ADF (blue) + DPLR (blue), tight 65px center-to-center -->
+  <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div></div>
+    <span class="label radio-toggle-label">ADF</span>
   </div>
-  <div class="component" id="dplr" data-active="false" style="left:650px; top:45px;">
-    <span class="label">DPLR</span>
-    <div class="btn-round black"></div>
+  <div class="component toggle radio-toggle blue" id="dplr" data-active="false" style="left:625px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div></div>
+    <span class="label radio-toggle-label">DPLR</span>
   </div>
-  <div class="component toggle" id="pat" data-active="true" style="left:710px; top:45px;">
-    <span class="label">PAT</span>
-    <div class="assembly-toggle small"><div class="nut"></div></div>
-  </div>
-  <div class="component" id="so" data-active="false" style="left:750px; top:45px;">
-    <span class="label">SO</span>
-    <div class="btn-round yellow"></div>
+
+  <!-- PAT (yellow) — separated from MUSIC pair by 90px gap -->
+  <div class="component toggle radio-toggle yellow" id="pat" data-active="true" style="left:715px; top:25px;">
+    <div class="assembly-toggle radio"><div class="nut"></div></div>
+    <span class="label radio-toggle-label">PAT</span>
   </div>
 
   <!-- RX VOL -->
   <div class="component" id="rxvol_wrap" style="right:60px; top:40px;">
     <span class="label">RX VOL</span>
     <div class="knob-vol" id="rxvol" data-value="50"><div class="vol-pointer" id="ptr_rx"></div></div>
+  </div>
+
+  <!-- ── MIDDLE ROW: PLT/ISO CROSSHATCHED YELLOW DOME ───────────────────── -->
+  <!--
+    Single dome indicator flanked by PLT label (left) and ISO label (right).
+    Static visual for now — light on/off behavior to be added later.
+    Positioned in the middle band, between PAT (top row) and ICS CALL (bottom row).
+  -->
+  <div class="plt-iso-indicator" style="right:198px; top:158px;">
+    <span class="plt-iso-label">PLT</span>
+    <div class="plt-iso-dome"></div>
+    <span class="plt-iso-label">ISO</span>
   </div>
 
   <!-- SELECTOR KNOB -->
@@ -572,7 +604,7 @@
     <span class="label label-bottom">SELECTOR</span>
   </div>
 
-  <!-- ── BOTTOM-LEFT ROW (unchanged) ──────────────────────────────────── -->
+  <!-- ── BOTTOM ROW (LEFT) ───────────────────────────────────────────────── -->
   <div class="component toggle red" id="iso_emr" data-active="false" style="left:80px; bottom:50px;">
     <div class="assembly-toggle"><div class="nut"></div></div>
     <span class="label label-bottom">ISO/EMR</span>
@@ -588,27 +620,17 @@
     <div class="knob-vol small" id="vox" data-value="50"><div class="vol-pointer" id="ptr_vox"></div></div>
   </div>
 
-  <!-- ── MIDDLE ROW (Option B): PLT lifted up to its own row above ICS CALL -->
-  <div class="component" style="right:230px; top:140px;">
-    <div class="led" id="plt_light" data-active="true"></div>
-    <span class="label label-bottom">PLT</span>
-  </div>
-
-  <!-- ── BOTTOM-RIGHT ROW (Option B) ──────────────────────────────────────
-       ICS CALL sits below PLT in the same column.
-       ICS MIC + KEY are stacked vertically as a single column at right:130. -->
+  <!-- ── BOTTOM ROW (RIGHT): ICS CALL, ICS MIC/KEY stack, ICS VOL ───────── -->
   <div class="component" id="ics_call" data-active="false" style="right:230px; bottom:45px;">
     <span class="label">ICS CALL</span>
     <div class="btn-ics-call"></div>
   </div>
 
-  <!-- ICS MIC (top of stack) — small orange toggle to match KEY's size -->
   <div class="component toggle orange" id="ics_mic" data-active="true" style="right:130px; bottom:90px;">
     <span class="label">ICS MIC</span>
     <div class="assembly-toggle small"><div class="nut"></div></div>
   </div>
 
-  <!-- KEY (bottom of stack) — same column as ICS MIC -->
   <div class="component toggle" id="key" data-active="true" style="right:130px; bottom:25px;">
     <span class="label">KEY</span>
     <div class="assembly-toggle small"><div class="nut"></div></div>
@@ -624,31 +646,26 @@
 <button class="master-btn" id="masterBtn">▶ RUN MASTER CHECK</button>
 <div class="tip">Tip: Click toggles, drag knobs, press M for Master Check</div>
 
-<!-- Panel logic — unchanged -->
 <script>
 (function() {
   'use strict';
 
+  // ── Panel state ────────────────────────────────────────────────────────
+  // ADF, DPLR, PAT are now full toggles (PAT defaults ON, ADF/DPLR default OFF).
+  // SO removed entirely. plt_light removed (PLT/ISO is static visual for now).
   const panelState = {
     com1: true, com2: true, fm1: true, fm2: true, aux: true,
-    pat: true, iso_emr: false, ics_mic: true, key: true,
-    adf: false, dplr: false, so: false, ics_call: false,
+    adf: false, dplr: false, pat: true,
+    iso_emr: false, ics_mic: true, key: true,
+    ics_call: false,
     selector: { position: 'COM1', angle: -130, index: 0 },
     rxvol: 50, vox: 50, icsvol: 50,
-    tx_light: true, plt_light: true
+    tx_light: true
   };
 
   const CONFIG = {
     selector: {
       positions: ['COM1', 'COM2', 'FM1', 'FM2', 'AUX', 'PA'],
-      // Selector angles aligned individually to leader-line endpoints.
-      // 0° = stripe pointing up, positive = clockwise.
-      //   COM2 = -90° → straight left (9 o'clock), points at COM2 leader endpoint (415,230)
-      //   FM1  = -67° → locked to current visual alignment with FM1 leader
-      //   FM2  = -32° → between FM1 and AUX, points at FM2 leader endpoint (443,179)
-      //   AUX  =   0° → straight up (12 o'clock), points at AUX leader (471,175)
-      //   PA   =  45° → 1:30 position, points at PA leader endpoint (515,192)
-      // COM1 still pending alignment.
       angles: [-130, -90, -67, -32, 0, 45]
     },
     volume: { min: 0, max: 100, angleMin: -150, angleMax: 150 }
@@ -662,17 +679,23 @@
   function setStatus(text) { $('stat').innerText = text; }
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+  // ── List of all toggle component IDs (used by syncState + click handlers) ─
+  const TOGGLE_IDS = [
+    'com1','com2','fm1','fm2','aux',
+    'adf','dplr','pat',
+    'iso_emr','ics_mic','key'
+  ];
+
   function syncState() {
-    ['com1','com2','fm1','fm2','aux','pat','iso_emr','ics_mic','key'].forEach(id => {
+    TOGGLE_IDS.forEach(id => {
       const el = $(id);
       if (el) el.setAttribute('data-active', panelState[id]);
     });
-    ['adf','dplr','so','ics_call'].forEach(id => {
-      const el = $(id);
-      if (el) el.setAttribute('data-active', panelState[id]);
-    });
+    const ic = $('ics_call');
+    if (ic) ic.setAttribute('data-active', panelState.ics_call);
+
     $('tx_light').setAttribute('data-active', panelState.tx_light);
-    $('plt_light').setAttribute('data-active', panelState.plt_light);
+
     $('sel_ptr').style.transform = `rotate(${panelState.selector.angle}deg)`;
     ['rxvol','vox','icsvol'].forEach(id => {
       const angle = mapRange(panelState[id], CONFIG.volume.min, CONFIG.volume.max,
@@ -684,7 +707,6 @@
 
   function updateIndicators() {
     panelState.tx_light = ['com1','com2','fm1','fm2','aux'].some(id => panelState[id]);
-    panelState.plt_light = panelState.ics_mic;
     syncState();
   }
 
@@ -710,7 +732,8 @@
     }
   }
 
-  ['com1','com2','fm1','fm2','aux','pat','iso_emr','ics_mic','key'].forEach(id => {
+  // ── Toggle click handlers (all toggles share the same flip behavior) ────
+  TOGGLE_IDS.forEach(id => {
     const el = $(id);
     if (!el) return;
     el.onclick = () => {
@@ -720,16 +743,7 @@
     };
   });
 
-  ['adf','dplr','so'].forEach(id => {
-    const el = $(id);
-    if (!el) return;
-    el.onclick = () => {
-      panelState[id] = !panelState[id];
-      syncState();
-      setStatus(id.toUpperCase() + (panelState[id] ? ' ON' : ' OFF'));
-    };
-  });
-
+  // ── ICS CALL — momentary push button ────────────────────────────────────
   const icsCall = $('ics_call');
   if (icsCall) {
     const press   = () => { panelState.ics_call = true;  syncState(); setStatus('ICS CALL: PRESSED'); };
@@ -741,6 +755,7 @@
     icsCall.ontouchend   = e => { e.preventDefault(); release(); };
   }
 
+  // ── Selector knob ───────────────────────────────────────────────────────
   const selector = $('selector');
   if (selector) {
     let dragging = false, startY, startAngle;
@@ -795,6 +810,7 @@
     };
   }
 
+  // ── Volume knobs ────────────────────────────────────────────────────────
   [['rxvol','ptr_rx'], ['vox','ptr_vox'], ['icsvol','ptr_ics']].forEach(([id, ptrId]) => {
     const knob = $(id);
     const ptr  = $(ptrId);
@@ -836,6 +852,7 @@
     };
   });
 
+  // ── Keyboard shortcuts ──────────────────────────────────────────────────
   document.onkeydown = e => {
     const k = e.key.toLowerCase();
     if (k === 'm') masterCheck();
