@@ -483,20 +483,23 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- SVG LEADER LINES -->
+  <!-- SVG LEADER LINES
+       All knob-end points are at distance 65px from selector center (475,230),
+       producing a uniform 5px gap between each leader and the knob's 60px radius.
+       FM1 was already correct and is the visual reference. -->
   <svg class="panel-svg">
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
     <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
     <line class="leader-line" x1="308" y1="162" x2="415" y2="205" />
     <line class="leader-line" x1="400" y1="142" x2="400" y2="162" />
-    <line class="leader-line" x1="400" y1="162" x2="443" y2="179" />
+    <line class="leader-line" x1="400" y1="162" x2="438" y2="177" />
     <polyline class="leader-line" points="461,152 481,152" />
-    <line class="leader-line" x1="471" y1="152" x2="471" y2="175" />
+    <line class="leader-line" x1="471" y1="152" x2="471" y2="165" />
     <!-- PA leader: hockey-stick shape — 45° diagonal up-right from knob edge,
          sharp bend, then horizontal segment ending just before the PA label -->
-    <polyline class="leader-line" points="517,188 525,180 555,180" />
-    <polyline class="leader-line" points="415,230 395,230 225,162" />
-    <line class="leader-line" x1="430" y1="265" x2="355" y2="275" />
+    <polyline class="leader-line" points="521,184 525,180 555,180" />
+    <polyline class="leader-line" points="410,230 395,230 225,162" />
+    <line class="leader-line" x1="424" y1="270" x2="355" y2="275" />
     <line class="leader-line" x1="355" y1="275" x2="355" y2="295" />
   </svg>
 
