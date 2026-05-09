@@ -173,13 +173,31 @@
     /* ── TOP-STACK LABELS (above radio toggles) ─────────────────────────── */
     /*
      * Used for MUSIC (above ADF), PAT, and ON (above PAT toggle).
-     * Sit on the same horizontal plane as the RX-ON text (~y=62 from panel top).
-     * z-index: 1 so labels render BEHIND the lever bodies — when the toggle
-     * is ON (lever up), the lever covers the label, matching the real hardware.
-     * When OFF (lever down/foreshortened), the label is fully visible.
      *
-     * label-stack-2 = upper line (PAT, MUSIC) — aligns with RX-ON text.
-     * label-stack-1 = lower line (ON), sits just below the upper line.
+     * GEOMETRY:
+     *   The radio assembly is 138px tall. The chrome collar (.nut) sits at
+     *   bottom: 35px with height: 23px → collar top at y=80, bottom at y=103
+     *   within the component.
+     *
+     *   The bottom label (ADF/DPLR/OFF) starts at y=110 (the assembly's
+     *   y=138 minus the label's margin-top:-28). That puts a 7px gap
+     *   between the collar bottom (y=103) and the label top (y=110).
+     *
+     *   Per design: the top labels should mirror that gap on the OTHER
+     *   side of the toggle. So the BOTTOM edge of the closest top label
+     *   sits 7px above the collar TOP (y=80), i.e. at y=73. With a label
+     *   height of ~11px (font-size:11px, line-height:1), the top edge is
+     *   at y=62. That's `.label-stack-1`.
+     *
+     *   `.label-stack-2` is the second line up — used when there's a
+     *   two-line stack (PAT + ON). Stacks at y=50, leaving ~1px between
+     *   the two label lines.
+     *
+     * Z-INDEX:
+     *   z-index:1 keeps these labels BEHIND the lever body (lever wrapper
+     *   sits at z-index:5). When the toggle is ON (lever up/tilted), the
+     *   lever covers the label area. When OFF (lever foreshortened down to
+     *   the collar), the labels are exposed.
      */
     .label-stack-top {
       position: absolute;
@@ -193,9 +211,10 @@
       white-space: nowrap;
       line-height: 1;
       z-index: 1;
+      pointer-events: none;
     }
-    .label-stack-1 { top: 50px; }   /* lower line — ON */
-    .label-stack-2 { top: 37px; }   /* upper line — PAT, MUSIC (aligned to RX-ON plane) */
+    .label-stack-1 { top: 62px; }   /* closest to lever — MUSIC, ON */
+    .label-stack-2 { top: 50px; }   /* one line above stack-1 — PAT */
 
     /* ── MUSIC CONNECTOR (horizontal line between ADF and DPLR domes) ───── */
     .music-connector {
@@ -237,7 +256,7 @@
       height: 45px;
     }
 
-    /* ── NUT (base plate) ───────────────────────────────────────────────── */
+    /* ── NUT (base plate / chrome collar) ───────────────────────────────── */
     .nut {
       position: absolute;
       bottom: 28px;
@@ -559,9 +578,10 @@
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
-  <!-- ADF (blue) — "MUSIC" label sits behind the lever, on RX-ON plane -->
+  <!-- ADF (blue) — MUSIC label uses label-stack-1 (close to lever, mirrors
+       the bottom-label gap above the chrome collar instead of below). -->
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
-    <span class="label-stack-top label-stack-2">MUSIC</span>
+    <span class="label-stack-top label-stack-1">MUSIC</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">ADF</span>
   </div>
@@ -572,7 +592,10 @@
     <span class="label radio-toggle-label">DPLR</span>
   </div>
 
-  <!-- PAT (yellow) — "PAT" + "ON" stacked behind lever, "OFF" below -->
+  <!-- PAT (yellow) — two-line stack:
+         PAT (label-stack-2, upper) sits ONE LINE above
+         ON  (label-stack-1, lower, close to lever — same plane as MUSIC)
+       OFF below the lever as the standard radio-toggle-label. -->
   <div class="component toggle radio-toggle yellow" id="pat" data-active="true" style="left:715px; top:25px;">
     <span class="label-stack-top label-stack-2">PAT</span>
     <span class="label-stack-top label-stack-1">ON</span>
