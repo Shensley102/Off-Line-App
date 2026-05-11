@@ -650,14 +650,10 @@
     <div class="btn-ics-call"></div>
   </div>
 
-  <div class="component toggle orange" id="ics_mic" data-active="true" style="right:130px; bottom:90px;">
+  <div class="component toggle orange" id="ics_mic" data-active="true" style="right:130px; bottom:70px;">
     <span class="label">ICS MIC</span>
     <div class="assembly-toggle small"><div class="nut"></div></div>
-  </div>
-
-  <div class="component toggle" id="key" data-active="true" style="right:130px; bottom:25px;">
-    <span class="label">KEY</span>
-    <div class="assembly-toggle small"><div class="nut"></div></div>
+    <span class="label label-bottom">KEY</span>
   </div>
 
   <div class="component" id="icsvol_wrap" style="right:20px; bottom:45px;">
@@ -685,7 +681,6 @@
     pat: true,
     iso_emr: false,
     ics_mic: true,
-    key: true,
     ics_call: false,
     selector: { position: 'COM1', angle: -130, index: 0 },
     rxvol: 50,
@@ -732,8 +727,7 @@
     'dplr',
     'pat',
     'iso_emr',
-    'ics_mic',
-    'key'
+    'ics_mic'
   ];
 
   function syncState() {
