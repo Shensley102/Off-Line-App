@@ -172,32 +172,28 @@
 
     /* ── TOP-STACK LABELS (above radio toggles) ─────────────────────────── */
     /*
-     * Used for MUSIC (above ADF), PAT, and ON (above PAT toggle).
+     * MUSIC (above ADF), PAT, and ON (above PAT toggle).
      *
-     * GEOMETRY:
-     *   The radio assembly is 138px tall. The chrome collar (.nut) sits at
-     *   bottom: 35px with height: 23px → collar top at y=80, bottom at y=103
-     *   within the component.
+     * SPACING (geometry unchanged from previous iteration):
+     *   `.label-stack-1` (closest to lever): bottom edge sits 7px above the
+     *   chrome collar top — mirrors the 7px gap below the collar that the
+     *   bottom labels (ADF/DPLR/OFF) use.
+     *   `.label-stack-2`: one line above `.label-stack-1` for two-line stacks.
      *
-     *   The bottom label (ADF/DPLR/OFF) starts at y=110 (the assembly's
-     *   y=138 minus the label's margin-top:-28). That puts a 7px gap
-     *   between the collar bottom (y=103) and the label top (y=110).
+     * STACKING — the part that was broken:
+     *   These labels live INSIDE each toggle component (which has its own
+     *   stacking context via `filter: drop-shadow`). Within that context, the
+     *   label is z-index:1 and the `.assembly-toggle` (which contains the
+     *   lever) needs to be z-index:2 — see the `.assembly-toggle` rule below
+     *   for the fix that puts the lever IN FRONT of the labels. The lever
+     *   itself is z-index:5 inside the assembly's own stacking context, so
+     *   the assembly's z-index:2 carries the lever's visible drawing into
+     *   the component's stacking context above the labels.
      *
-     *   Per design: the top labels should mirror that gap on the OTHER
-     *   side of the toggle. So the BOTTOM edge of the closest top label
-     *   sits 7px above the collar TOP (y=80), i.e. at y=73. With a label
-     *   height of ~11px (font-size:11px, line-height:1), the top edge is
-     *   at y=62. That's `.label-stack-1`.
-     *
-     *   `.label-stack-2` is the second line up — used when there's a
-     *   two-line stack (PAT + ON). Stacks at y=50, leaving ~1px between
-     *   the two label lines.
-     *
-     * Z-INDEX:
-     *   z-index:1 keeps these labels BEHIND the lever body (lever wrapper
-     *   sits at z-index:5). When the toggle is ON (lever up/tilted), the
-     *   lever covers the label area. When OFF (lever foreshortened down to
-     *   the collar), the labels are exposed.
+     *   Net effect: when lever is ON (cylinder body fills assembly height),
+     *   the lever covers the labels. When OFF (lever foreshortened near
+     *   collar), upper portion of assembly is transparent so labels show.
+     *   Mirrors how RX-ON sits behind the COMs/FMs/AUX toggles.
      */
     .label-stack-top {
       position: absolute;
@@ -238,12 +234,25 @@
     }
 
     /* ── 3D STAGE ───────────────────────────────────────────────────────── */
+    /*
+     * z-index: 2 — KEY FIX for top-labels behind lever.
+     * The lever wrapper inside this element is at z-index:5 within the
+     * assembly's own stacking context (created by `perspective`), so without
+     * an explicit z-index on `.assembly-toggle` it defaulted to z-index:auto
+     * (paints as 0) within its parent component's stacking context. That put
+     * the `.label-stack-top` spans (z-index:1) IN FRONT of the assembly,
+     * which is why MUSIC/PAT/ON were rendering on top of the levers.
+     * Setting `.assembly-toggle` to z-index:2 lifts the whole assembly
+     * (lever and all) above the labels, exactly like RX-ON sits behind
+     * the COMs/FMs/AUX assemblies at the panel level.
+     */
     .assembly-toggle {
       position: relative;
       width: 44px;
       height: 110px;
       perspective: 800px;
       transform-style: preserve-3d;
+      z-index: 2;
     }
 
     .assembly-toggle.radio {
@@ -578,8 +587,7 @@
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
-  <!-- ADF (blue) — MUSIC label uses label-stack-1 (close to lever, mirrors
-       the bottom-label gap above the chrome collar instead of below). -->
+  <!-- ADF (blue) — MUSIC label (z:1) sits BEHIND the lever (assembly z:2). -->
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
     <span class="label-stack-top label-stack-1">MUSIC</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
@@ -592,10 +600,7 @@
     <span class="label radio-toggle-label">DPLR</span>
   </div>
 
-  <!-- PAT (yellow) — two-line stack:
-         PAT (label-stack-2, upper) sits ONE LINE above
-         ON  (label-stack-1, lower, close to lever — same plane as MUSIC)
-       OFF below the lever as the standard radio-toggle-label. -->
+  <!-- PAT (yellow) — PAT + ON labels (z:1) sit BEHIND the lever; OFF below. -->
   <div class="component toggle radio-toggle yellow" id="pat" data-active="true" style="left:715px; top:25px;">
     <span class="label-stack-top label-stack-2">PAT</span>
     <span class="label-stack-top label-stack-1">ON</span>
