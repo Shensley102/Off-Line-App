@@ -1,6 +1,6 @@
 /* sw.js - service worker for Aviation Simulators PWA */
 
-const CACHE_NAME = "radio-sim-v10";
+const CACHE_NAME = "radio-sim-v11";
 
 const ASSETS = [
   "/",
