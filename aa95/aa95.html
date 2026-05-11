@@ -141,24 +141,6 @@
       stroke-linejoin: round;
     }
 
-    .music-line-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 11;
-    }
-
-    .music-leader-line {
-      stroke: rgba(255,255,255,0.9);
-      stroke-width: 3;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
     .box-music {
       width: 200px;
       height: 110px;
@@ -562,6 +544,8 @@
   </div>
 
   <svg class="panel-svg">
+    <line class="leader-line" x1="614" y1="117" x2="629" y2="117" />
+
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
     <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
     <line class="leader-line" x1="308" y1="162" x2="415" y2="205" />
@@ -618,10 +602,6 @@
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">DPLR</span>
   </div>
-
-  <svg class="music-line-overlay">
-    <line class="music-leader-line" x1="609" y1="117" x2="634" y2="117" />
-  </svg>
 
   <div class="component toggle radio-toggle yellow" id="pat" data-active="true" style="left:715px; top:25px;">
     <span class="label-stack-top label-stack-2">PAT</span>
