@@ -174,26 +174,18 @@
     /*
      * MUSIC (above ADF), PAT, and ON (above PAT toggle).
      *
-     * SPACING (geometry unchanged from previous iteration):
+     * SPACING:
      *   `.label-stack-1` (closest to lever): bottom edge sits 7px above the
      *   chrome collar top — mirrors the 7px gap below the collar that the
      *   bottom labels (ADF/DPLR/OFF) use.
      *   `.label-stack-2`: one line above `.label-stack-1` for two-line stacks.
      *
-     * STACKING — the part that was broken:
-     *   These labels live INSIDE each toggle component (which has its own
-     *   stacking context via `filter: drop-shadow`). Within that context, the
-     *   label is z-index:1 and the `.assembly-toggle` (which contains the
-     *   lever) needs to be z-index:2 — see the `.assembly-toggle` rule below
-     *   for the fix that puts the lever IN FRONT of the labels. The lever
-     *   itself is z-index:5 inside the assembly's own stacking context, so
-     *   the assembly's z-index:2 carries the lever's visible drawing into
-     *   the component's stacking context above the labels.
-     *
-     *   Net effect: when lever is ON (cylinder body fills assembly height),
-     *   the lever covers the labels. When OFF (lever foreshortened near
-     *   collar), upper portion of assembly is transparent so labels show.
-     *   Mirrors how RX-ON sits behind the COMs/FMs/AUX toggles.
+     * STACKING:
+     *   Labels live INSIDE each toggle component (which has its own stacking
+     *   context via `filter: drop-shadow`). Within that context, labels are
+     *   z-index:1 and `.assembly-toggle` is z-index:2 — see `.assembly-toggle`
+     *   rule below. Net effect: lever ON covers labels; lever OFF reveals
+     *   them. Mirrors how RX-ON sits behind COMs/FMs/AUX toggles.
      */
     .label-stack-top {
       position: absolute;
@@ -212,17 +204,6 @@
     .label-stack-1 { top: 62px; }   /* closest to lever — MUSIC, ON */
     .label-stack-2 { top: 50px; }   /* one line above stack-1 — PAT */
 
-    /* ── MUSIC CONNECTOR (horizontal line between ADF and DPLR domes) ───── */
-    .music-connector {
-      position: absolute;
-      height: 2px;
-      background: rgba(220, 220, 220, 0.85);
-      border-radius: 1px;
-      z-index: 4;
-      pointer-events: none;
-      box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
-    }
-
     /* ── TOGGLE COMPONENT ───────────────────────────────────────────────── */
     .component.toggle {
       filter: drop-shadow(0px 7px 5px rgba(0, 0, 0, 0.78));
@@ -235,16 +216,9 @@
 
     /* ── 3D STAGE ───────────────────────────────────────────────────────── */
     /*
-     * z-index: 2 — KEY FIX for top-labels behind lever.
-     * The lever wrapper inside this element is at z-index:5 within the
-     * assembly's own stacking context (created by `perspective`), so without
-     * an explicit z-index on `.assembly-toggle` it defaulted to z-index:auto
-     * (paints as 0) within its parent component's stacking context. That put
-     * the `.label-stack-top` spans (z-index:1) IN FRONT of the assembly,
-     * which is why MUSIC/PAT/ON were rendering on top of the levers.
-     * Setting `.assembly-toggle` to z-index:2 lifts the whole assembly
-     * (lever and all) above the labels, exactly like RX-ON sits behind
-     * the COMs/FMs/AUX assemblies at the panel level.
+     * z-index: 2 lifts the assembly above the top-stack labels (z:1) within
+     * the component's stacking context, so the lever paints in front of
+     * MUSIC/PAT/ON. Without this the labels rendered on top of the lever.
      */
     .assembly-toggle {
       position: relative;
@@ -536,9 +510,6 @@
     <div class="rx-drop-line"></div>
   </div>
 
-  <!-- MUSIC CONNECTOR — thin horizontal line between ADF and DPLR domes. -->
-  <div class="music-connector" style="left:600px; top:44px; width:39px;"></div>
-
   <!-- SVG LEADER LINES -->
   <svg class="panel-svg">
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
@@ -594,7 +565,7 @@
     <span class="label radio-toggle-label">ADF</span>
   </div>
 
-  <!-- DPLR (blue) — no top label; connector line spans from ADF to DPLR dome -->
+  <!-- DPLR (blue) -->
   <div class="component toggle radio-toggle blue" id="dplr" data-active="false" style="left:625px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">DPLR</span>
