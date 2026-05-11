@@ -322,6 +322,76 @@
       transform-origin: center 14px;
     }
 
+    /* RX/ICS volume knobs — black ridged outer ring with white labeled center cap */
+    .knob-vol.face-knob {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0 31%, rgba(0,0,0,0.55) 32% 100%),
+        repeating-conic-gradient(from -6deg,
+          #1e1e1e 0deg 7deg,
+          #050505 7deg 13deg,
+          #141414 13deg 18deg),
+        radial-gradient(circle at 38% 30%, #333 0%, #161616 48%, #030303 100%);
+      box-shadow:
+        0 6px 10px rgba(0,0,0,0.75),
+        inset 0 2px 3px rgba(255,255,255,0.08),
+        inset 0 -5px 8px rgba(0,0,0,0.85);
+      border: 1px solid rgba(0,0,0,0.9);
+      overflow: visible;
+    }
+
+    .knob-vol.face-knob::after {
+      content: '';
+      position: absolute;
+      top: 9px;
+      left: 9px;
+      right: 9px;
+      bottom: 9px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 36% 26%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.35) 26%, rgba(255,255,255,0) 48%),
+        radial-gradient(circle at 50% 55%, #f2f0e8 0%, #d9d6cc 62%, #a9a69d 100%);
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,0.85),
+        inset 0 -2px 3px rgba(0,0,0,0.22),
+        0 0 0 2px rgba(45,45,45,0.95),
+        0 0 0 3px rgba(190,190,185,0.55);
+      z-index: 1;
+    }
+
+    .knob-vol.face-knob::before {
+      content: attr(data-face);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+      color: #111;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .knob-vol.face-knob .vol-pointer {
+      width: 10px;
+      height: 17px;
+      top: 2px;
+      left: 50%;
+      transform-origin: center 23px;
+      background: linear-gradient(180deg, #f8f8f2 0%, #dedbd2 64%, #aaa69b 100%);
+      border: 1px solid rgba(0,0,0,0.45);
+      border-bottom: none;
+      border-radius: 4px 4px 2px 2px;
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,0.85),
+        0 1px 2px rgba(0,0,0,0.45);
+      z-index: 3;
+    }
+
     .knob-selector-base {
       width: 120px;
       height: 120px;
@@ -610,9 +680,9 @@
     <span class="label radio-toggle-label">OFF</span>
   </div>
 
-  <div class="component" id="rxvol_wrap" style="right:60px; top:40px;">
+  <div class="component" id="rxvol_wrap" style="right:20px; top:40px;">
     <span class="label">RX VOL</span>
-    <div class="knob-vol" id="rxvol" data-value="50"><div class="vol-pointer" id="ptr_rx"></div></div>
+    <div class="knob-vol face-knob" id="rxvol" data-value="50" data-face="RX"><div class="vol-pointer" id="ptr_rx"></div></div>
   </div>
 
   <div class="plt-iso-indicator" style="right:198px; top:158px;">
@@ -658,7 +728,7 @@
 
   <div class="component" id="icsvol_wrap" style="right:20px; bottom:45px;">
     <span class="label">ICS VOL</span>
-    <div class="knob-vol" id="icsvol" data-value="50"><div class="vol-pointer" id="ptr_ics"></div></div>
+    <div class="knob-vol face-knob" id="icsvol" data-value="50" data-face="ICS"><div class="vol-pointer" id="ptr_ics"></div></div>
   </div>
 </div>
 
