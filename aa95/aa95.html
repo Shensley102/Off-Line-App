@@ -171,30 +171,6 @@
     }
 
     /* ── TOP-STACK LABELS (above radio toggles) ─────────────────────────── */
-    /*
-     * MUSIC (above ADF), PAT, and ON (above PAT toggle).
-     *
-     * SPACING (geometry unchanged from previous iteration):
-     *   `.label-stack-1` (closest to lever): bottom edge sits 7px above the
-     *   chrome collar top — mirrors the 7px gap below the collar that the
-     *   bottom labels (ADF/DPLR/OFF) use.
-     *   `.label-stack-2`: one line above `.label-stack-1` for two-line stacks.
-     *
-     * STACKING — the part that was broken:
-     *   These labels live INSIDE each toggle component (which has its own
-     *   stacking context via `filter: drop-shadow`). Within that context, the
-     *   label is z-index:1 and the `.assembly-toggle` (which contains the
-     *   lever) needs to be z-index:2 — see the `.assembly-toggle` rule below
-     *   for the fix that puts the lever IN FRONT of the labels. The lever
-     *   itself is z-index:5 inside the assembly's own stacking context, so
-     *   the assembly's z-index:2 carries the lever's visible drawing into
-     *   the component's stacking context above the labels.
-     *
-     *   Net effect: when lever is ON (cylinder body fills assembly height),
-     *   the lever covers the labels. When OFF (lever foreshortened near
-     *   collar), upper portion of assembly is transparent so labels show.
-     *   Mirrors how RX-ON sits behind the COMs/FMs/AUX toggles.
-     */
     .label-stack-top {
       position: absolute;
       left: 50%;
@@ -209,8 +185,8 @@
       z-index: 1;
       pointer-events: none;
     }
-    .label-stack-1 { top: 62px; }   /* closest to lever — MUSIC, ON */
-    .label-stack-2 { top: 50px; }   /* one line above stack-1 — PAT */
+    .label-stack-1 { top: 62px; }
+    .label-stack-2 { top: 50px; }
 
     /* ── TOGGLE COMPONENT ───────────────────────────────────────────────── */
     .component.toggle {
@@ -223,18 +199,6 @@
     }
 
     /* ── 3D STAGE ───────────────────────────────────────────────────────── */
-    /*
-     * z-index: 2 — KEY FIX for top-labels behind lever.
-     * The lever wrapper inside this element is at z-index:5 within the
-     * assembly's own stacking context (created by `perspective`), so without
-     * an explicit z-index on `.assembly-toggle` it defaulted to z-index:auto
-     * (paints as 0) within its parent component's stacking context. That put
-     * the `.label-stack-top` spans (z-index:1) IN FRONT of the assembly,
-     * which is why MUSIC/PAT/ON were rendering on top of the levers.
-     * Setting `.assembly-toggle` to z-index:2 lifts the whole assembly
-     * (lever and all) above the labels, exactly like RX-ON sits behind
-     * the COMs/FMs/AUX assemblies at the panel level.
-     */
     .assembly-toggle {
       position: relative;
       width: 44px;
@@ -528,7 +492,7 @@
   <!-- SVG LEADER LINES -->
   <svg class="panel-svg">
     <!-- MUSIC base connector: ADF and DPLR are tied together as the MUSIC pair. -->
-    <line class="leader-line" x1="612" y1="91" x2="630" y2="91" />
+    <line class="leader-line" x1="609" y1="117" x2="634" y2="117" />
 
     <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
     <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
@@ -576,20 +540,20 @@
     <span class="label radio-toggle-label">AUX</span>
   </div>
 
-  <!-- ADF (blue) — MUSIC label (z:1) sits BEHIND the lever (assembly z:2). -->
+  <!-- ADF (blue) — MUSIC label sits behind the lever. -->
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
     <span class="label-stack-top label-stack-1">MUSIC</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">ADF</span>
   </div>
 
-  <!-- DPLR (blue) — no top label; connector line spans from ADF to DPLR dome -->
+  <!-- DPLR (blue) -->
   <div class="component toggle radio-toggle blue" id="dplr" data-active="false" style="left:625px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">DPLR</span>
   </div>
 
-  <!-- PAT (yellow) — PAT + ON labels (z:1) sit BEHIND the lever; OFF below. -->
+  <!-- PAT (yellow) — PAT + ON labels sit behind the lever; OFF below. -->
   <div class="component toggle radio-toggle yellow" id="pat" data-active="true" style="left:715px; top:25px;">
     <span class="label-stack-top label-stack-2">PAT</span>
     <span class="label-stack-top label-stack-1">ON</span>
