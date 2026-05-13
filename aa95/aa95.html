@@ -199,12 +199,32 @@
       pointer-events: none;
     }
 
+    /* Spacing fix: labels now sit ABOVE the lever (was top:62 / top:50 - mid-lever) */
     .label-stack-1 {
-      top: 62px;
+      top: 10px;
     }
 
     .label-stack-2 {
-      top: 50px;
+      top: -3px;
+    }
+
+    /* Standalone MUSIC bridge label - centered between ADF and DPLR with connector line */
+    .music-bridge {
+      position: absolute;
+      left: 620px;
+      top: 22px;
+      transform: translateX(-50%);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #999;
+      background: #181818;
+      padding: 1px 5px;
+      line-height: 1;
+      z-index: 3;
+      pointer-events: none;
+      white-space: nowrap;
     }
 
     .component.toggle {
@@ -627,7 +647,13 @@
     <polyline class="leader-line" points="410,230 395,230 225,162" />
     <line class="leader-line" x1="424" y1="270" x2="355" y2="275" />
     <line class="leader-line" x1="355" y1="275" x2="355" y2="295" />
+
+    <!-- MUSIC pair connector line: bridges ADF and DPLR toggle tops (MUSIC label overlays middle) -->
+    <line class="leader-line" x1="575" y1="28" x2="665" y2="28" stroke-width="2" />
   </svg>
+
+  <!-- Standalone MUSIC label (was inline on #adf - moved here so it centers between ADF and DPLR) -->
+  <div class="music-bridge">MUSIC</div>
 
   <div class="component" style="left:330px; top:295px; pointer-events:none;">
     <span class="label" style="margin:0; color:#999;">COM1</span>
@@ -663,7 +689,6 @@
   </div>
 
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
-    <span class="label-stack-top label-stack-1">MUSIC</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">ADF</span>
   </div>
@@ -685,7 +710,8 @@
     <div class="knob-vol face-knob" id="rxvol" data-value="50" data-face="RX"><div class="vol-pointer" id="ptr_rx"></div></div>
   </div>
 
-  <div class="plt-iso-indicator" style="right:198px; top:158px;">
+  <!-- Spacing fix: shifted left from right:198 -> right:255 so PLT/ISO sits above ICS CALL -->
+  <div class="plt-iso-indicator" style="right:255px; top:158px;">
     <span class="plt-iso-label">PLT</span>
     <div class="plt-iso-dome"></div>
     <span class="plt-iso-label">ISO</span>
@@ -715,12 +741,14 @@
     <div class="knob-vol small" id="vox" data-value="50"><div class="vol-pointer" id="ptr_vox"></div></div>
   </div>
 
-  <div class="component" id="ics_call" data-active="false" style="right:230px; bottom:43px;">
+  <!-- Spacing fix: shifted left from right:230 -> right:275 so ICS CALL sits below ADF/DPLR midpoint -->
+  <div class="component" id="ics_call" data-active="false" style="right:275px; bottom:43px;">
     <span class="label">ICS CALL</span>
     <div class="btn-ics-call"></div>
   </div>
 
-  <div class="component toggle radio-toggle orange" id="ics_mic" data-active="true" style="right:115px; bottom:34px;">
+  <!-- Spacing fix: shifted left from right:115 -> right:150 so orange toggle sits below PAT -->
+  <div class="component toggle radio-toggle orange" id="ics_mic" data-active="true" style="right:150px; bottom:34px;">
     <span class="label-stack-top label-stack-1">ICS VOX</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">KEY</span>
