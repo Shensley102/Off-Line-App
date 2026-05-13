@@ -208,25 +208,6 @@
       top: -3px;
     }
 
-    /* Standalone MUSIC bridge label - centered between ADF and DPLR with connector line */
-    .music-bridge {
-      position: absolute;
-      left: 620px;
-      top: 22px;
-      transform: translateX(-50%);
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      color: #999;
-      background: #181818;
-      padding: 1px 5px;
-      line-height: 1;
-      z-index: 3;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
     .component.toggle {
       filter: drop-shadow(0px 7px 5px rgba(0, 0, 0, 0.78));
       transition: filter 0.34s ease-out;
@@ -647,13 +628,7 @@
     <polyline class="leader-line" points="410,230 395,230 225,162" />
     <line class="leader-line" x1="424" y1="270" x2="355" y2="275" />
     <line class="leader-line" x1="355" y1="275" x2="355" y2="295" />
-
-    <!-- MUSIC pair connector line: bridges ADF and DPLR toggle tops (MUSIC label overlays middle) -->
-    <line class="leader-line" x1="575" y1="28" x2="665" y2="28" stroke-width="2" />
   </svg>
-
-  <!-- Standalone MUSIC label (was inline on #adf - moved here so it centers between ADF and DPLR) -->
-  <div class="music-bridge">MUSIC</div>
 
   <div class="component" style="left:330px; top:295px; pointer-events:none;">
     <span class="label" style="margin:0; color:#999;">COM1</span>
@@ -689,6 +664,7 @@
   </div>
 
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
+    <span class="label-stack-top label-stack-1">MUSIC</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">ADF</span>
   </div>
