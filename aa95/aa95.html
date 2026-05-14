@@ -199,13 +199,15 @@
       pointer-events: none;
     }
 
-    /* Spacing fix: labels now sit ABOVE the lever (was top:62 / top:50 - mid-lever) */
+    /* Symmetric spacing: 7px gap above lever cap (matches 7px gap below nut to bottom labels).
+       Labels remain behind the toggle (z-index 1 vs assembly-toggle z-index 2),
+       so the lever overlaps them visually when tilted up in ON state. */
     .label-stack-1 {
-      top: 10px;
+      top: 52px;
     }
 
     .label-stack-2 {
-      top: -3px;
+      top: 40px;
     }
 
     .component.toggle {
