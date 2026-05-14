@@ -73,7 +73,7 @@
     .rx-on-line {
       position: absolute;
       top: 8px;
-      left: 27px;
+      left: 22px;
       width: 365px;
       height: 1px;
       background: var(--boundary-line);
@@ -117,11 +117,11 @@
       background: var(--boundary-line);
     }
 
-    .rx-drop-line:nth-child(1) { left: 27px; }
-    .rx-drop-line:nth-child(2) { left: 118px; }
-    .rx-drop-line:nth-child(3) { left: 210px; }
-    .rx-drop-line:nth-child(4) { left: 301px; }
-    .rx-drop-line:nth-child(5) { left: 392px; }
+    .rx-drop-line:nth-child(1) { left: 22px; }
+    .rx-drop-line:nth-child(2) { left: 113px; }
+    .rx-drop-line:nth-child(3) { left: 205px; }
+    .rx-drop-line:nth-child(4) { left: 296px; }
+    .rx-drop-line:nth-child(5) { left: 387px; }
 
     .panel-svg {
       position: absolute;
@@ -199,9 +199,6 @@
       pointer-events: none;
     }
 
-    /* Symmetric spacing: 7px gap above lever cap (matches 7px gap below nut to bottom labels).
-       Labels remain behind the toggle (z-index 1 vs assembly-toggle z-index 2),
-       so the lever overlaps them visually when tilted up in ON state. */
     .label-stack-1 {
       top: 52px;
     }
@@ -325,7 +322,6 @@
       transform-origin: center 14px;
     }
 
-    /* RX/ICS volume knobs — black ridged outer ring with white labeled center cap */
     .knob-vol.face-knob {
       width: 50px;
       height: 50px;
@@ -617,26 +613,30 @@
   </div>
 
   <svg class="panel-svg">
-    <line class="leader-line" x1="614" y1="117" x2="629" y2="117" />
+    <!-- MUSIC connecting line -->
+    <line class="leader-line" x1="595" y1="115" x2="635" y2="115" />
 
-    <line class="leader-line" x1="225" y1="142" x2="225" y2="162" />
-    <line class="leader-line" x1="308" y1="142" x2="308" y2="162" />
-    <line class="leader-line" x1="308" y1="162" x2="415" y2="205" />
-    <line class="leader-line" x1="400" y1="142" x2="400" y2="162" />
-    <line class="leader-line" x1="400" y1="162" x2="438" y2="177" />
-    <polyline class="leader-line" points="461,152 481,152" />
-    <line class="leader-line" x1="471" y1="152" x2="471" y2="165" />
-    <polyline class="leader-line" points="521,184 525,180 555,180" />
-    <polyline class="leader-line" points="410,230 395,230 225,162" />
-    <line class="leader-line" x1="424" y1="270" x2="355" y2="275" />
-    <line class="leader-line" x1="355" y1="275" x2="355" y2="295" />
+    <!-- Routing Lines pointing towards selector (center ~400, 230) -->
+    <!-- COM 2 line -->
+    <polyline class="leader-line" points="192,145 192,165 330,215" />
+    <!-- FM 1 line -->
+    <polyline class="leader-line" points="284,145 284,165 342,195" />
+    <!-- FM 2 line -->
+    <line class="leader-line" x1="375" y1="145" x2="375" y2="168" />
+    <!-- AUX T-Bar and line -->
+    <line class="leader-line" x1="456" y1="145" x2="476" y2="145" />
+    <polyline class="leader-line" points="466,145 466,155 435,170" />
+    <!-- PA line -->
+    <polyline class="leader-line" points="510,185 490,185 455,195" />
+    <!-- COM 1 Bottom line -->
+    <polyline class="leader-line" points="377,290 377,275 350,260" />
   </svg>
 
-  <div class="component" style="left:330px; top:295px; pointer-events:none;">
+  <div class="component" style="left:360px; top:295px; pointer-events:none;">
     <span class="label" style="margin:0; color:#999;">COM1</span>
   </div>
 
-  <div class="component" style="left:563px; top:173px; pointer-events:none;">
+  <div class="component" style="left:510px; top:175px; pointer-events:none;">
     <span class="label" style="margin:0; color:#999;">PA</span>
   </div>
 
@@ -688,14 +688,13 @@
     <div class="knob-vol face-knob" id="rxvol" data-value="50" data-face="RX"><div class="vol-pointer" id="ptr_rx"></div></div>
   </div>
 
-  <!-- Spacing fix: shifted left from right:198 -> right:255 so PLT/ISO sits above ICS CALL -->
-  <div class="plt-iso-indicator" style="right:255px; top:158px;">
+  <div class="plt-iso-indicator" style="left:650px; top:158px;">
     <span class="plt-iso-label">PLT</span>
     <div class="plt-iso-dome"></div>
     <span class="plt-iso-label">ISO</span>
   </div>
 
-  <div class="component selector-wrapper" style="left:415px; top:170px;">
+  <div class="component selector-wrapper" style="left:340px; top:170px;">
     <div class="knob-selector-base" id="selector">
       <div class="knob-body" id="sel_ptr">
         <div class="knob-stripe"></div>
@@ -714,19 +713,17 @@
     <span class="label label-bottom">TX</span>
   </div>
 
-  <div class="component" id="vox_wrap" style="left:270px; bottom:45px;">
+  <div class="component" id="vox_wrap" style="left:264px; bottom:45px;">
     <span class="label">VOX</span>
     <div class="knob-vol small" id="vox" data-value="50"><div class="vol-pointer" id="ptr_vox"></div></div>
   </div>
 
-  <!-- Spacing fix: shifted left from right:230 -> right:275 so ICS CALL sits below ADF/DPLR midpoint -->
-  <div class="component" id="ics_call" data-active="false" style="right:275px; bottom:43px;">
+  <div class="component" id="ics_call" data-active="false" style="left:622px; bottom:43px;">
     <span class="label">ICS CALL</span>
     <div class="btn-ics-call"></div>
   </div>
 
-  <!-- Spacing fix: shifted left from right:115 -> right:150 so orange toggle sits below PAT -->
-  <div class="component toggle radio-toggle orange" id="ics_mic" data-active="true" style="right:150px; bottom:34px;">
+  <div class="component toggle radio-toggle orange" id="ics_mic" data-active="true" style="left:715px; bottom:34px;">
     <span class="label-stack-top label-stack-1">ICS VOX</span>
     <div class="assembly-toggle radio"><div class="nut"></div></div>
     <span class="label radio-toggle-label">KEY</span>
