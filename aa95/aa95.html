@@ -643,8 +643,8 @@
 
   <svg class="panel-svg">
     <!-- Routing Lines pointing towards selector (center ~475, 230) -->
-    <!-- COM 2 line (~9 o'clock) — vertical drop with angled leg into selector edge -->
-    <polyline class="leader-line" points="192,145 192,178 415,230" />
+    <!-- COM 2 line (~9 o'clock) — horizontal, vertical, diagonal, then horizontal into selector -->
+    <polyline class="leader-line" points="192,145 222,145 222,178 330,230 415,230" />
     <!-- FM 1 line (~9:30 position) -->
     <polyline class="leader-line" points="284,145 284,197 421,230" />
     <!-- FM 2 line (~10:30 position) -->
@@ -673,7 +673,7 @@
 
   <div class="component toggle radio-toggle" id="com2" data-active="true" style="left:170px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
-    <span class="label radio-toggle-label">COM2</span>
+    <span class="label radio-toggle-label" style="line-height:0.95; text-align:center;">COM<br>2</span>
   </div>
 
   <div class="component toggle radio-toggle" id="fm1" data-active="true" style="left:262px; top:25px;">
