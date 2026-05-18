@@ -199,6 +199,9 @@
       pointer-events: none;
     }
 
+    /* Symmetric spacing: 7px gap above lever cap (matches 7px gap below nut to bottom labels).
+       Labels remain behind the toggle (z-index 1 vs assembly-toggle z-index 2),
+       so the lever overlaps them visually when tilted up in ON state. */
     .label-stack-1 {
       top: 52px;
     }
@@ -207,6 +210,10 @@
       top: 40px;
     }
 
+    /* Model-number branding (blueprint §5) — vertical text on far-left bezel,
+       same gray as other panel labels, centered vertically.
+       Plain block-level character stack: no writing-mode, no transform — keeps
+       stacking context clean so toggles render above as expected. */
     .model-brand {
       position: absolute;
       left: 8px;
@@ -340,6 +347,7 @@
       transform-origin: center 14px;
     }
 
+    /* RX/ICS volume knobs — black ridged outer ring with white labeled center cap */
     .knob-vol.face-knob {
       width: 50px;
       height: 50px;
@@ -617,6 +625,7 @@
   <div class="boundary-box box-music"></div>
   <div class="boundary-box box-ics"></div>
 
+  <!-- Model-number branding (blueprint §5) -->
   <div class="model-brand"><span>A</span><span>A</span><span>9</span><span>5</span><span>-</span><span>7</span><span>2</span><span>9</span></div>
 
   <div class="rx-on-header">
@@ -639,7 +648,7 @@
     <polyline class="leader-line" points="230,139 245,139 245,159 392,230 410,230" />
 
     <!-- FM 1 line — same stepped path, diagonal ends directly at selector without final flat segment -->
-    <polyline class="leader-line" points="284,145 299,145 299,178 421,230" />
+    <polyline class="leader-line" points="320,145 335,145 335,178 457,230" />
 
     <!-- AUX line (drop vertically from T-bar) -->
     <line class="leader-line" x1="456" y1="145" x2="476" y2="145" />
