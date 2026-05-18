@@ -104,7 +104,7 @@
       left: 79px;
       top: 70px;
       width: 420px;
-      height: 75px;
+      height: 28px;
       z-index: 1;
       pointer-events: none;
     }
@@ -651,14 +651,14 @@
     <polyline class="leader-line" points="310,143 325,143 325,159 417,198" />
 
     <!-- FM 2 line — same stepped proportions as COM2/FM1, aimed toward FM2 selector position -->
-    <polyline class="leader-line" points="400,143 415,143 415,159 440,175" />
+    <polyline class="leader-line" points="400,143 415,143 415,159 430,185" />
 
     <!-- AUX line (drop vertically from T-bar) -->
-    <line class="leader-line" x1="462" y1="155" x2="482" y2="155" />
-    <polyline class="leader-line" points="472,155 472,165" />
+    <line class="leader-line" x1="456" y1="145" x2="476" y2="145" />
+    <polyline class="leader-line" points="466,145 466,170" />
 
     <!-- PA line (~2 o'clock) -->
-    <polyline class="leader-line" points="545,170 530,170 522,186" />
+    <polyline class="leader-line" points="520,188 510,188 495,205" />
 
     <!-- COM 1 line (~7 o'clock) — short angled jog with vertical drop ending above label -->
     <polyline class="leader-line" points="415,255 390,270 390,288" />
@@ -668,33 +668,33 @@
     <span class="label" style="margin:0; color:var(--label-white);">COM 1</span>
   </div>
 
-  <div class="component" style="left:550px; top:163px; pointer-events:none;">
-    <span class="label" style="margin:0; color:rgba(255,255,255,0.9);">PA</span>
+  <div class="component" style="left:530px; top:180px; pointer-events:none;">
+    <span class="label" style="margin:0; color:#999;">PA</span>
   </div>
 
   <div class="component toggle radio-toggle" id="com1" data-active="true" style="left:79px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
-    <span class="label radio-toggle-label" style="text-align:center; color: rgba(255,255,255,0.9);">COM<br>1</span>
+    <span class="label radio-toggle-label">COM1</span>
   </div>
 
   <div class="component toggle radio-toggle" id="com2" data-active="true" style="left:170px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
-    <span class="label radio-toggle-label" style="text-align:center; color: rgba(255,255,255,0.9);">COM<br>2</span>
+    <span class="label radio-toggle-label" style="line-height:0.95; text-align:center;">COM<br>2</span>
   </div>
 
   <div class="component toggle radio-toggle" id="fm1" data-active="true" style="left:262px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
-    <span class="label radio-toggle-label" style="color: rgba(255,255,255,0.9);">FM1</span>
+    <span class="label radio-toggle-label">FM1</span>
   </div>
 
   <div class="component toggle radio-toggle" id="fm2" data-active="true" style="left:353px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
-    <span class="label radio-toggle-label" style="color: rgba(255,255,255,0.9);">FM2</span>
+    <span class="label radio-toggle-label">FM2</span>
   </div>
 
   <div class="component toggle radio-toggle" id="aux" data-active="true" style="left:444px; top:25px;">
     <div class="assembly-toggle radio"><div class="nut"></div></div>
-    <span class="label radio-toggle-label" style="color: rgba(255,255,255,0.9);">AUX</span>
+    <span class="label radio-toggle-label">AUX</span>
   </div>
 
   <div class="component toggle radio-toggle blue" id="adf" data-active="false" style="left:560px; top:25px;">
