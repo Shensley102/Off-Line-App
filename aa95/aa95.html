@@ -186,7 +186,7 @@
 
     .top-radio-label {
       position: absolute;
-      top: 108px;
+      top: 112px;
       left: 50%;
       transform: translateX(-50%);
       margin: 0;
@@ -211,9 +211,6 @@
       pointer-events: none;
     }
 
-    /* Symmetric spacing: 7px gap above lever cap (matches 7px gap below nut to bottom labels).
-       Labels remain behind the toggle (z-index 1 vs assembly-toggle z-index 2),
-       so the lever overlaps them visually when tilted up in ON state. */
     .label-stack-1 {
       top: 52px;
     }
@@ -222,10 +219,6 @@
       top: 40px;
     }
 
-    /* Model-number branding (blueprint §5) — vertical text on far-left bezel,
-       same gray as other panel labels, centered vertically.
-       Plain block-level character stack: no writing-mode, no transform — keeps
-       stacking context clean so toggles render above as expected. */
     .model-brand {
       position: absolute;
       left: 8px;
@@ -359,7 +352,6 @@
       transform-origin: center 14px;
     }
 
-    /* RX/ICS volume knobs — black ridged outer ring with white labeled center cap */
     .knob-vol.face-knob {
       width: 62.5px;
       height: 62.5px;
@@ -637,7 +629,6 @@
   <div class="boundary-box box-music"></div>
   <div class="boundary-box box-ics"></div>
 
-  <!-- Model-number branding (blueprint §5) -->
   <div class="model-brand"><span>A</span><span>A</span><span>9</span><span>5</span><span>-</span><span>7</span><span>2</span><span>9</span></div>
 
   <div class="rx-on-header">
@@ -656,23 +647,23 @@
   <svg class="panel-svg">
     <!-- Routing Lines pointing towards selector -->
 
-    <!-- COM 2 line — horizontal, vertical, diagonal, then short horizontal into selector -->
+    <!-- COM 2 line -->
     <polyline class="leader-line" points="220,143 235,143 235,159 392,230 410,230" />
 
-    <!-- FM 1 line — same stepped path, diagonal ends directly at selector without final flat segment -->
+    <!-- FM 1 line -->
     <polyline class="leader-line" points="310,143 325,143 325,159 417,198" />
 
-    <!-- FM 2 line — same stepped proportions as COM2/FM1, aimed toward FM2 selector position -->
+    <!-- FM 2 line -->
     <polyline class="leader-line" points="400,143 415,143 415,159 430,185" />
 
-    <!-- AUX line (drop vertically from T-bar) -->
+    <!-- AUX line -->
     <line class="leader-line" x1="462" y1="155" x2="482" y2="155" />
     <polyline class="leader-line" points="472,155 472,165" />
 
-    <!-- PA line (~2 o'clock) -->
+    <!-- PA line -->
     <polyline class="leader-line" points="545,170 530,170 522,186" />
 
-    <!-- COM 1 line (~7 o'clock) — short angled jog with vertical drop ending above label -->
+    <!-- COM 1 line -->
     <polyline class="leader-line" points="415,255 390,270 390,288" />
   </svg>
 
