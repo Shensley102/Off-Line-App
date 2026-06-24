@@ -1,0 +1,2782 @@
+{
+  "version": "2026",
+  "updatedFrom": [
+    "2026 VHF / UHF Radio Matrix - UPDATED June 9, 2026",
+    "2026 800mhz Radio Matrix"
+  ],
+  "counts": {
+    "vhfZones": 3,
+    "band2TotalZones": 46,
+    "uhf800ActiveZonesExcludingFutureOnly": 40,
+    "band2FutureOnlyZones": [
+      21,
+      25,
+      26,
+      27,
+      30,
+      31
+    ]
+  },
+  "zones": [
+    {
+      "zone": "A",
+      "band": 1,
+      "bandLabel": "VHF",
+      "name": "AIRCARE VHF",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "AIRCARE (DIGITAL)",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "FL SOUTH (STK)",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "TAMPA GEN (1)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "ST JOES (II, Peds)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "BAYFRONT MED (II)",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "PUTNAM ATG",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "HOLMES",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "AIR SECONDARY",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "MOBILE CARE",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "VOLUSIA AIR 1",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "AIRCARE ALT (old)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": "B",
+      "band": 2,
+      "bandLabel": "UHF",
+      "name": "UHF HOSPITAL",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "HOLMES REG (II)(TRB)",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "SHANDS (1)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "SOUTHLAKE PS",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "SOUTHLAKE BACK",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "AIRCARE (old)",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "AIRCARE (DIGITAL)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": "C",
+      "band": 2,
+      "bandLabel": "UHF",
+      "name": "UHF-MED 1",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "MED 8 STATE",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "MED 8 (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "MED 6 MARION",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "MED 9 LAKE",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "MED 12 AH-WAT",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "MED 22 UF-LEE",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "MED 62 S-LAKE",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "MED 82 HEALTH",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "MED 82 (Direct)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": "D",
+      "band": 2,
+      "bandLabel": "UHF",
+      "name": "UHF-MED 2",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "MED 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "MED 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "MED 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "MED 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "MED 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "MED 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "MED 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "MED 8",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "MED 9",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "MED 10",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": "E",
+      "band": 2,
+      "bandLabel": "UHF",
+      "name": "UHF-MED 3",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "MED 12",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "MED 22",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "MED 32",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "MED 42",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "MED 52",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "MED 62",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "MED 72",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "MED 82",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "MED 92",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "MED 102",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": "F",
+      "band": 1,
+      "bandLabel": "VHF",
+      "name": "VHF-MUT AID",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "VCALL10",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "VTAC11",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "VTAC12",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "VTAC13",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "VTAC14",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "VFIRE21 (White)",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "VFIRE22 (Red)",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "VFIRE23 (Blue)",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "VMED28",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "VMED29",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "INTERCITY",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "SHERIFF NET",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "RMACS",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "MARINE 6",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "MARINE 9",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "MARINE 16 (Distress)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": "G",
+      "band": 1,
+      "bandLabel": "VHF",
+      "name": "VHF-MUT AID 2",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "VFIRE 24",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "VFIRE 25",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "VFIRE 26",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "VLAW 31",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "VLAW 32",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "VTAC 33",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "VTAC 34",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "VTAC 35",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "VTAC 36",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "VTAC 37",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "VTAC 38",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": "H",
+      "band": 2,
+      "bandLabel": "UHF",
+      "name": "UHF-MUT AID",
+      "source": "2026 VHF/UHF Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "UCALL40",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "UTAC41",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "UTAC42",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "UTAC43",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "UCALL40 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "UTAC41 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "UTAC42 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "UTAC43 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "LE EMERG",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "LE EMERG (Direct)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 1,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "OSCEOLA",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "OSC TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "OSC TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "OSC TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "OSC TAC 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "OSC TAC 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "OSC TAC 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "OSC TAC 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "OSC TAC 8",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "100JSM42523",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 2,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "LAKE",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "LAKE L/Z",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "LAKE PS1",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "LAKE PS2",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "LAKE PS3",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "LAKE PS4",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "LAKE PS5",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "LAKE PS6",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "LAKE PS7",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "LAKE PS8",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "LAKE IA1",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "LAKE IA2",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "LAKE IA3",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "LAKE IA4",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "LAKE IA5",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "LAKE IA6",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "LAKE IA7",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 3,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "APOPKA",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "APK FIRE DISP",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "APK EMS 1",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "APK FIRE 1",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "APK EMS 2",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "APK FIRE 2",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "APK FIRE EMS 3",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "APK TRAINING",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "APK FIRE EVENT",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "APK FIRE SPARE",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "APK CALL",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "APK TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "APK TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "APK TAC 3",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 4,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "ORANGE FIRE",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "OCFRD TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "OCFRD TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "OCFRD TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "OCFRD TAC 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "OCFRD TAC 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "OCFRD TAC 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "OCFRD TAC 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "OCFRD TAC 8",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "OCFRD TAC 9",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "OCFRD TAC 10",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "OCFRD TAC 11",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 5,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "POLK",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "POLK L/Z 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "POLK L/Z 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "POLK DISPATCH",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "POLK TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "POLK TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "POLK TAC 4",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "POLK TAC 5",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "POLK TAC 6",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "POLK TAC 7",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "POLK TAC 8",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "POLK TAC 9",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "POLK TAC 10",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "POLK TAC 11",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "POLK TAC 12",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "POLK/HILL 1",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "POLK/HILL 2",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 6,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "POLK TWR",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "POLK TOWER",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "LAKLAND REG (1)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "WINTER HAVEN (TRB)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 7,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "REEDY CREEK",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "REEDY TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "REEDY TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "REEDY TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "REEDY TAC 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "REEDY TAC 5",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 8,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "SUMTER",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "SUM L/Z",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "SUM HAIL",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "SUM 2",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "SUM 3",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "SUM 4",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "SUM 5",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "SUM 6",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "SUM 7",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "SUM 8",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "SUM 9",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "SUM 10",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "SUM 11",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 9,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "SEMINOLE",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "SEM 49A",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "SEM 49B",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "SEM 49C",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "SEM 49D",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "SEM 49E",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "SEM 49F",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "SEM 49G",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "SEM 49H",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "SEM 49I",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "SEM 49J",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "SEM 49K",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "SEM 49L",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "SEM 49M",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "SEM 49N",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "SEM 49O",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "SEM 49P",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 10,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HOSPITAL 1",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "ORMC (1)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "APH (1)",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "LK MONROE (II)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "OCALA REG (II)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "OSCEOLA REG (II)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "LAKLAND REG (II)(PED)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "AH-ORL (STK)",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "BAY PT MC (II)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "FUTURE",
+          "isFuture": true
+        },
+        {
+          "number": 10,
+          "label": "FUTURE",
+          "isFuture": true
+        },
+        {
+          "number": 11,
+          "label": "SHANDS (1)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "WINTER HAVEN (TRB)",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "MAYO JAX (STK)",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "MAYO JAX IC",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "UF-LEESBURG REG (TRB)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 11,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HOSPITAL 2 (AH)",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "AH-APK",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "AH-O PEDS",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "AH-ALT",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "AH-CELEB",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "AH-EAST",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "AH-ER OVIEDO",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "AH-HEART O FL",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "AH-KIS",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "AH-LK WALES",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "FUTURE",
+          "isFuture": true
+        },
+        {
+          "number": 11,
+          "label": "AH-TIMBER RID",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "AH-WATERMAN",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "AH-WAUCHULA",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "AH-WGRD",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 12,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HOSPITAL 3 (OH)",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "DPH",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "HCH",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "SOUTH LAKE",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "SOUTH SEMINOLE",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "ST CLOUD",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "WINNIE PALM",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 13,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HOSPITAL 4 (HCA)",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "CITRUS MEM",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "HIGHLANDS REG",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "HUN CRK ER",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "OAK HILL",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "OVIEDO MC",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "POINCIANA",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 14,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HOSPITAL 5",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "7RIVERS",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "BARTOW",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "LK PLACID",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "NEMOURS",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "UF-LEESBURG REG (TRB)",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "UF-VILLAGES REG",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "VETS ORL",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "EMS-OPS",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "MED COM",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "WINTER HAVEN (TRB)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 15,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "KISSIMMEE",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "KIS COMB",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "KIS TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "KIS TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "KIS TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "KIS TAC 4",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 16,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "SAINT CLOUD",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "ST CLD TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "ST CLD TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "ST CLD TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "ST CLD TAC 4",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 17,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "WINTER PARK",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "WP TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "WP TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "WP TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "WP TAC 4",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 18,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "ORLANDO",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "OFD 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "OFD 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "OFD 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "OFD 4",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 19,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "GOAA",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "GOAA TAC 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "GOAA TAC 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "GOAA TAC 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "GOAA TAC 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "GOAA TAC 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "GOAA TAC 6",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 20,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "CITRUS",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "CITRUS HELO",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "CITUS MEMOR H",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "CIT 7RIVERS",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "CITRUS EMS",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "CITRUS EAST",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "CITRUS WEST",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "CITRUS INOP 1",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "CITRUS INOP 2",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "CITRUS INOP 3",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "CITRUS INOP 4",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "CITRUS INOP 5",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "CITRUS INOP 6",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 21,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "DESOTO",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "Future",
+          "isFuture": true
+        }
+      ],
+      "isFutureOnly": true
+    },
+    {
+      "zone": 22,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HARDEE",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "HARDEE DISPATCH",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "HARDEE EMS",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "HARDEE FIRE",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "HARDEE TAC 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "HARDEE TAC 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "HARDEE TAC 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "HARDEE TAC 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "HARDEE TAC 10",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "HARDEE TAC 11",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "HARDEE TAC 12",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "HARDEE TAC 13",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "HARDEE TAC 14",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "HARDEE TAC 15",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "HARDEE INTEROP",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 23,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HERNANDO",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "HERN AIR OP 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "HERN AIR OP 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "BROOKSVIL REG",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "SPRING HILL",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "OAK HILL",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "BAY PT MC (II)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "HERN FIRE 1",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "HERN FIRE 2",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "HERN FIRE 3",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "HERN FIRE 4",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "BAYFLIGHT - 4",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 24,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HIGHLANDS",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "HIGHLANDS LZ 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "HIGHLANDS LZ 1",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "HIGHLANDS DISP",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 25,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "HILLSBOROUGH",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "Future",
+          "isFuture": true
+        }
+      ],
+      "isFutureOnly": true
+    },
+    {
+      "zone": 26,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "INDIAN RIVER",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "Future",
+          "isFuture": true
+        }
+      ],
+      "isFutureOnly": true
+    },
+    {
+      "zone": 27,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "MANATEE",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "Future",
+          "isFuture": true
+        }
+      ],
+      "isFutureOnly": true
+    },
+    {
+      "zone": 28,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "MARION",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "MARION HELO",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "OCALA REG (II)(STK)",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "AH-OCALA",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "AH-TIMBER",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "HCA-W MARION",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "HCA - SUMRF",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "AH-PEDS",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "HCA-MARIC",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "AH-BELLEVW",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "HCA-SILVR",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "UF-OCALA",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 29,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "PASCO",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "MA-FLA D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "8TAC94 D (Direct)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 30,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "PINELLAS",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "Future",
+          "isFuture": true
+        }
+      ],
+      "isFutureOnly": true
+    },
+    {
+      "zone": 31,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "ST. LUCIE",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "Future",
+          "isFuture": true
+        }
+      ],
+      "isFutureOnly": true
+    },
+    {
+      "zone": 32,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "ORANGE DISASTER",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "ORG DISASTER A",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "ORG DISASTER B",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "ORG DISASTER C",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "ORG DISASTER D",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "ORG DISASTER E",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 33,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "ORANGE MA",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "OCFR MA 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "OCFR MA 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "OCFR MA 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "OCFR MA 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "OCFR MA 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "OCFR MA 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "OCFR MA 7",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 34,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "ORANGE METRO (LEO)",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "OC METRO 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "OC METRO 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "OC METRO 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "OC METRO 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "OC METRO 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "OC METRO 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "OC METRO 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "OC METRO 8",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 35,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "700 MUT-AID",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "7CALL50",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "7CALL70",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "7TAC55",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "7TAC56",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "7GTAC57",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "7TAC75",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "7TAC76",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "7GTAC77",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "7CALL50 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "7CALL70 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "7TAC55 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "7TAC56 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "7GTAC57 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "7TAC75 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "7TAC76 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "7GTAC77 D (Direct)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 36,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "800 MUTUAL AID",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "8CALL90",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "8TAC91",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "8TAC92",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "8TAC93",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "8TAC94",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "MA-FLA",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "8TAC91 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "8TAC92 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "8TAC93 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "8TAC94 D (Direct)",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "MA-FLA D (Direct)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 37,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "PSIC MUT-AID REG 5",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "PSIC 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "PSIC 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "PSIC 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "PSIC 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "PSIC 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "PSIC 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "PSIC 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "PSIC 8",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "PSIC 9",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "PSIC 10",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "PSIC 11",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "PSIC 12",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "PSIC 13",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "PSIC 14",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "PSIC 15",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "7CALL50 D (Direct)",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 38,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "DISASTER 1",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "DISASTER 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "DISASTER 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "DISASTER 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "DISASTER 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "DISASTER 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "DISASTER 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "DISASTER 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "DISASTER 8",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "DISASTER 9",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "DISASTER 10",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "DISASTER 11",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "DISASTER 12",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "DISASTER 13",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "DISASTER 14",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "DISASTER 15",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "DISASTER 16",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 39,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "DISASTER 2",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "DISASTER 17",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "DISASTER 18",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "DISASTER 19",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "DISASTER 20",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "DISASTER 21",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "DISASTER 22",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "DISASTER 23",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "DISASTER 24",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "DISASTER 25",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "DISASTER 26",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "DISASTER 27",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "DISASTER 28",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "DISASTER 29",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "DISASTER 30",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "DISASTER 31",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "DISASTER 32",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 40,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "VOLUSIA",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "VC WIDE 1",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "VC WIDE 2",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "VC WIDE 3",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "VC WIDE 4",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "VC WIDE 5",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "VC WIDE 6",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "VC WIDE 7",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "AH - DAYTONA",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "AH - NSB",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "AH - PT ORANGE",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "HALIFAX (II)(TRB)",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "HALIFAX PO",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "AH - DELAND",
+          "isFuture": false
+        },
+        {
+          "number": 14,
+          "label": "AH - DELTONA",
+          "isFuture": false
+        },
+        {
+          "number": 15,
+          "label": "AH - FISH (OR CITY)",
+          "isFuture": false
+        },
+        {
+          "number": 16,
+          "label": "HALIFAX DELTONA",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    },
+    {
+      "zone": 41,
+      "band": 2,
+      "bandLabel": "800 MHz",
+      "name": "BREVARD",
+      "source": "2026 800mhz Radio Matrix",
+      "channels": [
+        {
+          "number": 1,
+          "label": "BREV CALL",
+          "isFuture": false
+        },
+        {
+          "number": 2,
+          "label": "BREVARD 1",
+          "isFuture": false
+        },
+        {
+          "number": 3,
+          "label": "BREVARD 2",
+          "isFuture": false
+        },
+        {
+          "number": 4,
+          "label": "BREVARD 3",
+          "isFuture": false
+        },
+        {
+          "number": 5,
+          "label": "BREVARD 4",
+          "isFuture": false
+        },
+        {
+          "number": 6,
+          "label": "BREVARD 5",
+          "isFuture": false
+        },
+        {
+          "number": 7,
+          "label": "BREVARD 6",
+          "isFuture": false
+        },
+        {
+          "number": 8,
+          "label": "PSIC CALL",
+          "isFuture": false
+        },
+        {
+          "number": 9,
+          "label": "PSIC 1",
+          "isFuture": false
+        },
+        {
+          "number": 10,
+          "label": "PSIC 2",
+          "isFuture": false
+        },
+        {
+          "number": 11,
+          "label": "PSIC 3",
+          "isFuture": false
+        },
+        {
+          "number": 12,
+          "label": "PSIC 4",
+          "isFuture": false
+        },
+        {
+          "number": 13,
+          "label": "BSO - KSC",
+          "isFuture": false
+        }
+      ],
+      "isFutureOnly": false
+    }
+  ],
+  "notes": {
+    "legend": {
+      "blue": "Hospital Channel",
+      "pink": "LZ Channel"
+    },
+    "traumaStrokeLegend": {
+      "1": "Level I Trauma Center",
+      "II": "Level II Trauma Center",
+      "STK": "Comprehensive Stroke Center",
+      "TRB": "Thrombectomy Capable Stroke Center"
+    },
+    "pilotControlledLighting": [
+      {
+        "label": "HCA-Lake Monroe (CFR)",
+        "frequency": "122.825"
+      },
+      {
+        "label": "Holmes Regional",
+        "frequency": "122.825"
+      },
+      {
+        "label": "Orlando VA Hospital",
+        "frequency": "122.8"
+      }
+    ],
+    "militaryBombingRange": {
+      "label": "SEA Lord",
+      "frequency": "134.65"
+    },
+    "discreteRadioSquawkCodes": {
+      "AC1": "5240",
+      "AC2": "5237",
+      "AC3": "5232",
+      "AC4": "5207",
+      "AC5": "5226",
+      "Tampa Area": "0204"
+    },
+    "floridaWildfireAviationPlan": [
+      {
+        "label": "Air-to-Air",
+        "frequency": "122.925 or 122.125"
+      },
+      {
+        "label": "FFS Flight Following",
+        "frequency": "159.300",
+        "tone": "156.7"
+      },
+      {
+        "label": "Fire MA (RED / VFIRE22)",
+        "frequency": "154.265",
+        "tone": "156.7"
+      },
+      {
+        "label": "Fire MA (WHITE / VFIRE21)",
+        "frequency": "154.28",
+        "tone": "156.7"
+      },
+      {
+        "label": "Fire MA (BLUE / VFIRE23)",
+        "frequency": "154.295",
+        "tone": "156.7"
+      }
+    ],
+    "clevelandClinicMartinSouth": "NO HELIPAD. Martin County FD radio channel: 8TAC91 D (Direct)."
+  }
+}
