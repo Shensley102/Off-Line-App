@@ -32,22 +32,22 @@
         },
         {
           "number": 2,
-          "label": "FL SOUTH (STK)",
+          "label": "FL SOUTH",
           "isFuture": false
         },
         {
           "number": 3,
-          "label": "TAMPA GEN (1)(STK)",
+          "label": "TAMPA GEN",
           "isFuture": false
         },
         {
           "number": 4,
-          "label": "ST JOES (II, Peds)(STK)",
+          "label": "ST JOES",
           "isFuture": false
         },
         {
           "number": 5,
-          "label": "BAYFRONT MED (II)",
+          "label": "BAYFRONT MED",
           "isFuture": false
         },
         {
@@ -627,12 +627,12 @@
         },
         {
           "number": 2,
-          "label": "LAKLAND REG (1)(STK)",
+          "label": "LAKLAND REG",
           "isFuture": false
         },
         {
           "number": 3,
-          "label": "WINTER HAVEN (TRB)",
+          "label": "WINTER HAVEN",
           "isFuture": false
         }
       ],
@@ -842,7 +842,7 @@
       "channels": [
         {
           "number": 1,
-          "label": "ORMC (1)(STK)",
+          "label": "ORMC",
           "isFuture": false
         },
         {
@@ -852,32 +852,32 @@
         },
         {
           "number": 3,
-          "label": "LK MONROE (II)(STK)",
+          "label": "LK MONROE",
           "isFuture": false
         },
         {
           "number": 4,
-          "label": "OCALA REG (II)(STK)",
+          "label": "OCALA REG",
           "isFuture": false
         },
         {
           "number": 5,
-          "label": "OSCEOLA REG (II)(STK)",
+          "label": "OSCEOLA REG",
           "isFuture": false
         },
         {
           "number": 6,
-          "label": "LAKLAND REG (II)(PED)(STK)",
+          "label": "LAKLAND REG",
           "isFuture": false
         },
         {
           "number": 7,
-          "label": "AH-ORL (STK)",
+          "label": "AH-ORL",
           "isFuture": false
         },
         {
           "number": 8,
-          "label": "BAY PT MC (II)(STK)",
+          "label": "BAY PT MC",
           "isFuture": false
         },
         {
@@ -892,17 +892,17 @@
         },
         {
           "number": 11,
-          "label": "SHANDS (1)(STK)",
+          "label": "SHANDS",
           "isFuture": false
         },
         {
           "number": 12,
-          "label": "WINTER HAVEN (TRB)",
+          "label": "WINTER HAVEN",
           "isFuture": false
         },
         {
           "number": 13,
-          "label": "MAYO JAX (STK)",
+          "label": "MAYO JAX",
           "isFuture": false
         },
         {
@@ -912,7 +912,7 @@
         },
         {
           "number": 15,
-          "label": "UF-LEESBURG REG (TRB)",
+          "label": "UF-LEESBURG REG",
           "isFuture": false
         }
       ],
@@ -932,7 +932,7 @@
         },
         {
           "number": 2,
-          "label": "AH-O PEDS",
+          "label": "AH-O",
           "isFuture": false
         },
         {
@@ -1107,7 +1107,7 @@
         },
         {
           "number": 5,
-          "label": "UF-LEESBURG REG (TRB)",
+          "label": "UF-LEESBURG REG",
           "isFuture": false
         },
         {
@@ -1132,7 +1132,7 @@
         },
         {
           "number": 10,
-          "label": "WINTER HAVEN (TRB)",
+          "label": "WINTER HAVEN",
           "isFuture": false
         }
       ],
@@ -1502,7 +1502,7 @@
         },
         {
           "number": 6,
-          "label": "BAY PT MC (II)(STK)",
+          "label": "BAY PT MC",
           "isFuture": false
         },
         {
@@ -1617,7 +1617,7 @@
         },
         {
           "number": 2,
-          "label": "OCALA REG (II)(STK)",
+          "label": "OCALA REG",
           "isFuture": false
         },
         {
@@ -1642,7 +1642,7 @@
         },
         {
           "number": 7,
-          "label": "AH-PEDS",
+          "label": "AH",
           "isFuture": false
         },
         {
@@ -2332,7 +2332,7 @@
         },
         {
           "number": 11,
-          "label": "HALIFAX (II)(TRB)",
+          "label": "HALIFAX",
           "isFuture": false
         },
         {
@@ -2447,12 +2447,12 @@
       "channels": [
         {
           "number": 1,
-          "label": "HOLMES REG (II)(TRB)",
+          "label": "HOLMES REG",
           "isFuture": false
         },
         {
           "number": 2,
-          "label": "SHANDS (1)(STK)",
+          "label": "SHANDS",
           "isFuture": false
         },
         {
