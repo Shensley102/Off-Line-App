@@ -652,7 +652,7 @@
   <div class="guide-section">
     <h3>Audio</h3>
     <p><span class="key">Mute</span> (- button): Toggle mute on/off</p>
-    <p><span class="key">VOL</span> indicator shown in bottom right of display</p>
+    <p><span class="key">Bottom-right display</span> shows the active knob mode value (CHAN, ZONE, or VOL)</p>
   </div>
   
   <div class="guide-section">
@@ -711,7 +711,7 @@ function render() {
   document.getElementById('txInd2').textContent = st.activeBand === 1 ? '↑' : ' ';
   document.getElementById('mode1').textContent = 'HOA';
   document.getElementById('mode2').textContent = 'HOA';
-  document.getElementById('volInd').textContent = `VOL-${st.volume}${st.muted ? ' M' : ''}`;
+  document.getElementById('volInd').textContent = knobLabel();
   document.getElementById('knobMode').textContent = knobLabel();
   document.getElementById('knob').style.transform = `rotate(${st.knobAngle}deg)`;
 }
