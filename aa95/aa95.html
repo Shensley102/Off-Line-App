@@ -33,6 +33,33 @@
       overflow-x: hidden;
     }
 
+    .back-link {
+      position: fixed;
+      top: calc(env(safe-area-inset-top) + 10px);
+      left: calc(env(safe-area-inset-left) + 38px);
+      z-index: 1000;
+    }
+
+    .back-link a {
+      color: #7fffb9;
+      text-decoration: none;
+      font-size: 16px;
+      line-height: 1;
+      opacity: 0.9;
+      transition: opacity 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    .back-link a:hover,
+    .back-link a:focus-visible {
+      opacity: 1;
+      text-shadow: 0 0 8px rgba(127, 255, 185, 0.5);
+    }
+
+    .back-link a:focus-visible {
+      outline: 1px solid #7fffb9;
+      outline-offset: 4px;
+    }
+
     .panel {
       position: relative;
       width: 940px;
@@ -649,6 +676,10 @@
   </style>
 </head>
 <body>
+
+  <div class="back-link">
+    <a href="/" aria-label="Return to home">← HOME</a>
+  </div>
 
 <div class="panel" id="panel">
   <div class="boundary-box box-comms"></div>
