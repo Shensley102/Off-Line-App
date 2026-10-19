@@ -646,7 +646,7 @@
     <h3>Knob Control</h3>
     <p><span class="key">Click knob:</span> Cycle through modes (CHAN → ZONE → VOL)</p>
     <p><span class="key">Scroll wheel on knob:</span> Adjust the selected mode value</p>
-    <p><span class="key">HOME</span> button: Return knob to CHAN mode</p>
+    <p><span class="key">HOME</span> button: Return knob to CHAN mode. Hold for 3 seconds to return the selected band to its home channel: VHF Zone A, Channel 1 (AIRCARE DIGITAL) or UHF/800 Zone 6, Channel 1 (POLK TOWER).</p>
   </div>
   
   <div class="guide-section">
@@ -716,7 +716,7 @@ function render() {
   document.getElementById('knob').style.transform = `rotate(${st.knobAngle}deg)`;
 }
 
-document.getElementById('bandBtn').onclick = () => { st.activeBand = st.activeBand ? 0 : 1; render(); };
+document.getElementById('bandBtn').onclick = () => { cancelHomeHold(); st.activeBand = st.activeBand ? 0 : 1; render(); };
 
 document.getElementById('mup').onclick = () => {
   const zone = getZone(st.activeBand);
@@ -765,7 +765,40 @@ document.getElementById('zoneUpBtn').onclick = () => {
 };
 
 document.getElementById('muteBtn').onclick = () => { st.muted = !st.muted; render(); };
-document.getElementById('homeBtn').onclick = () => { st.knobMode = 0; render(); };
+const homeBtn = document.getElementById('homeBtn');
+let homeHoldTimer = null;
+
+function cancelHomeHold() {
+  clearTimeout(homeHoldTimer);
+  homeHoldTimer = null;
+}
+
+homeBtn.onclick = () => { st.knobMode = 0; render(); };
+homeBtn.addEventListener('pointerdown', (e) => {
+  if (!e.isPrimary || e.button !== 0) return;
+  cancelHomeHold();
+  homeHoldTimer = setTimeout(() => {
+    homeHoldTimer = null;
+    const band = st.activeBand === 0 ? codeplug.band1 : codeplug.band2;
+    const homeZone = band.zones.findIndex(zone => zone.id === (st.activeBand === 0 ? 'A' : '6'));
+    if (st.activeBand === 0) {
+      st.zoneB1 = homeZone;
+      st.chanB1 = 0;
+    } else {
+      st.zoneB2 = homeZone;
+      st.chanB2 = 0;
+    }
+    st.knobMode = 0;
+    render();
+  }, 3000);
+});
+homeBtn.addEventListener('pointerleave', cancelHomeHold);
+homeBtn.addEventListener('pointercancel', cancelHomeHold);
+window.addEventListener('pointerup', cancelHomeHold);
+window.addEventListener('blur', cancelHomeHold);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) cancelHomeHold();
+});
 document.getElementById('up').onclick = () => {};
 document.getElementById('dn').onclick = () => {};
 document.getElementById('brt').onclick = () => { st.brightness = clamp(st.brightness + 1, 1, 10); render(); };
